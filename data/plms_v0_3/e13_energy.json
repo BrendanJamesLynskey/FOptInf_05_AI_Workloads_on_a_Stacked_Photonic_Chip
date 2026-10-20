@@ -1,0 +1,444 @@
+{
+ "config_hash": "6409e785c8ee",
+ "experiment": "e13_energy",
+ "figures": [
+  {
+   "annotations": [
+    {
+     "label": "ASIC",
+     "type": "hline",
+     "y": 32.3521
+    }
+   ],
+   "id": "transform_vs_units",
+   "kind": "line",
+   "series": [
+    {
+     "name": "1 λ",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0
+     ],
+     "y": [
+      634.375,
+      565.061,
+      559.285,
+      556.397,
+      556.397,
+      556.216
+     ]
+    },
+    {
+     "name": "2 λ",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0
+     ],
+     "y": [
+      538.259,
+      515.155,
+      515.155,
+      512.989,
+      512.628,
+      512.628
+     ]
+    },
+    {
+     "name": "4 λ",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0
+     ],
+     "y": [
+      490.202,
+      490.202,
+      485.87,
+      485.87,
+      485.599,
+      485.599
+     ]
+    },
+    {
+     "name": "8 λ",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0
+     ],
+     "y": [
+      477.725,
+      477.725,
+      477.725,
+      477.725,
+      477.725,
+      477.725
+     ]
+    }
+   ],
+   "title": "pJ per 4-point transform vs U",
+   "x": {
+    "label": "units U",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "energy",
+    "scale": "log",
+    "unit": "pJ"
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "ASIC",
+     "type": "hline",
+     "y": 32.3521
+    }
+   ],
+   "id": "transform_vs_conv",
+   "kind": "line",
+   "series": [
+    {
+     "name": "stacked chip",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.05,
+      0.1,
+      0.25,
+      0.5,
+      1.0,
+      2.0
+     ],
+     "y": [
+      167.27,
+      202.67,
+      308.87,
+      485.87,
+      839.87,
+      1547.87
+     ]
+    }
+   ],
+   "title": "pJ per transform vs E_conv",
+   "x": {
+    "label": "E_conv",
+    "scale": "log",
+    "unit": "pJ/bit"
+   },
+   "y": {
+    "label": "energy",
+    "scale": "log",
+    "unit": "pJ"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "breakdown",
+   "kind": "bar",
+   "series": [
+    {
+     "name": "stacked chip",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "laser",
+      "phase_shifters",
+      "conversions",
+      "recombination",
+      "logic"
+     ],
+     "y": [
+      18.7725,
+      69.3139,
+      354.0,
+      11.8,
+      31.9833
+     ]
+    },
+    {
+     "name": "ASIC",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "laser",
+      "phase_shifters",
+      "conversions",
+      "recombination",
+      "logic"
+     ],
+     "y": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      32.3521
+     ]
+    }
+   ],
+   "title": "Transform energy breakdown",
+   "x": {
+    "label": "component",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "energy",
+    "scale": "linear",
+    "unit": "pJ"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "bootstrap_sparse16",
+   "kind": "bar",
+   "series": [
+    {
+     "name": "logic",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.0521403,
+      0.0521403,
+      0.0525188
+     ]
+    },
+    {
+     "name": "conversions",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.363354,
+      0.363354,
+      0.0
+     ]
+    },
+    {
+     "name": "recombination",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.0121118,
+      0.0121118,
+      0.0
+     ]
+    },
+    {
+     "name": "laser",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.128247,
+      0.128247,
+      0.0
+     ]
+    },
+    {
+     "name": "phase_shifters",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.473526,
+      0.473526,
+      0.0
+     ]
+    },
+    {
+     "name": "hbm",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      1.0697,
+      1.0697,
+      1.0697
+     ]
+    }
+   ],
+   "title": "sparse16: energy per bootstrap (compute-bound)",
+   "x": {
+    "label": "design",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "energy",
+    "scale": "linear",
+    "unit": "J"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "bootstrap_full14",
+   "kind": "bar",
+   "series": [
+    {
+     "name": "logic",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.0456827,
+      0.0456827,
+      0.0459363
+     ]
+    },
+    {
+     "name": "conversions",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.243445,
+      0.243445,
+      0.0
+     ]
+    },
+    {
+     "name": "recombination",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.00811484,
+      0.00811484,
+      0.0
+     ]
+    },
+    {
+     "name": "laser",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.118512,
+      0.118512,
+      0.0
+     ]
+    },
+    {
+     "name": "phase_shifters",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      0.437582,
+      0.437582,
+      0.0
+     ]
+    },
+    {
+     "name": "hbm",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      "photonic",
+      "photonic all optical",
+      "asic logic"
+     ],
+     "y": [
+      1.41579,
+      1.41579,
+      1.41579
+     ]
+    }
+   ],
+   "title": "full14: energy per bootstrap (compute-bound)",
+   "x": {
+    "label": "design",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "energy",
+    "scale": "linear",
+    "unit": "J"
+   }
+  }
+ ],
+ "profile": "full",
+ "schema": "plms-web-data",
+ "schema_version": 3,
+ "sources": {
+  "asic.hbm_pJ_bit": "illustrative",
+  "asic.pJ_add32": "textbook",
+  "asic.pJ_mul32": "textbook",
+  "future.conv_pJ_bit": "illustrative",
+  "laser.wall_plug": "illustrative",
+  "thermal.p_pi_mW": "illustrative"
+ },
+ "tables": [],
+ "title": "Future chip: energy per useful operation"
+}

@@ -1,0 +1,27 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Python dependencies
+        run: pip install "numpy>=2" pytest
+      - name: pytest (analysis/)
+        run: python -m pytest -q analysis/tests
+      - name: node tests (js/ models against Python fixtures)
+        run: node --test js/tests/models.test.js
+      - name: number check (every number on the slides has a source)
+        run: python tools/check_numbers.py
+      - name: naming check
+        run: python tools/check_names.py

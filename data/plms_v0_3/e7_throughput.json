@@ -1,0 +1,429 @@
+{
+ "config_hash": "6409e785c8ee",
+ "experiment": "e7_throughput",
+ "figures": [
+  {
+   "annotations": [],
+   "id": "rate",
+   "kind": "line",
+   "series": [
+    {
+     "name": "14GBd x1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      1697500000.0,
+      848750000.0,
+      798824000.0,
+      565833000.0,
+      424375000.0,
+      339500000.0,
+      282917000.0,
+      246909000.0
+     ]
+    },
+    {
+     "name": "56GBd x1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      6790000000.0,
+      3395000000.0,
+      3195290000.0,
+      2263330000.0,
+      1697500000.0,
+      1358000000.0,
+      1131670000.0,
+      987636000.0
+     ]
+    },
+    {
+     "name": "112GBd x1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      13580000000.0,
+      6790000000.0,
+      6390590000.0,
+      4526670000.0,
+      3395000000.0,
+      2716000000.0,
+      2263330000.0,
+      1975270000.0
+     ]
+    },
+    {
+     "name": "112GBd x4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      54320000000.0,
+      27160000000.0,
+      25562400000.0,
+      18106700000.0,
+      13580000000.0,
+      10864000000.0,
+      9053330000.0,
+      7901090000.0
+     ]
+    },
+    {
+     "name": "FPGA k=1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      400000000.0,
+      400000000.0,
+      400000000.0,
+      400000000.0,
+      400000000.0,
+      400000000.0,
+      400000000.0,
+      400000000.0
+     ]
+    },
+    {
+     "name": "FPGA k=16",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      6400000000.0,
+      6400000000.0,
+      6400000000.0,
+      6400000000.0,
+      6400000000.0,
+      6400000000.0,
+      6400000000.0,
+      6400000000.0
+     ]
+    }
+   ],
+   "title": "Optical-core transform rate vs operand width",
+   "x": {
+    "label": "width",
+    "scale": "linear",
+    "unit": "bits"
+   },
+   "y": {
+    "label": "4-point transforms/s",
+    "scale": "log",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "break-even",
+     "type": "hline",
+     "y": 1.0
+    }
+   ],
+   "id": "speedup",
+   "kind": "line",
+   "series": [
+    {
+     "name": "Amdahl bound (8 adds removed)",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0
+     ],
+     "y": [
+      1.66667,
+      1.5,
+      1.4,
+      1.33333,
+      1.28571,
+      1.25,
+      1.22222,
+      1.2
+     ]
+    },
+    {
+     "name": "w=17, recombine 0",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0
+     ],
+     "y": [
+      1.25,
+      1.2,
+      1.16667,
+      1.14286,
+      1.125,
+      1.11111,
+      1.1,
+      1.09091
+     ]
+    },
+    {
+     "name": "w=17, recombine 0.25",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0
+     ],
+     "y": [
+      0.606061,
+      0.648649,
+      0.682927,
+      0.711111,
+      0.734694,
+      0.754717,
+      0.77193,
+      0.786885
+     ]
+    },
+    {
+     "name": "w=32, recombine 0",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0
+     ],
+     "y": [
+      1.25,
+      1.2,
+      1.16667,
+      1.14286,
+      1.125,
+      1.11111,
+      1.1,
+      1.09091
+     ]
+    },
+    {
+     "name": "w=32, recombine 0.25",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0
+     ],
+     "y": [
+      0.416667,
+      0.461538,
+      0.5,
+      0.533333,
+      0.5625,
+      0.588235,
+      0.611111,
+      0.631579
+     ]
+    }
+   ],
+   "title": "Equal-area speed-up vs multiply/add cost",
+   "x": {
+    "label": "r = mul/add cost",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "speed-up",
+    "scale": "linear",
+    "unit": "×"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "energy",
+   "kind": "line",
+   "series": [
+    {
+     "name": "hybrid 14 GBd, k=1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      27866.6,
+      34899.5,
+      35778.6,
+      41932.4,
+      48965.3,
+      55998.2,
+      63031.1,
+      69184.8
+     ]
+    },
+    {
+     "name": "hybrid 112 GBd x4, no recombine cost",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      314.891,
+      581.783,
+      615.144,
+      848.674,
+      1115.57,
+      1382.46,
+      1649.35,
+      1882.88
+     ]
+    },
+    {
+     "name": "FPGA only",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      8.0,
+      16.0,
+      17.0,
+      24.0,
+      32.0,
+      40.0,
+      48.0,
+      55.0
+     ],
+     "y": [
+      56.0,
+      56.0,
+      56.0,
+      56.0,
+      56.0,
+      56.0,
+      56.0,
+      56.0
+     ]
+    }
+   ],
+   "title": "Energy per full-width transform",
+   "x": {
+    "label": "width",
+    "scale": "linear",
+    "unit": "bits"
+   },
+   "y": {
+    "label": "energy",
+    "scale": "log",
+    "unit": "pJ"
+   }
+  }
+ ],
+ "profile": "full",
+ "schema": "plms-web-data",
+ "schema_version": 3,
+ "sources": {
+  "energy.fpga_pJ_modadd": "illustrative",
+  "energy.link_pJ_bit": "datasheet",
+  "energy.module_static_W": "paper",
+  "link.baud_GBd": "paper",
+  "timing.mul_add_ratio": "illustrative",
+  "timing.recombine_add_per_plane": "illustrative"
+ },
+ "tables": [],
+ "title": "Throughput, latency, energy and break-even"
+}

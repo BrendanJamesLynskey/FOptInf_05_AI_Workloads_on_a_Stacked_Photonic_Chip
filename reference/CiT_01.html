@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compute in Transit 01 — Compute in Transit: the Idea and the Budget</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Geist+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1c1815;
+            --bg-card: #231e1a;
+            --bg-code: #2b2520;
+            --text-primary: #efe8dc;
+            --text-secondary: #a2978b;
+            --accent: #6cb6c4;
+            --accent-dim: #6cb6c444;
+            --accent-glow: #6cb6c433;
+            --border: #3a322b;
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'Geist Mono', 'Geist Mono', monospace;
+            --font-body: 'Instrument Sans', sans-serif;
+            --max-width: 900px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 17px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .series-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .accent {
+            color: var(--accent);
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Tag Pills ── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+            white-space: nowrap;
+        }
+
+        /* ── Pipeline Flow Bar ── */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            max-width: var(--max-width);
+        }
+
+        .pipeline-step {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* ── Slides ── */
+        .slide {
+            min-height: 100vh;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-number {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent-dim);
+            position: absolute;
+            top: 2rem;
+            right: 1.5rem;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .slide h2 {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            line-height: 1.25;
+        }
+
+        .slide h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .slide p strong {
+            color: var(--text-primary);
+        }
+
+        .slide ul, .slide ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .slide li {
+            margin-bottom: 0.4rem;
+        }
+
+        .slide li strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Code Blocks ── */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(108,182,196,0.08);
+            padding: 0.4rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #dad1c5;
+        }
+
+        /* Syntax highlighting (manual) */
+        .kw { color: #de805a; }
+        .fn { color: #d7bbdf; }
+        .str { color: #bcdbd4; }
+        .cm { color: #a2978b; font-style: italic; }
+        .num { color: #97cdc6; }
+        .type { color: #e3b174; }
+        .dir { color: #de805a; }
+        .mac { color: #e3b174; }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+            white-space: nowrap;
+        }
+
+        .table-wrap th { white-space: normal; }   /* long headers wrap rather than widen the table */
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(35,30,26,0.5);
+        }
+
+        /* ── Diagrams ── */
+        .diagram-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-box {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .diagram-box.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(108,182,196,0.08);
+        }
+
+        .diagram-box.dim {
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .diagram-arrow {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Vertical flow diagrams */
+        .diagram-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-vertical .diagram-arrow {
+            font-size: 1.1rem;
+        }
+
+        /* Nested hierarchy diagram */
+        .hierarchy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .hierarchy-level {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hierarchy-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .hierarchy-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .hierarchy-item {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .hierarchy-item.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(108,182,196,0.08);
+        }
+
+        /* Grid diagram */
+        .diagram-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .diagram-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .diagram-panel {
+            padding: 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .diagram-panel.accent-border {
+            border-left: 3px solid var(--accent);
+        }
+
+        .diagram-panel h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagram-panel p, .diagram-panel ul {
+            font-size: 0.85rem;
+        }
+
+        /* ── Callout Boxes ── */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .callout p {
+            margin-bottom: 0;
+        }
+
+        .callout .callout-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ── Tier Visual ── */
+        .tier-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .tier-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tier-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .tier-fill {
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            transition: width 0.6s ease;
+        }
+
+        .tier-cost {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 70px;
+        }
+
+        /* ── Contents list ── */
+        .contents-list {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: contents;
+        }
+
+        .contents-list li {
+            counter-increment: contents;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contents-list li:last-child {
+            border-bottom: none;
+        }
+
+        .contents-list li::before {
+            content: counter(contents, decimal-leading-zero);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 2rem;
+        }
+
+        .contents-list a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contents-list a:hover {
+            color: var(--accent);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .slide {
+                padding: 3rem 1rem;
+                min-height: auto;
+            }
+
+            .slide-number {
+                font-size: 3rem;
+                top: 1.5rem;
+                right: 1rem;
+            }
+
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+
+            .diagram-grid.cols-2,
+            .diagram-grid.cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                gap: 0.15rem;
+            }
+
+            .pipeline-step {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            table {
+                font-size: 0.78rem;
+            }
+
+            .tier-label {
+                min-width: 60px;
+                font-size: 0.65rem;
+            }
+
+            .tier-fill {
+                font-size: 0.6rem;
+                height: 26px;
+            }
+        }
+
+        /* ── Interactive controls (added for Local LLM series) ── */
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .control-row label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 180px;
+        }
+        .control-row input[type="range"] {
+            flex: 1;
+            min-width: 160px;
+            accent-color: var(--accent);
+        }
+        .control-row input[type="number"],
+        .control-row select {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        .control-row .val {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 80px;
+            text-align: right;
+        }
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.9rem;
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn:hover { background: rgba(108,182,196,0.2); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn.secondary {
+            background: var(--bg-code);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .result-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-top: 0.75rem;
+        }
+        .result-box .line-label { color: var(--text-secondary); }
+        .result-box .line-val   { color: var(--accent); font-weight: 600; }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .metric {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            text-align: center;
+        }
+        .metric .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .metric .metric-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Canvas / SVG containers */
+        .canvas-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+        .canvas-wrap canvas,
+        .canvas-wrap svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        /* Small inline badge */
+        .badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+            margin-left: 0.3rem;
+        }
+        .badge.ok    { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .badge.warn  { border-color: #e3b174; color: #e3b174; background: rgba(227,177,116,0.08); }
+        .badge.bad   { border-color: #de805a; color: #de805a; background: rgba(222,128,90,0.08); }
+
+
+        /* ── LLM Inference Simulators additions ── */
+        .canvas-wrap canvas { image-rendering: auto; display: block; width: 100%; height: auto; }
+        .canvas-wrap svg { max-width: 100%; height: auto; }
+        .ladder { display: grid; gap: 0.4rem; margin: 1.25rem 0; }
+        .ladder-row {
+            display: grid; grid-template-columns: 11rem 1fr 7.5rem; gap: 0.75rem; align-items: center;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+            padding: 0.55rem 0.85rem; font-size: 0.88rem;
+        }
+        .ladder-row .rung { font-family: var(--font-display); font-weight: 600; color: var(--accent); }
+        .ladder-row .speed { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary); text-align: right; }
+        .res-list { list-style: none; padding: 0; margin: 0.75rem 0; }
+        .res-list li { padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+        .res-list li:last-child { border-bottom: none; }
+        .res-list .what { color: var(--text-secondary); display: block; font-size: 0.86rem; margin-top: 0.15rem; }
+        .res-list a { color: var(--accent); text-decoration: none; }
+        .res-list a:hover { text-decoration: underline; }
+        .qa { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin: 0.6rem 0; padding: 0.2rem 1rem; }
+        .qa summary { cursor: pointer; padding: 0.6rem 0; font-weight: 600; }
+        .qa p, .qa ul { margin-bottom: 0.75rem; font-size: 0.92rem; }
+        .sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.4rem 1.25rem; }
+        .chart-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .chart-title { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .slide a { color: var(--accent); }
+        @media (max-width: 640px) {
+            .ladder-row { grid-template-columns: 1fr; gap: 0.2rem; }
+            .ladder-row .speed { text-align: left; }
+        }
+        .concepts { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 0.75rem 1rem; margin-top: 1.25rem; font-size: 0.88rem; }
+        .concepts p { margin: 0 0 0.4rem; color: var(--text-secondary); }
+        .concepts .chips { display: flex; flex-wrap: wrap; gap: 0.35rem 0.5rem; }
+        .concepts .chips a { border: 1px solid var(--border); border-radius: 999px; padding: 0.1rem 0.6rem; text-decoration: none; font-size: 0.82rem; }
+        .concepts .chips a:hover { border-color: var(--accent); }
+        .hero { overflow: hidden; }   /* the 600px glow must not widen the page on phones */
+        .chart-pair > *, .diagram-grid > *, .sim-grid > * { min-width: 0; }   /* let wide code scroll inside its column */
+        .slide p code, .slide li code, .slide td code { overflow-wrap: anywhere; }
+        @media (max-width: 640px) { .diagram-box { white-space: normal; max-width: 100%; } }   /* long boxes must wrap on phones */
+        /* FOptInf: keep long titles clear of the slide number on phones */
+        @media (max-width: 640px) { .slide h2 { padding-right: 3.6rem; } }
+        .sim-grid select, .sim-grid input[type="range"] { max-width: 100%; min-width: 0; }   /* long option labels must not spill into the next column */
+    </style>
+</head>
+
+<header class="hero">
+    <div class="series-label">Compute in Transit &mdash; Presentation 01</div>
+    <h1><span class="accent">Compute in Transit:</span> the Idea and the Budget</h1>
+    <p class="subtitle">What it means to compute on data while it crosses a link, what a photonic link module (arXiv:2608.21536) is reported to do, and the arithmetic that decides what fits: operations per byte at line rate, whether the transform is charged, precision, energy and placement. Five tests, applied to the data movements of LLM training and inference.</p>
+
+    <div class="tags">
+        <span class="tag">Compute in transit</span>
+        <span class="tag">Operations per byte</span>
+        <span class="tag">Photonic link module</span>
+        <span class="tag">Published operation set</span>
+        <span class="tag">Placement</span>
+        <span class="tag">Five tests</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">Bytes that must move</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Budget: ops / byte</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Published operations</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Precision</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Placement</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Candidates</span>
+    </div>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <ul class="contents-list">
+        <li><a href="#slide-01">Data Movement Is the Bottleneck</a></li>
+        <li><a href="#slide-02">What Compute in Transit Means</a></li>
+        <li><a href="#slide-03">The Photonic Link Module</a></li>
+        <li><a href="#slide-04">The Published Operation Set, and What Is Missing</a></li>
+        <li><a href="#slide-05">How the Optics Computes</a></li>
+        <li><a href="#slide-06">Interactive: the Budget in Operations per Byte</a></li>
+        <li><a href="#slide-07">Is the Transform Free?</a></li>
+        <li><a href="#slide-08">Precision: Noise or Exactness</a></li>
+        <li><a href="#slide-09">Energy per Bit</a></li>
+        <li><a href="#slide-10">Five Tests Any Candidate Must Pass</a></li>
+        <li><a href="#slide-11">Candidates at a Glance</a></li>
+        <li><a href="#slide-12">Open Questions for the Module's Developer</a></li>
+        <li><a href="#slide-13">What to Take Away</a></li>
+    </ul>
+    <div class="concepts">
+        <p><strong>Concepts used here, and where they are explained.</strong> Every concept is in the <a href="https://brendanjameslynskey.github.io/LLM_Hub_Compute_in_Transit/#glossary">series glossary</a>; concepts the sister series already explain link to their glossaries.</p>
+        <div class="chips"><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-computetransit" title="Operations applied in a link's data path, between transmitter and receiver, on data that must move anyway.">Compute in transit</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-photoniclink" title="Optical links that move bytes between chips. They are photonics but compute nothing.">Photonic interconnect</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-kvtransfer" title="Bytes = prompt tokens × KV per token; the link and its queue can become the hot-spot.">KV-cache transfer</a><a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/#g-optics" title="A lens Fourier-transforms the light field; two lenses with a mask between them compute a convolution.">Fourier optics and the 4f system</a><a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/#g-ntt" title="The FFT over a finite field Zq; the core of FHE polynomial multiplication.">Number-theoretic transform (NTT)</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-floatenob" title="For float workloads the analogue chain must match the number format's own rounding error, not be exact.">The noise rule for floating-point workloads</a><a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/#g-enob" title="Effective number of bits: the real precision of an analogue chain.">ENOB and exact rounding</a><a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/#g-digits" title="Splitting operands into narrow digits so low-precision analogue products can be recombined exactly.">Digit decomposition (bit slicing)</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-quant" title="Storing weights, activations or KV in fewer bits.">Quantisation</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-tdcompress" title="Compressing the KV cache or hidden states by keeping low-frequency DCT/Fourier coefficients.">Transform-domain compression</a></div>
+    </div>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>Data Movement Is the Bottleneck</h2>
+    <p>LLM work moves large, regular blocks of data between devices. Two of them set the scale for this series: the gradient or pseudo-gradient sync in training, and the KV-cache hand-off in disaggregated inference.</p>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Training: one model-sized update</h4>
+            <ul>
+                <li><strong>Llama-3-70B, BF16:</strong> 141.10 GB per update.</li>
+                <li>A ring all-reduce sends 246.93 GB from each of 8 workers, 277.80 GB from each of 64.</li>
+                <li>Moving it once takes 313.6 ms over NVLink 4, 2,822.1 ms over InfiniBand NDR and 11,288.4 ms over 100 GbE.</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Inference: one prompt's KV hand-off</h4>
+            <ul>
+                <li><strong>Llama-3-8B, 2,048 tokens:</strong> 268.4 MB (131,072 bytes per token).</li>
+                <li>0.60 ms over NVLink 4, 5.38 ms over IB NDR, 21.49 ms over 100 GbE, 85.92 ms over 25 GbE.</li>
+                <li>A 32,768-token Llama-3-70B prompt hands off 10,737.4 MB: 859.01 ms over 100 GbE.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Movement</th><th>Size</th><th>NVLink 4</th><th>IB NDR 400G</th><th>100 GbE</th><th>25 GbE</th></tr>
+        <tr><td>Llama-3-70B BF16 update</td><td>141.10 GB</td><td>313.6 ms</td><td>2,822.1 ms</td><td>11,288.4 ms</td><td>45,153.5 ms</td></tr>
+        <tr><td>Llama-3-8B BF16 update</td><td>16.06 GB</td><td>35.7 ms</td><td>321.2 ms</td><td>1,284.8 ms</td><td>5,139.2 ms</td></tr>
+        <tr><td>Llama-3-70B KV, 2,048 tokens</td><td>671.1 MB</td><td>1.50 ms</td><td>13.43 ms</td><td>53.71 ms</td><td>214.77 ms</td></tr>
+        <tr><td>Llama-3-8B KV, 2,048 tokens</td><td>268.4 MB</td><td>0.60 ms</td><td>5.38 ms</td><td>21.49 ms</td><td>85.92 ms</td></tr>
+    </table>
+    </div>
+    <p class="src" style="font-size:0.85rem;">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Compute_in_Transit/blob/main/analysis/results.md">results.md</a>, sections 3 and 4. Link rates and model shapes come from Disaggregated_Inference_Sim's presets.</p>
+    <ul>
+        <li><strong>The training sync is more than 500 times the size of a short-prompt KV hand-off.</strong> Over a cross-data-centre 100 GbE link, a Llama-3-70B update takes 11.3 s uncompressed. That is the traffic DiLoCo-family methods shrink, and it is where compression in transit would act.</li>
+        <li><strong>Weight streaming</strong> is the third movement: Llama-3-70B's 141.10 GB of BF16 weights take 2.20 s over PCIe Gen5 x16.</li>
+        <li>Size alone does not make a bottleneck. Whether the link bounds the system is the first of the five tests (<a href="#slide-10">slide 10</a>).</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>What Compute in Transit Means</h2>
+    <p><strong>Compute in transit</strong> is computation applied in the data path, on data that must move anyway. The data is not fetched to a processor and sent back; it is changed on the way past. Where the computation sits decides what it can see.</p>
+    <div class="canvas-wrap">
+        <svg viewBox="0 0 760 270" width="760" height="270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three placements: compute at an endpoint (GPU or NIC), in a pluggable link module that sees one flow, and in a switch that sees many flows">
+            <style>
+                .bx { fill: #2b2520; stroke: #3a322b; stroke-width: 1.2; }
+                .bxa { fill: rgba(108,182,196,0.10); stroke: #6cb6c4; stroke-width: 1.6; }
+                .fb { stroke: #a2978b; stroke-width: 1.6; fill: none; }
+                .fbd { stroke: #a2978b; stroke-width: 1.2; fill: none; stroke-dasharray: 4 3; }
+                .t  { fill: #efe8dc; font-family: 'Geist Mono', monospace; font-size: 11px; }
+                .d  { fill: #a2978b; font-family: 'Geist Mono', monospace; font-size: 10px; }
+                .m  { fill: #6cb6c4; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600; }
+                .c  { fill: #1c1815; stroke: #6cb6c4; stroke-width: 1.6; }
+            </style>
+            <!-- sender -->
+            <rect x="20" y="70" width="120" height="90" rx="6" class="bxa"/>
+            <text x="34" y="96" class="t">GPU (sender)</text>
+            <rect x="34" y="112" width="92" height="34" rx="4" class="bx"/>
+            <text x="64" y="133" class="t">NIC</text>
+            <!-- pluggable -->
+            <rect x="160" y="108" width="96" height="42" rx="4" class="bxa"/>
+            <text x="170" y="126" class="t">pluggable</text>
+            <text x="170" y="141" class="d">QSFP module</text>
+            <line x1="126" y1="129" x2="160" y2="129" class="fb"/>
+            <!-- fibre to switch -->
+            <line x1="256" y1="129" x2="390" y2="129" class="fb"/>
+            <text x="290" y="121" class="d">fibre: one flow</text>
+            <!-- switch -->
+            <rect x="390" y="60" width="150" height="140" rx="6" class="bxa"/>
+            <text x="432" y="84" class="t">switch</text>
+            <text x="404" y="186" class="d">many flows meet here</text>
+            <!-- other flows into switch -->
+            <path d="M390 92 L330 60 L250 60" class="fbd"/>
+            <path d="M390 168 L330 210 L250 210" class="fbd"/>
+            <text x="200" y="56" class="d">other senders</text>
+            <text x="200" y="224" class="d">other senders</text>
+            <!-- to receiver -->
+            <line x1="540" y1="129" x2="620" y2="129" class="fb"/>
+            <rect x="620" y="70" width="120" height="90" rx="6" class="bx"/>
+            <text x="630" y="96" class="t">GPU (receiver)</text>
+            <rect x="634" y="112" width="92" height="34" rx="4" class="bx"/>
+            <text x="664" y="133" class="t">NIC</text>
+            <!-- markers -->
+            <circle cx="80" cy="60" r="12" class="c"/><text x="76" y="64" class="m">1</text>
+            <circle cx="208" cy="96" r="12" class="c"/><text x="204" y="100" class="m">2</text>
+            <circle cx="465" cy="48" r="12" class="c"/><text x="461" y="52" class="m">3</text>
+            <text x="20" y="252" class="m">1 endpoint</text><text x="110" y="252" class="d">its own data, any operation</text>
+            <text x="300" y="252" class="m">2 link</text><text x="360" y="252" class="d">one flow</text>
+            <text x="450" y="252" class="m">3 switch</text><text x="530" y="252" class="d">many flows, can combine</text>
+        </svg>
+    </div>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Placement</th><th>Sees</th><th>Can do</th><th>Cannot do</th></tr>
+        <tr><td><strong>Endpoint</strong> (GPU, NIC)</td><td>Its own data, before it leaves or after it lands</td><td>Anything the device's instruction set allows, at the cost of its own time and memory traffic</td><td>Combine with data it has not received; it is not &ldquo;free&rdquo;, since it competes with the device's main work</td></tr>
+        <tr><td><strong>Link</strong> (pluggable transceiver module)</td><td>One flow, at line rate</td><td>Per-stream transforms: compress, re-encode, transform, score against a held vector</td><td>Combine two streams: a sum of gradients from two workers needs both at one point</td></tr>
+        <tr><td><strong>Switch</strong></td><td>Many flows</td><td>Combine flows: in-network aggregation (the sum in an all-reduce)</td><td>Much per-byte work: the same compute budget is shared by every port</td></tr>
+    </table>
+    </div>
+    <p style="font-size:0.85rem;">A photonic interconnect that only moves bytes is not compute in transit. The distinction in this series is whether the device changes the data (<a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-photoniclink">glossary</a>).</p>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>The Photonic Link Module</h2>
+    <p>The series starts from one published device. Kundu, Hammond, Todd, Goel, Simpson, Rajendra, Michel, Crawford, Bergamaschi, R. Todd and New describe it in &ldquo;Programmable Compute-in-Transit using Integrated Photonics&rdquo; (<a href="https://arxiv.org/abs/2608.21536">arXiv:2608.21536</a>, submitted 21 August 2026).</p>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>What the paper reports</h4>
+            <ul>
+                <li>A <strong>QSFP56 pluggable module</strong> with an integrated optical Fourier transform device.</li>
+                <li>It lists <strong>radix-4 FFT and NTT, addition, subtraction, multiplication, MAC, floating-point MAC and modular arithmetic</strong>. The modular logic runs in the driver IP on the host FPGA, an AMD Alveo V80 attached through the QSFP56 port.</li>
+                <li>&ldquo;Tens of GFLOPs of operations on data links&rdquo;: the authors' claim.</li>
+                <li>Evaluated inside a <strong>CKKS bootstrapping</strong> flow: ring dimension 65,536, 32-bit words, about 420 GB streamed through the photonics; functional correctness checked against a CPU implementation. The 65,536-point NTTs were split into 256-point transforms, then spread over four optical channels by radix-4 decomposition.</li>
+                <li>The photonic devices run at 14 GBaud, with NRZ data into the module; module power is 9.7 W. No throughput, latency or energy per operation is measured.</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>What the developer says</h4>
+            <ul>
+                <li>Compute-in-Transit is &ldquo;operations performed with light directly in the data path&rdquo;, and &ldquo;AI infrastructure has hit the data movement wall&rdquo; (the developer&rsquo;s website).</li>
+                <li>Estimated <strong>2.76 pJ/bit</strong> link energy on 45 nm silicon photonics, excluding the laser; &ldquo;Native <strong>384 GOPS / lambda</strong> @ 32GSps (GF45nm)&rdquo; (the developer&rsquo;s website).</li>
+                <li>Evaluation kit: photonic compute module, AMD Alveo V80 accelerator, QSFP data path and control software.</li>
+                <li>Stated targets: distributed and hyperscale AI, optical interconnect, secure and confidential AI; AI, security, HPC and telecoms (the developer&rsquo;s website). The paper adds post-quantum cryptography and FHE.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="callout">
+        <div class="callout-label">How much weight these figures carry</div>
+        <p>A third-party review notes that the GFLOPs figure is asserted rather than measured (<a href="https://pith.science/paper/2608.21536">pith.science</a>). The GOPS and pJ/bit figures are company estimates. This deck treats all three as claims and brackets &ldquo;tens of GFLOPs&rdquo; with 10 and 99 GFLOP/s, which is our reading, not a measurement.</p>
+    </div>
+    <p><strong>Hardware primer &rarr;</strong> how the module's modulators, coherent receivers and TIAs work, with its signals drawn as constellations through the chain: <a href="https://brendanjameslynskey.github.io/FOptInf_04_Inside_a_Photonic_Link/">FOptInf 04, Inside a Photonic Link</a>.</p>
+    <p style="font-size:0.8rem;">Note: the paper facts on this slide were checked against its full text (four pages) on 9 October 2026.</p>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>The Published Operation Set, and What Is Missing</h2>
+    <p>The paper lists radix-4 FFT and NTT, addition and subtraction, multiplication, MAC, floating-point MAC and modular arithmetic (add, subtract, multiply, MAC, MSUB). Everything a candidate kernel does must be built from them, or it cannot run in the module.</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Operation</th><th>Listed?</th><th>What it gives an LLM kernel</th></tr>
+        <tr><td>FFT (1&times;N, radix-4)</td><td><span class="badge ok">yes</span></td><td>Frequency-domain compression along a sequence or within a chunk</td></tr>
+        <tr><td>NTT (1&times;N, radix-4)</td><td><span class="badge ok">yes</span></td><td>Exact transforms over integers mod q: FHE, not float traffic</td></tr>
+        <tr><td>Modular arithmetic</td><td><span class="badge ok">yes</span></td><td>Integer rescaling and encoding (runs in the host FPGA&rsquo;s driver IP)</td></tr>
+        <tr><td>Addition, subtraction, multiplication</td><td><span class="badge ok">yes</span></td><td>Summing streams, scaling, element-wise products</td></tr>
+        <tr><td>MAC, floating-point MAC</td><td><span class="badge ok">yes</span></td><td>Dot products against a held vector, weighted sums</td></tr>
+        <tr><td>Comparison</td><td><span class="badge bad">not listed</span></td><td>Needed for absmax scaling, thresholds, max</td></tr>
+        <tr><td>Rounding to a narrower format</td><td><span class="badge bad">not listed</span></td><td>Needed to requantise BF16 to FP8</td></tr>
+        <tr><td>Top-k selection</td><td><span class="badge bad">not listed</span></td><td>Needed by DeMo-style sparsification and KV block selection</td></tr>
+        <tr><td>Data-dependent control</td><td><span class="badge bad">not listed</span></td><td>Needed for any &ldquo;if this value, then&rdquo; logic</td></tr>
+    </table>
+    </div>
+    <p>&ldquo;Not listed&rdquo; means only that the public sources do not mention it; the module or its host FPGA may do more.</p>
+    <div class="callout">
+        <div class="callout-label">Consequence</div>
+        <p>Kernels must be <strong>data-independent</strong>: the same arithmetic on every value, whatever its size. Keeping a fixed frequency band replaces top-k. On synthetic 64&times;64 chunks, keeping 1/16 of the DCT coefficients, the fixed band keeps 0.957 of a smooth signal's energy against top-k's 0.995, but only 0.062 of white noise against top-k's 0.325 (<a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Compute_in_Transit/blob/main/analysis/results.md">results.md</a>, section 5, illustrative).</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>How the Optics Computes</h2>
+    <p>A lens performs a Fourier transform on a coherent light field as it propagates, and two lenses with a mask between them compute a convolution (the 4f system). The transform has no operation count, only the cost of getting data into and out of the light. The background is in <a href="https://brendanjameslynskey.github.io/FOptInf_01_Fourier_Optics_for_Engineers/">Fourier Optics for Inference 01</a>: <a href="https://brendanjameslynskey.github.io/FOptInf_01_Fourier_Optics_for_Engineers/#slide-03">the lens as a Fourier transformer</a> and <a href="https://brendanjameslynskey.github.io/FOptInf_01_Fourier_Optics_for_Engineers/#slide-05">the 4f system</a>.</p>
+    <div class="diagram-flow">
+        <span class="diagram-box dim">Electrical bits in</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box">Modulators</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box accent">Passive diffractive OFT device<br>4 optical channels</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box">Detectors</span>
+        <span class="diagram-arrow">&rarr;</span>
+        <span class="diagram-box accent">Digital recombination<br>larger, higher precision</span>
+    </div>
+    <ul>
+        <li><strong>A passive device on the chip.</strong> The photonic chip carries Mach-Zehnder modulators, &ldquo;a proprietary passive diffractive device that computes Optical Fourier Transform (OFT)&rdquo;, and balanced photodiodes for coherent detection (Kundu et al., section II).</li>
+        <li><strong>Small transforms, recombined.</strong> The prototype has four optical channels and builds larger transforms by radix-4 decomposition: in the FHE run, 65,536-point NTTs were split into 256-point transforms and spread over the four channels (Kundu et al., section IV).</li>
+        <li><strong>Pending patents</strong> (the module&rsquo;s developer, priority 10 September 2024, checked on <a href="https://patents.google.com/patent/GB2643957A">Google Patents</a>): &ldquo;Arbitrary size and precision Fourier transforms via optical Fourier transforms&rdquo; (GB-2643957-A, WO-2026057669-A1) and the same for number-theoretic transforms (GB-2643956-A, WO-2026057670-A1).</li>
+    </ul>
+    <p>So the native optical transform is small, and long transforms are built by recombination. How much of that recombination is digital, and whether it counts against the module's &ldquo;tens of GFLOPs&rdquo;, is not public. That question decides the budget (<a href="#slide-07">slide 07</a>).</p>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Interactive: the Budget in Operations per Byte</h2>
+    <p>A module that applies C operations per second to a stream arriving at R bytes per second can afford <strong>C / R operations per byte</strong>. Anything more and the link slows to the module's pace.</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Link</th><th>Line rate (GB/s)</th><th>Claim</th><th>Operations per byte</th></tr>
+        <tr><td>QSFP56 200G</td><td>25</td><td>low (10 GFLOP/s)</td><td>0.40</td></tr>
+        <tr><td>QSFP56 200G</td><td>25</td><td>high (99 GFLOP/s)</td><td>3.96</td></tr>
+        <tr><td>400G</td><td>50</td><td>low (10 GFLOP/s)</td><td>0.20</td></tr>
+        <tr><td>400G</td><td>50</td><td>high (99 GFLOP/s)</td><td>1.98</td></tr>
+        <tr><td>800G</td><td>100</td><td>low (10 GFLOP/s)</td><td>0.10</td></tr>
+        <tr><td>800G</td><td>100</td><td>high (99 GFLOP/s)</td><td>0.99</td></tr>
+        <tr><td>Prototype optics (4 &times; 14 Gb/s NRZ)</td><td>7</td><td>low (10 GFLOP/s)</td><td>1.43</td></tr>
+        <tr><td>Prototype optics (4 &times; 14 Gb/s NRZ)</td><td>7</td><td>high (99 GFLOP/s)</td><td>14.14</td></tr>
+    </table>
+    </div>
+    <p class="src" style="font-size:0.85rem;">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Compute_in_Transit/blob/main/analysis/results.md">results.md</a>, section 1. 400G and 800G rows assume the same engine per link. The prototype-optics rate is our arithmetic from the paper, not a figure it states.</p>
+    <div class="callout">
+        <div class="callout-label">Port rate is not the optics' rate</div>
+        <p>25 GB/s is the QSFP56 port's rate. In the prototype the port connects the module to its host FPGA, and the photonic devices run at 14 GBaud, with NRZ data into four modulators (Kundu et al., section II): about 7 GB/s, 28% of the port, by our arithmetic. At 7 GB/s the same claim gives <strong>1.43 to 14.14 operations per byte</strong>, enough for a charged BF16 FFT of length 2,048 at the high end. That is more work per byte, but on a link the prototype could not fill: a module limited to its optics' rate would itself throttle a 200 Gb/s link. 25 GB/s is the rate a product would have to match.</p>
+    </div>
+    <p>Move the claim and the line rate below. Work per value uses the same conventions as <code>cit_budget.py</code>: FFT 2.5 log<sub>2</sub> n per value; 2-D DCT of c&times;c chunks 2 &times; 2.5 log<sub>2</sub> c; sum 1; dot product 2; FP8 requantisation about 2 (illustrative); top-k about 2 comparisons (illustrative).</p>
+    <div class="control-panel">
+        <div class="sim-grid">
+            <div class="control-row"><label for="bg-g">Claimed compute (GFLOP/s)</label><input type="range" id="bg-g" min="1" max="200" value="99"><span class="val" id="bg-g-val">99</span></div>
+            <div class="control-row"><label for="bg-r">Line rate</label><select id="bg-r"><option value="25" selected>25 GB/s (QSFP56 200G)</option><option value="50">50 GB/s (400G)</option><option value="100">100 GB/s (800G)</option><option value="7">7 GB/s (prototype optics)</option></select></div>
+            <div class="control-row"><label for="bg-f">Value format</label><select id="bg-f"><option value="2" selected>BF16 (2 bytes)</option><option value="4">FP32 (4 bytes)</option></select></div>
+            <div class="control-row"><label for="bg-t">Optical transform</label><select id="bg-t"><option value="1" selected>charged against the budget</option><option value="0">free (done by the optics)</option></select></div>
+        </div>
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">Budget, ops per byte</div><div class="metric-value" id="bg-b">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Budget, ops per value</div><div class="metric-value" id="bg-bv">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Longest FFT that fits</div><div class="metric-value" id="bg-n">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Kernels that fit</div><div class="metric-value" id="bg-k">&mdash;</div></div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Kernel</th><th>Transform / byte</th><th>Other / byte</th><th>Counted / byte</th><th>In set</th><th>Fits</th></tr></thead>
+                <tbody id="bg-rows"></tbody>
+            </table>
+        </div>
+        <p id="bg-note" style="font-size:0.85rem; margin-top:0.4rem;"></p>
+    </div>
+    <script>
+    (function(){
+        const $ = id => document.getElementById(id);
+        const L2 = Math.log2;
+        // name, transform FLOPs per value, other ops per value, in the published set
+        const K = [
+            ['Sum two gradient streams (switch, not pluggable)', 0, 1, true],
+            ['1-D FFT, length 8, keep a fixed band', 2.5 * L2(8), 0, true],
+            ['1-D FFT, length 64, keep a fixed band', 2.5 * L2(64), 0, true],
+            ['1-D FFT, length 1024, keep a fixed band', 2.5 * L2(1024), 0, true],
+            ['2-D DCT 16x16, keep a fixed band', 2 * 2.5 * L2(16), 0, true],
+            ['2-D DCT 64x64, keep a fixed band', 2 * 2.5 * L2(64), 0, true],
+            ['2-D DCT 64x64 + top-k (DeMo as published)', 2 * 2.5 * L2(64), 2, false],
+            ['Requantise to FP8, per-block scale (illustrative)', 0, 2, false],
+            ['Score a KV key against the query (dot product)', 0, 2, true]
+        ];
+        const f2 = x => x.toFixed(2);
+        function rec() {
+            const g = +$('bg-g').value, r = +$('bg-r').value, bpv = +$('bg-f').value, charged = $('bg-t').value === '1';
+            $('bg-g-val').textContent = String(g);
+            const b = g / r;                       // ops per byte (GFLOP/s over GB/s)
+            $('bg-b').textContent = f2(b);
+            $('bg-bv').textContent = f2(b * bpv);
+            // longest power-of-2 FFT with 2.5 log2 n / bpv <= b (transform charged)
+            const maxLog = Math.floor(b * bpv / 2.5 + 1e-9);
+            $('bg-n').textContent = !charged ? 'any (free)' : maxLog >= 1 ? String(2 ** Math.min(maxLog, 30)) : 'none';
+            let fit = 0, fitSet = 0;
+            $('bg-rows').innerHTML = K.map(([name, t, o, inSet]) => {
+                const tb = t / bpv, ob = o / bpv, cnt = (charged ? tb : 0) + ob, ok = cnt <= b + 1e-9;
+                if (ok) fit++; if (ok && inSet) fitSet++;
+                return `<tr><td>${name}</td><td>${f2(tb)}</td><td>${f2(ob)}</td><td>${f2(cnt)}</td>` +
+                    `<td>${inSet ? '<span class="badge ok">yes</span>' : '<span class="badge bad">no</span>'}</td>` +
+                    `<td>${ok ? '<span class="badge ok">fits</span>' : '<span class="badge bad">no</span>'}</td></tr>`;
+            }).join('');
+            $('bg-k').textContent = `${fitSet} of ${K.length}`;
+            $('bg-note').innerHTML = `${fit} kernels fit the budget; ${fitSet} of them use only the published operations (the metric counts those). ` +
+                (charged ? 'With the transform charged, every FFT or DCT FLOP comes out of the budget.'
+                         : 'With the transform free, only the remaining arithmetic counts, so every transform-only kernel fits.') +
+                (bpv === 4 ? ' FP32 halves the work per byte, because each value brings twice the bytes.' : '');
+            window.bgState = { budget: b, maxFft: charged ? (maxLog >= 1 ? 2 ** maxLog : 0) : Infinity, fit, fitSet };
+        }
+        ['bg-g', 'bg-r', 'bg-f', 'bg-t'].forEach(id => $(id).addEventListener('input', rec));
+        window.bgDemo = { set(o) { for (const [k, v] of Object.entries(o)) $(k).value = v; rec(); return window.bgState; } };
+        rec();
+    })();
+    </script>
+    <p style="font-size:0.85rem;">The same ledger, in Python, is <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Compute_in_Transit/blob/main/analysis/cit_budget.py">analysis/cit_budget.py</a>. At 99 GFLOP/s on 25 GB/s with BF16 and the transform charged, the page reproduces results.md section 2: the longest FFT that fits is length 8.</p>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>Is the Transform Free?</h2>
+    <p>There are two ways to account for the optical transform, and the answer to the whole question changes with the choice.</p>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Charged</h4>
+            <p>The &ldquo;tens of GFLOPs&rdquo; include the transform's FLOPs (or the digital recombination that builds long transforms from short ones). Every FFT costs 2.5 log<sub>2</sub> n per value. At the low end no transform fits: even length 2 costs 1.25 per BF16 byte against a budget of 0.40. At the high end, 3.96 per byte, the longest BF16 FFT that fits is length 8.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Free</h4>
+            <p>The optics performs the transform by propagation, and the GFLOPs figure counts only the other arithmetic. Then every transform-based kernel fits, and the remaining arithmetic decides. A fixed-band selection is a gather with no arithmetic, so it fits even at the low end.</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Kernel</th><th>Transform / byte</th><th>Other / byte</th><th>In set</th><th>Low, charged</th><th>High, charged</th><th>Low, free</th></tr>
+        <tr><td>Sum two gradient streams</td><td>0.00</td><td>0.50</td><td>yes</td><td>no</td><td>yes</td><td>no</td></tr>
+        <tr><td>1-D FFT, length 8, fixed band</td><td>3.75</td><td>0.00</td><td>yes</td><td>no</td><td>yes</td><td>yes</td></tr>
+        <tr><td>1-D FFT, length 64, fixed band</td><td>7.50</td><td>0.00</td><td>yes</td><td>no</td><td>no</td><td>yes</td></tr>
+        <tr><td>1-D FFT, length 1024, fixed band</td><td>12.50</td><td>0.00</td><td>yes</td><td>no</td><td>no</td><td>yes</td></tr>
+        <tr><td>2-D DCT 16&times;16, fixed band</td><td>10.00</td><td>0.00</td><td>yes</td><td>no</td><td>no</td><td>yes</td></tr>
+        <tr><td>2-D DCT 64&times;64, fixed band</td><td>15.00</td><td>0.00</td><td>yes</td><td>no</td><td>no</td><td>yes</td></tr>
+        <tr><td>2-D DCT 64&times;64 + top-k (DeMo)</td><td>15.00</td><td>1.00</td><td>no</td><td>no</td><td>no</td><td>no</td></tr>
+        <tr><td>Requantise BF16 to FP8</td><td>0.00</td><td>1.00</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
+        <tr><td>Score a KV key (dot product, head dim 128)</td><td>0.00</td><td>1.00</td><td>yes</td><td>no</td><td>yes</td><td>no</td></tr>
+    </table>
+    </div>
+    <p class="src" style="font-size:0.85rem;">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Compute_in_Transit/blob/main/analysis/results.md">results.md</a>, section 2. Low = 0.40, high = 3.96 operations per byte (QSFP56). &ldquo;Fits&rdquo; is arithmetic only; &ldquo;in set&rdquo; is a separate test.</p>
+    <ul>
+        <li><strong>The verdict turns on one unknown.</strong> Charged, only short transforms and light arithmetic fit. Free, every transform-based kernel fits.</li>
+        <li>Requantising to FP8 fits the high budget arithmetically, but it needs rounding and comparison, which are not in the published set.</li>
+        <li>This is the first open question for the module&rsquo;s developer (<a href="#slide-12">slide 12</a>).</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>Precision: Noise or Exactness</h2>
+    <p>An optical transform is analogue. Its result carries noise from the light, the detectors and the converters. Whether that matters depends on the data.</p>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Float traffic: a noise level</h4>
+            <ul>
+                <li>Gradients, activations and KV are floating-point. They already carry their format's rounding error, so the analogue chain need only match it, not be exact.</li>
+                <li>The rule from <a href="https://brendanjameslynskey.github.io/FOptInf_01_Fourier_Optics_for_Engineers/#slide-17">FOptInf 01, slide 17</a>: relative RMS error = crest &times; 2<sup>&minus;ENOB</sup> &times; 2/&radic;12. Matching BF16 needs about 10.3 ENOB, INT8 8.0, FP8 E4M3 6.3 (<a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">FOptInf results.md</a>, section 6).</li>
+                <li>Compressed traffic is lossy anyway. Analogue noise adds to the compression error; it does not need to vanish.</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Cryptography: exact results</h4>
+            <ul>
+                <li>FHE and post-quantum schemes work in integers mod q. A single wrong digit corrupts the ciphertext.</li>
+                <li>The module reaches exactness by <strong>decomposition</strong>: small, low-precision optical transforms recombined digitally into larger, higher-precision ones (the patents on <a href="#slide-05">slide 05</a>).</li>
+                <li>The CKKS bootstrapping evaluation checked functional correctness against a CPU implementation (<a href="#slide-03">slide 03</a>).</li>
+            </ul>
+        </div>
+    </div>
+    <div class="callout">
+        <div class="callout-label">Why this matters for LLM traffic</div>
+        <p>Decomposition buys exactness with extra passes and digital work. Float traffic does not need it, so an LLM kernel could, in principle, run the optics at its native precision. The developer claims &ldquo;Scalable accuracy e.g. FP4-&gt;FP64&rdquo; and the paper projects FP4 MAC on a future link, but no ENOB or error figure is published; the driver IP includes a proprietary error-correction block. The FHE accelerator series works through the exact case (<a href="https://brendanjameslynskey.github.io/FHESim_04_Optical_NTT_Engines/#slide-03">FHESim 04</a>).</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Energy per Bit</h2>
+    <p>The module&rsquo;s developer estimates <strong>2.76 pJ/bit</strong> link energy on 45 nm silicon photonics, excluding the laser (the developer&rsquo;s website). For scale, the link energy coefficients used in Brendan's Disaggregated_Inference_Sim:</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Link</th><th>pJ/bit</th><th>Status</th></tr>
+        <tr><td>Photonic compute-in-transit link</td><td>2.76</td><td>Company estimate, 45 nm, excluding laser</td></tr>
+        <tr><td>Co-packaged optics</td><td>3</td><td>Illustrative simulator coefficient</td></tr>
+        <tr><td>NVLink 4</td><td>5</td><td>Illustrative simulator coefficient</td></tr>
+        <tr><td>InfiniBand NDR 400G</td><td>15</td><td>Illustrative simulator coefficient</td></tr>
+        <tr><td>100 GbE</td><td>15</td><td>Illustrative simulator coefficient</td></tr>
+    </table>
+    </div>
+    <p class="src" style="font-size:0.85rem;">Simulator presets: <a href="https://github.com/BrendanJamesLynskey/disaggregated_inference_sim/blob/main/src/disagg_sim/hardware.py">disagg_sim/hardware.py</a>, <code>LINKS</code>. They are first-order coefficients for the simulator's energy model, not measurements.</p>
+    <ul>
+        <li><strong>The scopes differ.</strong> The simulator's figures mean end to end (SerDes, NIC, switch); the module&rsquo;s figure is a link estimate without the laser. The comparison says the module's estimate is in the range of an optical link, not that it saves energy over one.</li>
+        <li><strong>What would save energy</strong> is moving fewer bits. A kernel that compresses a stream by a factor k cuts the downstream bits by k, and that saving dwarfs any difference between these coefficients, provided the compression is worth having.</li>
+        <li>The laser, the host FPGA and any digital recombination add to the module's bill. None is in the 2.76 pJ/bit.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>Five Tests Any Candidate Must Pass</h2>
+    <div class="table-wrap">
+    <table>
+        <tr><th>#</th><th>Test</th><th>Question</th><th>Where it is decided</th></tr>
+        <tr><td>1</td><td><strong>Bottleneck</strong></td><td>Does this traffic bound the system's time or throughput?</td><td>Simulation of the whole system, not the link alone</td></tr>
+        <tr><td>2</td><td><strong>Operations</strong></td><td>Is the kernel built only from the listed operations (FFT, NTT, add, multiply, MAC, modular arithmetic)?</td><td><a href="#slide-04">Slide 04</a></td></tr>
+        <tr><td>3</td><td><strong>Budget</strong></td><td>Does its work per byte fit C / R, with the transform charged or free?</td><td><a href="#slide-06">Slides 06</a> and <a href="#slide-07">07</a></td></tr>
+        <tr><td>4</td><td><strong>Precision</strong></td><td>Does it tolerate analogue noise, or can it be made exact?</td><td><a href="#slide-08">Slide 08</a></td></tr>
+        <tr><td>5</td><td><strong>Placement</strong></td><td>Does it need one flow (a pluggable) or many (a switch)?</td><td><a href="#slide-02">Slide 02</a></td></tr>
+    </table>
+    </div>
+    <div class="callout">
+        <div class="callout-label">Test 1 in Brendan's simulator</div>
+        <p>Disaggregated_Inference_Sim compresses the KV hand-off either in transit or on the prefill GPU (<a href="https://brendanjameslynskey.github.io/FOptInf_03_Optical_Prefill_Pools/#slide-13">FOptInf 03, slide 13</a>). Compression helped only where the link bound the system: GQA KV over 25 GbE at 14 req/s, FP8 cut the hand-off p99 from 9,657.8 ms to 166.6 ms and lifted SLO attainment from 41.0% to 100.0%. The GPU did the same compression for the same 166.6 ms (<a href="https://github.com/BrendanJamesLynskey/disaggregated_inference_sim/blob/main/examples/results.md">simulator results.md</a>, section 15; transit stage parameters illustrative).</p>
+    </div>
+    <ul>
+        <li><strong>Test 1 comes first.</strong> If the link is idle half the time, compressing its traffic changes nothing a user sees.</li>
+        <li><strong>Doing it in transit must also beat doing it at the endpoint.</strong> A GPU can often do the same elementwise work nearly free; the module wins only where the endpoint is busy, cannot see the data, or the data is encrypted.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-11">
+    <div class="slide-number">11</div>
+    <h2>Candidates at a Glance</h2>
+    <p>Each data movement placed on two of the tests. The placement is a judgement from this deck's arithmetic, not a measurement; decks 02 and 03 test it.</p>
+    <div class="canvas-wrap">
+        <svg viewBox="0 0 720 470" width="720" height="470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two-by-two chart: horizontal axis fits the published operations, vertical axis traffic bounds the system. Strong candidates top right, needs a switch top left, fits but little to gain bottom right, weak bottom left.">
+            <style>
+                .q  { fill: #231e1a; stroke: #3a322b; stroke-width: 1; }
+                .qs { fill: rgba(108,182,196,0.10); stroke: #6cb6c4; stroke-width: 1.4; }
+                .ax { stroke: #a2978b; stroke-width: 1.4; }
+                .ql { fill: #6cb6c4; font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 700; }
+                .qd { fill: #a2978b; font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 700; }
+                .it { fill: #efe8dc; font-family: 'Geist Mono', monospace; font-size: 11.5px; }
+                .lb { fill: #a2978b; font-family: 'Geist Mono', monospace; font-size: 11px; }
+                .dt { fill: #6cb6c4; }
+                .dd { fill: #a2978b; }
+            </style>
+            <rect x="80" y="20" width="300" height="190" class="q"/>
+            <rect x="380" y="20" width="320" height="190" class="qs"/>
+            <rect x="80" y="210" width="300" height="190" class="q"/>
+            <rect x="380" y="210" width="320" height="190" class="q"/>
+            <line x1="80" y1="400" x2="700" y2="400" class="ax"/>
+            <line x1="80" y1="20" x2="80" y2="400" class="ax"/>
+            <text x="94" y="44" class="qd">Needs a switch</text>
+            <text x="394" y="44" class="ql">Strong</text>
+            <text x="94" y="234" class="qd">Weak</text>
+            <text x="394" y="234" class="qd">Fits, little to gain</text>
+            <!-- strong -->
+            <circle cx="400" cy="72" r="5" class="dt"/><text x="412" y="76" class="it">Cross-data-centre gradient sync</text>
+            <circle cx="400" cy="100" r="5" class="dt"/><text x="412" y="104" class="it">KV-cache tiering</text>
+            <circle cx="400" cy="128" r="5" class="dt"/><text x="412" y="132" class="it">Query-aware KV selection (scoring)</text>
+            <circle cx="400" cy="200" r="5" class="dt"/><text x="412" y="204" class="it">KV hand-off on slow links (boundary)</text>
+            <!-- needs a switch -->
+            <circle cx="110" cy="80" r="5" class="dd"/><text x="122" y="84" class="it">In-cluster all-reduce</text>
+            <text x="122" y="102" class="lb">sum of two streams: many flows</text>
+            <!-- fits little gain -->
+            <circle cx="400" cy="262" r="5" class="dd"/><text x="412" y="266" class="it">FHE and encrypted traffic</text>
+            <circle cx="400" cy="290" r="5" class="dd"/><text x="412" y="294" class="it">Ring-attention KV blocks (overlapped)</text>
+            <!-- weak -->
+            <circle cx="110" cy="270" r="5" class="dd"/><text x="122" y="274" class="it">Pipeline / tensor-parallel</text>
+            <text x="122" y="290" class="it">activations</text>
+            <circle cx="110" cy="318" r="5" class="dd"/><text x="122" y="322" class="it">Weight streaming</text>
+            <!-- axis labels -->
+            <text x="230" y="424" class="lb">fits the published operations: low &rarr; high</text>
+            <text x="40" y="330" class="lb" transform="rotate(-90 40 330)">traffic bounds the system: low &rarr; high</text>
+            <text x="86" y="452" class="lb">FHE and encrypted traffic: a strong fit for the operations; little to gain for LLM latency.</text>
+        </svg>
+    </div>
+    <ul>
+        <li><strong>Strong:</strong> large, slow transfers whose compression can be data-independent. Training syncs over cross-data-centre links are the clearest case (11.3 s per Llama-3-70B update over 100 GbE). <a href="https://brendanjameslynskey.github.io/CiT_02_Data_Movement_in_LLM_Training/">Deck 02</a> covers training; <a href="https://brendanjameslynskey.github.io/CiT_03_Data_Movement_in_LLM_Inference/">deck 03</a> covers inference (KV tiering, query-aware selection, hand-off).</li>
+        <li><strong>Needs a switch:</strong> the in-cluster all-reduce is bound by traffic, but summing two workers' streams needs both at one point.</li>
+        <li><strong>Fits, little to gain:</strong> the operations suit encrypted traffic and ring-attention KV blocks, but those transfers rarely bound the system: FHE is compute-bound, and ring attention already hides its transfers behind compute (deck 03).</li>
+        <li><strong>Weak:</strong> pipeline- and tensor-parallel activations are latency-critical, poorly tolerant of noise (forward-pass error compounds), and already on the fastest links; weight streaming has no useful lossless kernel and matters only at cold start.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-12">
+    <div class="slide-number">12</div>
+    <h2>Open Questions for the Module's Developer</h2>
+    <p>Four answers would settle most of this deck's uncertainty. Each changes a verdict, not a detail.</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Question</th><th>Why it matters</th><th>If yes</th><th>If no</th></tr>
+        <tr><td><strong>Is the optical transform charged against the &ldquo;tens of GFLOPs&rdquo;?</strong></td><td>Decides whether any transform-based kernel fits</td><td>Only FFTs of length 8 or less fit at 3.96 ops/byte</td><td>Every fixed-band kernel fits; the remaining arithmetic decides</td></tr>
+        <tr><td><strong>Can the module compare and round?</strong></td><td>FP8 requantisation, absmax scaling and top-k need them</td><td>Requantisation joins the candidates</td><td>Kernels stay data-independent: fixed bands, fixed scales</td></tr>
+        <tr><td><strong>What is the native transform size and precision?</strong></td><td>Sets the recombination work and the noise floor (<a href="#slide-05">slide 05</a>, <a href="#slide-08">08</a>)</td><td>A large native size with float-level ENOB suits LLM traffic</td><td>A small native transform at low ENOB pushes work into digital recombination</td></tr>
+        <tr><td><strong>Is LLM traffic a target?</strong></td><td>The stated targets include distributed and hyperscale AI; the published evaluation is FHE</td><td>LLM kernels may get dedicated support</td><td>This series is a feasibility study on a device built for cryptography</td></tr>
+    </table>
+    </div>
+    <p>A measured throughput figure, in place of the asserted one, would also replace this deck's 10 to 99 GFLOP/s bracket.</p>
+</section>
+
+<section class="slide" id="slide-13">
+    <div class="slide-number">13</div>
+    <h2>What to Take Away</h2>
+    <ul>
+        <li><strong>Compute in transit changes data that must move anyway.</strong> A pluggable sees one flow, a switch sees many; only a switch can sum two streams.</li>
+        <li><strong>The budget is compute rate over line rate.</strong> On a QSFP56 link the module's claim gives 0.40 to 3.96 operations per byte; faster links shrink it. At the prototype optics' own rate, about 7 GB/s, it gives 1.43 to 14.14, but that rate cannot fill a 200 Gb/s link.</li>
+        <li><strong>Whether the transform is free decides everything.</strong> Charged, nothing longer than an 8-point BF16 FFT fits; free, every fixed-band kernel fits.</li>
+        <li><strong>The published operations are FFT, NTT, MAC, and modular and floating-point arithmetic.</strong> Without comparison or rounding, kernels must be data-independent: a fixed band instead of top-k.</li>
+        <li><strong>The largest movements are training syncs:</strong> 141.10 GB per Llama-3-70B BF16 update, against 268.4 MB for a 2,048-token Llama-3-8B KV hand-off.</li>
+        <li><strong>Test 1 comes first.</strong> Compressing traffic helps only where the link bounds the system, and then the endpoint can often do it too.</li>
+        <li><strong>Next:</strong> <a href="https://brendanjameslynskey.github.io/CiT_02_Data_Movement_in_LLM_Training/">deck 02</a> applies the five tests to data movement in LLM training.</li>
+    </ul>
+</section>
+
+<!-- ════════════════════════════════════ Footer ════════════════════════════════════ -->
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Compute_in_Transit">Compute in Transit series</a> &middot; <a href="https://brendanjameslynskey.github.io/LLM_Hub_Compute_in_Transit/#glossary">glossary: every concept and where it is explained</a> &middot; numbers: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Compute_in_Transit/blob/main/analysis/results.md">analysis/results.md</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;"><a href="https://brendanjameslynskey.github.io/CiT_02_Data_Movement_in_LLM_Training/">02 Data Movement in LLM Training &rarr;</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">Sister series: <a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/">Fourier Optics for Inference</a> &middot; <a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/">LLM Inference Simulators</a> &middot; <a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/">FHE Accelerator Simulators</a></p>
+</footer>
+
+<script>
+    // Smooth scroll for TOC links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // Subtle fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.slide').forEach(slide => {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(30px)';
+        slide.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(slide);
+    });
+</script>
+
+</body>
+</html>

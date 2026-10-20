@@ -1,0 +1,625 @@
+{
+ "config_hash": "6409e785c8ee",
+ "experiment": "e15_calibration_scaling",
+ "figures": [
+  {
+   "annotations": [
+    {
+     "label": "calibration-limited",
+     "type": "hline",
+     "y": 0.9
+    }
+   ],
+   "id": "in_service_0.01",
+   "kind": "line",
+   "series": [
+    {
+     "name": "P = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.00517055
+     ]
+    },
+    {
+     "name": "P = 4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "P = 16",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "name": "P = 64",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    }
+   ],
+   "title": "Units in service vs U (drift 0.01 rad/√s)",
+   "x": {
+    "label": "units U",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "fraction in service",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "calibration-limited",
+     "type": "hline",
+     "y": 0.9
+    }
+   ],
+   "id": "in_service_0.03",
+   "kind": "line",
+   "series": [
+    {
+     "name": "P = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.025657,
+      0.00287255,
+      0.000511169
+     ]
+    },
+    {
+     "name": "P = 4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.025657,
+      0.00287255
+     ]
+    },
+    {
+     "name": "P = 16",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.025657
+     ]
+    },
+    {
+     "name": "P = 64",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    }
+   ],
+   "title": "Units in service vs U (drift 0.03 rad/√s)",
+   "x": {
+    "label": "units U",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "fraction in service",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "calibration-limited",
+     "type": "hline",
+     "y": 0.9
+    }
+   ],
+   "id": "in_service_0.1",
+   "kind": "line",
+   "series": [
+    {
+     "name": "P = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      0.974954,
+      0.00628397,
+      0.000761144,
+      0.000199751,
+      4.75715e-05
+     ]
+    },
+    {
+     "name": "P = 4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.987805,
+      0.00628397,
+      0.000761144,
+      0.000199751
+     ]
+    },
+    {
+     "name": "P = 16",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.989888,
+      0.00628397,
+      0.000761144
+     ]
+    },
+    {
+     "name": "P = 64",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.99,
+      0.00628397
+     ]
+    }
+   ],
+   "title": "Units in service vs U (drift 0.1 rad/√s)",
+   "x": {
+    "label": "units U",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "fraction in service",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [],
+   "id": "effective_units",
+   "kind": "line",
+   "series": [
+    {
+     "name": "P = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      4.0,
+      16.0,
+      62.3971,
+      1.6087,
+      0.779412,
+      0.818182,
+      0.779412
+     ]
+    },
+    {
+     "name": "P = 4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      252.878,
+      6.43478,
+      3.11765,
+      3.27273
+     ]
+    },
+    {
+     "name": "P = 16",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1013.64,
+      25.7391,
+      12.4706
+     ]
+    },
+    {
+     "name": "P = 64",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4055.04,
+      102.957
+     ]
+    }
+   ],
+   "title": "Effective units U × in-service (drift 0.1)",
+   "x": {
+    "label": "units U",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "units in service",
+    "scale": "log",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [],
+   "id": "startup",
+   "kind": "line",
+   "series": [
+    {
+     "name": "P = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ]
+    },
+    {
+     "name": "P = 4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0
+     ]
+    },
+    {
+     "name": "P = 16",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0
+     ]
+    },
+    {
+     "name": "P = 64",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0,
+      1024.0,
+      4096.0,
+      16384.0
+     ],
+     "y": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      4.0,
+      16.0,
+      64.0,
+      256.0
+     ]
+    }
+   ],
+   "title": "Start-up calibration time",
+   "x": {
+    "label": "units U",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "time",
+    "scale": "log",
+    "unit": "s"
+   }
+  }
+ ],
+ "profile": "full",
+ "schema": "plms-web-data",
+ "schema_version": 3,
+ "sources": {
+  "control.pilot_period_frames": "patent",
+  "control.recal_time_s": "illustrative",
+  "thermal.cal_parallelism": "illustrative",
+  "thermal.logic_drift_rad_sqrt_s": "illustrative"
+ },
+ "tables": [],
+ "title": "Future chip: calibration scaling"
+}

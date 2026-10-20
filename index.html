@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fourier Optics for Inference 05 — AI Workloads on a Stacked Photonic Chip</title>
+    <link href="fonts/fonts.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1c1815;
+            --bg-card: #231e1a;
+            --bg-code: #2b2520;
+            --text-primary: #efe8dc;
+            --text-secondary: #a2978b;
+            --accent: #aabd59;
+            --accent-dim: #aabd5944;
+            --accent-glow: #aabd5933;
+            --border: #3a322b;
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'Geist Mono', 'Geist Mono', monospace;
+            --font-body: 'Instrument Sans', sans-serif;
+            --max-width: 900px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 17px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .series-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .accent {
+            color: var(--accent);
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Tag Pills ── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+            white-space: nowrap;
+        }
+
+        /* ── Pipeline Flow Bar ── */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            max-width: var(--max-width);
+        }
+
+        .pipeline-step {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* ── Slides ── */
+        .slide {
+            min-height: 100vh;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-number {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent-dim);
+            position: absolute;
+            top: 2rem;
+            right: 1.5rem;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .slide h2 {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            line-height: 1.25;
+        }
+
+        .slide h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .slide p strong {
+            color: var(--text-primary);
+        }
+
+        .slide ul, .slide ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .slide li {
+            margin-bottom: 0.4rem;
+        }
+
+        .slide li strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Code Blocks ── */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+            padding: 0.4rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #dad1c5;
+        }
+
+        /* Syntax highlighting (manual) */
+        .kw { color: #de805a; }
+        .fn { color: #d7bbdf; }
+        .str { color: #bcdbd4; }
+        .cm { color: #a2978b; font-style: italic; }
+        .num { color: #97cdc6; }
+        .type { color: #e3b174; }
+        .dir { color: #de805a; }
+        .mac { color: #e3b174; }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(35,30,26,0.5);
+        }
+
+        /* ── Diagrams ── */
+        .diagram-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-box {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .diagram-box.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+        }
+
+        .diagram-box.dim {
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .diagram-arrow {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Vertical flow diagrams */
+        .diagram-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-vertical .diagram-arrow {
+            font-size: 1.1rem;
+        }
+
+        /* Nested hierarchy diagram */
+        .hierarchy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .hierarchy-level {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hierarchy-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .hierarchy-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .hierarchy-item {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .hierarchy-item.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+        }
+
+        /* Grid diagram */
+        .diagram-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .diagram-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .diagram-panel {
+            padding: 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .diagram-panel.accent-border {
+            border-left: 3px solid var(--accent);
+        }
+
+        .diagram-panel h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagram-panel p, .diagram-panel ul {
+            font-size: 0.85rem;
+        }
+
+        /* ── Callout Boxes ── */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .callout p {
+            margin-bottom: 0;
+        }
+
+        .callout .callout-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ── Tier Visual ── */
+        .tier-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .tier-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tier-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .tier-fill {
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            transition: width 0.6s ease;
+        }
+
+        .tier-cost {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 70px;
+        }
+
+        /* ── Contents list ── */
+        .contents-list {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: contents;
+        }
+
+        .contents-list li {
+            counter-increment: contents;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contents-list li:last-child {
+            border-bottom: none;
+        }
+
+        .contents-list li::before {
+            content: counter(contents, decimal-leading-zero);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 2rem;
+        }
+
+        .contents-list a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contents-list a:hover {
+            color: var(--accent);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .slide {
+                padding: 3rem 1rem;
+                min-height: auto;
+            }
+
+            .slide-number {
+                font-size: 3rem;
+                top: 1.5rem;
+                right: 1rem;
+            }
+
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+
+            .diagram-grid.cols-2,
+            .diagram-grid.cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                gap: 0.15rem;
+            }
+
+            .pipeline-step {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            table {
+                font-size: 0.78rem;
+            }
+
+            .tier-label {
+                min-width: 60px;
+                font-size: 0.65rem;
+            }
+
+            .tier-fill {
+                font-size: 0.6rem;
+                height: 26px;
+            }
+        }
+
+        /* ── Interactive controls (added for Local LLM series) ── */
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .control-row label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 180px;
+        }
+        .control-row input[type="range"] {
+            flex: 1;
+            min-width: 160px;
+            accent-color: var(--accent);
+        }
+        .control-row input[type="number"],
+        .control-row select {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        .control-row .val {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 80px;
+            text-align: right;
+        }
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.9rem;
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn:hover { background: rgba(170,189,89,0.2); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn.secondary {
+            background: var(--bg-code);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .result-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-top: 0.75rem;
+        }
+        .result-box .line-label { color: var(--text-secondary); }
+        .result-box .line-val   { color: var(--accent); font-weight: 600; }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .metric {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            text-align: center;
+        }
+        .metric .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .metric .metric-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Canvas / SVG containers */
+        .canvas-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+        .canvas-wrap canvas,
+        .canvas-wrap svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        /* Small inline badge */
+        .badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+            margin-left: 0.3rem;
+        }
+        .badge.ok    { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .badge.warn  { border-color: #e3b174; color: #e3b174; background: rgba(227,177,116,0.08); }
+        .badge.bad   { border-color: #de805a; color: #de805a; background: rgba(222,128,90,0.08); }
+
+
+        /* ── LLM Inference Simulators additions ── */
+        .canvas-wrap canvas { image-rendering: auto; display: block; width: 100%; height: auto; }
+        .canvas-wrap svg { max-width: 100%; height: auto; }
+        .ladder { display: grid; gap: 0.4rem; margin: 1.25rem 0; }
+        .ladder-row {
+            display: grid; grid-template-columns: 11rem 1fr 7.5rem; gap: 0.75rem; align-items: center;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+            padding: 0.55rem 0.85rem; font-size: 0.88rem;
+        }
+        .ladder-row .rung { font-family: var(--font-display); font-weight: 600; color: var(--accent); }
+        .ladder-row .speed { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary); text-align: right; }
+        .res-list { list-style: none; padding: 0; margin: 0.75rem 0; }
+        .res-list li { padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+        .res-list li:last-child { border-bottom: none; }
+        .res-list .what { color: var(--text-secondary); display: block; font-size: 0.86rem; margin-top: 0.15rem; }
+        .res-list a { color: var(--accent); text-decoration: none; }
+        .res-list a:hover { text-decoration: underline; }
+        .qa { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin: 0.6rem 0; padding: 0.2rem 1rem; }
+        .qa summary { cursor: pointer; padding: 0.6rem 0; font-weight: 600; }
+        .qa p, .qa ul { margin-bottom: 0.75rem; font-size: 0.92rem; }
+        .sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.4rem 1.25rem; }
+        .chart-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .chart-title { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .slide a { color: var(--accent); }
+        @media (max-width: 640px) {
+            .ladder-row { grid-template-columns: 1fr; gap: 0.2rem; }
+            .ladder-row .speed { text-align: left; }
+        }
+        .concepts { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 0.75rem 1rem; margin-top: 1.25rem; font-size: 0.88rem; }
+        .concepts p { margin: 0 0 0.4rem; color: var(--text-secondary); }
+        .concepts .chips { display: flex; flex-wrap: wrap; gap: 0.35rem 0.5rem; }
+        .concepts .chips a { border: 1px solid var(--border); border-radius: 999px; padding: 0.1rem 0.6rem; text-decoration: none; font-size: 0.82rem; }
+        .concepts .chips a:hover { border-color: var(--accent); }
+        .hero { overflow: hidden; }   /* the 600px glow must not widen the page on phones */
+        .chart-pair > *, .diagram-grid > *, .sim-grid > * { min-width: 0; }   /* let wide code scroll inside its column */
+        .slide p code, .slide li code, .slide td code { overflow-wrap: anywhere; }
+        @media (max-width: 640px) { .diagram-box { white-space: normal; max-width: 100%; } }   /* long boxes must wrap on phones */
+        /* FOptInf: keep long titles clear of the slide number on phones */
+        @media (max-width: 640px) { .slide h2 { padding-right: 3.6rem; } }
+        .sim-grid select, .sim-grid input[type="range"] { max-width: 100%; min-width: 0; }   /* long option labels must not spill into the next column */
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="series-label">Fourier Optics for Inference &mdash; Presentation 05</div>
+    <h1><span class="accent">AI Workloads</span> on a Stacked Photonic Chip</h1>
+    <p class="subtitle">Which AI workloads could a future dense, 3D-stacked photonic chip run well, and under what conditions? The future system its developer has described in public stacks a photonic layer on its logic. A simulator now models it: throughput against an all-digital ASIC, energy per useful operation, laser and heat limits, calibration, and an approximate mode that chains optical stages for FFT- and AI-style work. This deck asks what precision AI formats need, what the chip's approximate mode delivers, what each costs in energy, and runs the candidate workloads through one screen. Every number comes from the simulator's data, from tested code in this repository, or from a cited source; every mechanism has a figure driven by a tested model.</p>
+
+    <div class="tags">
+        <span class="tag">3D stacking</span>
+        <span class="tag">Exact and approximate mode</span>
+        <span class="tag">Memory wall</span>
+        <span class="tag">ENOB</span>
+        <span class="tag">FP4</span>
+        <span class="tag">Energy per operation</span>
+        <span class="tag">Workload screen</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">HBM</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Stacked logic</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Driver</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Optical transform</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">TIA + decision</span>
+    </div>
+</header>
+
+<style>
+    /* FOptInf figures (as deck 01): extra hues on the Walnut palette (dark theme), used through variables only */
+    :root { --c-teal: #97cdc6; --c-amber: #e3b174; --c-orange: #de805a; --c-blue: #8fb4e3; --c-violet: #c3a6dd; }
+    .fig { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem; margin: 1.1rem 0; }
+    .fig canvas { display: block; width: 100%; }
+    .fig svg { display: block; width: 100%; height: auto; }
+    .fig svg text { font-family: var(--font-mono); }
+    .fig-cap { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-secondary); margin: 0.45rem 0 0; line-height: 1.45; }
+    .fig-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.8rem; }
+    .fig-row > * { min-width: 0; }
+    .fig .control-row { margin: 0.4rem 0; }
+    .fig .control-row label { min-width: 0; }
+    .anim-controls { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-top: 0.55rem; }
+    .anim-controls .btn { min-height: 44px; min-width: 44px; }
+    .anim-controls input[type="range"] { flex: 1 1 120px; min-width: 0; accent-color: var(--accent); min-height: 44px; }
+    .anim-controls select { background: var(--bg-code); color: var(--text-primary); border: 1px solid var(--border); border-radius: 4px; min-height: 44px; font-family: var(--font-mono); font-size: 0.8rem; }
+    .anim-count { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); }
+    .anim-caption { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-primary); background: var(--bg-code); border-left: 3px solid var(--accent); padding: 0.45rem 0.7rem; margin: 0.5rem 0 0; min-height: 3.2em; }
+    .anim:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .src-tag { font-family: var(--font-mono); font-size: 0.68rem; border: 1px solid var(--border); border-radius: 999px; padding: 0 0.45rem; color: var(--text-secondary); white-space: nowrap; }
+    .src-tag.paper { border-color: var(--c-teal); color: var(--c-teal); }
+    .src-tag.web { border-color: var(--c-amber); color: var(--c-amber); }
+    .src-tag.derived { border-color: var(--c-violet); color: var(--c-violet); }
+    .src-tag.inference { border-color: var(--c-orange); color: var(--c-orange); }
+    .src-tag.patent { border-color: var(--c-blue); color: var(--c-blue); }
+    .eq { text-align: center; font-family: var(--font-mono); font-size: 0.95rem; color: var(--accent); margin: 0.5rem 0; }
+    .map a { text-decoration: none; }
+    .map a:hover rect, .map a:focus rect { stroke: var(--accent); stroke-width: 2.5; }
+    .s-box { fill: var(--bg-code); stroke: var(--border); stroke-width: 1.2; }
+    .s-acc { fill: var(--accent-dim); stroke: var(--accent); stroke-width: 1.5; }
+    .s-t { fill: var(--text-primary); font-size: 14px; }
+    .s-d { fill: var(--text-secondary); font-size: 12px; }
+    .s-a { fill: var(--accent); font-size: 14px; }
+    .s-line { stroke: var(--text-secondary); stroke-width: 1.5; fill: none; }
+    .s-wave { stroke: var(--c-teal); stroke-width: 2; fill: none; }
+    #anim-layer select, #anim-layer .control-row label { min-height: 44px; display: inline-flex; align-items: center; gap: 0.5rem; }
+    #ly-opt { accent-color: var(--accent); width: 20px; height: 20px; }
+    #slide-00 .contents-list li::before { content: attr(data-n); min-width: 2.4rem; }   /* show the slide's own id (02b, 08c ...) */
+    .narrow-only, .fig svg.narrow-only { display: none; }   /* must outrank .fig svg { display: block } */
+    @media (max-width: 640px) { .fig { padding: 0.45rem; } .anim-caption { font-size: 0.74rem; }
+        .fig svg.wide-only, .fig .wide-only { display: none; } .fig svg.narrow-only, .fig .narrow-only { display: block; } }
+</style>
+
+<style>
+    /* FOptInf 05 additions: long option labels must not widen a figure on phones */
+    .fig select { max-width: 100%; min-width: 0; }
+    .fig .control-row > * { min-width: 0; }
+    /* below 700 px each table row becomes a stacked card: the first cell is its title, then label: value lines */
+    @media (max-width: 700px) {
+        .table-wrap:has(table.cards) { overflow: visible; border: none; border-radius: 0; }
+        table.cards, table.cards tbody, table.cards tr, table.cards td { display: block; width: 100%; }
+        table.cards tr:has(th) { display: none; }
+        table.cards tr { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin: 0 0 0.6rem; padding: 0.55rem 0.8rem; }
+        table.cards tr:nth-child(even) td { background: none; }
+        table.cards td { border: none; padding: 0.15rem 0; overflow-wrap: anywhere; }
+        table.cards td:first-child { font-family: var(--font-display); font-weight: 600; color: var(--text-primary); font-size: 0.98rem; margin-bottom: 0.2rem; }
+        table.cards td:not(:first-child)::before, table.cards.labeltitle td:first-child::before { content: attr(data-label) ": "; font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); }
+        table.cards.numfirst td:first-child { display: inline; }
+        table.cards.numfirst td:first-child::before { content: "#"; }
+        table.cards.numfirst td:nth-child(2) { display: inline; padding-left: 0.4rem; font-family: var(--font-display); font-weight: 600; color: var(--text-primary); }
+        table.cards.numfirst td:nth-child(2)::before { content: none; }
+        table.cards.numfirst td:nth-child(3) { margin-top: 0.3rem; }
+        table.cards td.tick { display: inline-block; width: auto; margin-right: 0.9rem; }
+        table.cards .src-tag { white-space: normal; }
+    }
+</style>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <div class="fig map">
+        <svg class="wide-only" viewBox="0 0 600 240" role="img" aria-label="Map of the deck in six parts: the question and the system; speed; precision; energy; limits; the workload screen and what follows">
+            <a href="#slide-01"><rect class="s-box" x="4" y="10" width="190" height="100" rx="8"/><text class="s-a" x="14" y="34" style="font-size: 12px">1 &middot; The chip</text><text class="s-d" x="14" y="56">the question</text><text class="s-d" x="14" y="74">two layers, two modes</text><text class="s-d" x="14" y="98">01&ndash;02</text></a>
+            <a href="#slide-03"><rect class="s-box" x="205" y="10" width="190" height="100" rx="8"/><text class="s-a" x="215" y="34" style="font-size: 12px">2 &middot; Speed</text><text class="s-d" x="215" y="56">the memory wall</text><text class="s-d" x="215" y="74">conversions per stage</text><text class="s-d" x="215" y="98">03&ndash;04</text></a>
+            <a href="#slide-05"><rect class="s-box" x="406" y="10" width="190" height="100" rx="8"/><text class="s-a" x="416" y="34" style="font-size: 12px">3 &middot; Precision</text><text class="s-d" x="416" y="56">available, needed</text><text class="s-d" x="416" y="74">FP4 and INT4 computed</text><text class="s-d" x="416" y="98">05&ndash;06</text></a>
+            <a href="#slide-07"><rect class="s-box" x="4" y="130" width="190" height="100" rx="8"/><text class="s-a" x="14" y="154" style="font-size: 12px">4 &middot; Energy</text><text class="s-d" x="14" y="176">at matched precision</text><text class="s-d" x="14" y="194">what breaks even</text><text class="s-d" x="14" y="218">07&ndash;08</text></a>
+            <a href="#slide-09"><rect class="s-box" x="205" y="130" width="190" height="100" rx="8"/><text class="s-a" x="215" y="154" style="font-size: 12px">5 &middot; Limits</text><text class="s-d" x="215" y="176">light, heat</text><text class="s-d" x="215" y="194">calibration</text><text class="s-d" x="215" y="218">09&ndash;10</text></a>
+            <a href="#slide-11"><rect class="s-acc" x="406" y="130" width="190" height="100" rx="8"/><text class="s-a" x="416" y="154" style="font-size: 12px">6 &middot; Workloads</text><text class="s-d" x="416" y="176">the screen, verdicts</text><text class="s-d" x="416" y="194">what must be true</text><text class="s-d" x="416" y="218">11&ndash;19</text></a>
+            <path class="s-line" d="M194 60 H205 M395 60 H406 M501 110 V120 H99 V130 M194 180 H205 M395 180 H406"/>
+        </svg>
+        <svg class="narrow-only" viewBox="0 0 300 350" role="img" aria-label="Map of the deck in six parts">
+            <a href="#slide-01"><rect class="s-box" x="4" y="4" width="142" height="104" rx="8"/><text class="s-a" x="14" y="28" style="font-size: 12px">1 &middot; The chip</text><text class="s-d" x="14" y="50">the question</text><text class="s-d" x="14" y="68">two modes</text><text class="s-d" x="14" y="94">01&ndash;02</text></a>
+            <a href="#slide-03"><rect class="s-box" x="154" y="4" width="142" height="104" rx="8"/><text class="s-a" x="164" y="28" style="font-size: 12px">2 &middot; Speed</text><text class="s-d" x="164" y="50">memory wall</text><text class="s-d" x="164" y="68">conversions</text><text class="s-d" x="164" y="94">03&ndash;04</text></a>
+            <a href="#slide-05"><rect class="s-box" x="4" y="118" width="142" height="104" rx="8"/><text class="s-a" x="14" y="142" style="font-size: 12px">3 &middot; Precision</text><text class="s-d" x="14" y="164">available</text><text class="s-d" x="14" y="182">needed</text><text class="s-d" x="14" y="208">05&ndash;06</text></a>
+            <a href="#slide-07"><rect class="s-box" x="154" y="118" width="142" height="104" rx="8"/><text class="s-a" x="164" y="142" style="font-size: 12px">4 &middot; Energy</text><text class="s-d" x="164" y="164">matched bits</text><text class="s-d" x="164" y="182">break-even</text><text class="s-d" x="164" y="208">07&ndash;08</text></a>
+            <a href="#slide-09"><rect class="s-box" x="4" y="232" width="142" height="104" rx="8"/><text class="s-a" x="14" y="256" style="font-size: 12px">5 &middot; Limits</text><text class="s-d" x="14" y="278">light, heat</text><text class="s-d" x="14" y="296">calibration</text><text class="s-d" x="14" y="322">09&ndash;10</text></a>
+            <a href="#slide-11"><rect class="s-acc" x="154" y="232" width="142" height="104" rx="8"/><text class="s-a" x="164" y="256" style="font-size: 12px">6 &middot; Workloads</text><text class="s-d" x="164" y="278">the screen</text><text class="s-d" x="164" y="296">conditions</text><text class="s-d" x="164" y="322">11&ndash;19</text></a>
+        </svg>
+        <p class="fig-cap">The chip first, then the four bills it must pay (memory, precision, energy, physics), then each AI workload through one screen.</p>
+    </div>
+    <ul class="contents-list">
+        <li data-n="01"><a href="#slide-01">The Question, and What Changed</a></li>
+        <li data-n="02"><a href="#slide-02">The Stacked System</a></li>
+        <li data-n="03"><a href="#slide-03">The Memory Wall</a></li>
+        <li data-n="04"><a href="#slide-04">Exact or Approximate: Where the Conversions Go</a></li>
+        <li data-n="05"><a href="#slide-05">Precision Available</a></li>
+        <li data-n="06"><a href="#slide-06">Precision Needed</a></li>
+        <li data-n="07"><a href="#slide-07">Energy at Matched Precision</a></li>
+        <li data-n="08"><a href="#slide-08">What Breaks Even</a></li>
+        <li data-n="09"><a href="#slide-09">Physical Limits: Light and Heat</a></li>
+        <li data-n="10"><a href="#slide-10">Physical Limits: Temperature and Calibration</a></li>
+        <li data-n="11"><a href="#slide-11">The Workload Screen: Seven Tests</a></li>
+        <li data-n="12"><a href="#slide-12">The Workload Screen: Verdicts</a></li>
+        <li data-n="13"><a href="#slide-13">Fourier Layers and Circulant Weights</a></li>
+        <li data-n="14"><a href="#slide-14">The FP4 MAC: a Projection</a></li>
+        <li data-n="15"><a href="#slide-15">Low-Bit KV and Training Traffic</a></li>
+        <li data-n="16"><a href="#slide-16">What Would Have to Be True</a></li>
+        <li data-n="17"><a href="#slide-17">What to Take Away</a></li>
+        <li data-n="18"><a href="#slide-18">Open Questions for the Developer</a></li>
+        <li data-n="19"><a href="#slide-19">Sources and Assumptions</a></li>
+    </ul>
+    <div class="concepts">
+        <p><strong>Concepts used here, and where they are explained.</strong> Each links to a glossary entry in this <a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#glossary">series glossary</a> or a sister series'.</p>
+        <div class="chips"><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-floatenob" title="For float workloads the analogue chain must match the number format's own rounding error, not be exact. Relative RMS error = crest × 2^−ENOB × 2/√12.">The noise rule for floating-point workloads</a><a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/#g-enob" title="Effective number of bits: the real precision of an analogue chain.">ENOB and exact rounding</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-crest" title="The ratio of a signal's peak to its RMS value.">Crest factor</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-conversion" title="Every value entering or leaving the optics costs a conversion.">Conversion-bound optics</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-photonicpower" title="Lasers and thermal tuning burn static power; conversions cost energy per value.">Power in photonic compute</a><a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/#g-ntt" title="The FFT over a finite field Zq.">Number-theoretic transform (NTT)</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-circulant" title="A weight matrix made of circulant blocks, so multiplying by it is an FFT, a pointwise product and an inverse FFT; speculative at LLM scale.">Block-circulant weights</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-longconv" title="A convolution whose filter is as long as the sequence, computed by FFT.">Long convolution by FFT</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-computetransit" title="Operations applied in a link's data path, on data that must move anyway.">Compute in transit</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-amdahl" title="The speed-up from accelerating a share of the work is bounded by 1/(1 − share).">Amdahl's law</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-quant" title="Storing values in fewer bits with a scale.">Quantisation</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-kvcache" title="The keys and values a decoder keeps for every past token.">KV cache</a></div>
+    </div>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>The Question, and What Changed</h2>
+    <p>Decks 01&ndash;03 asked what a Fourier-optical engine costs in general; deck 04 and the simulator after it asked what today's pluggable photonic link module (<a href="https://arxiv.org/abs/2608.21536">arXiv:2608.21536</a>) does. <strong>What changed:</strong> the simulator (plms 0.3.0) now models the future system its developer has described in public, a photonic layer stacked on its logic, and runs it against an all-digital ASIC of the same logic and of the same silicon. This deck asks which AI workloads that chip could run well, and under what conditions.</p>
+    <div class="fig">
+        <div class="fig-row">
+            <div class="diagram-panel accent-border">
+                <h4>Today: a pluggable module</h4>
+                <p>Four optical channels on a QSFP56 module beside a host FPGA; the devices &ldquo;can operate at 14 GBaud/s (28 Gbps PAM4)&rdquo; (the paper, &sect;II); the series' simulator found it slower and far costlier in energy than the FPGA alone: 35779 pJ against 56 pJ per full-width transform. <span class="src-tag derived">modelled</span></p>
+            </div>
+            <div class="diagram-panel accent-border">
+                <h4>The future chip: stacked</h4>
+                <p>U optical transform units bonded onto the logic that drives them, with W wavelengths, so there is no package port between optics and logic: the 3D stacking is the developer's public statement. The paper's &sect;V describes a <em>monolithic</em> chip, &ldquo;a 112 GBaud/s Photonic Integrated circuit (PIC)&rdquo; with &ldquo;custom high-speed logic operating at 28 GHz&rdquo;; the simulator takes the 112 GBd and 28 GHz from there. Two modes: <strong>exact</strong> (integers, for FHE and PQC) and <strong>approximate</strong> (a few effective bits, for FFT- and AI-style work). <span class="src-tag web">public-statement</span> <span class="src-tag paper">paper</span></p>
+            </div>
+        </div>
+        <p class="fig-cap">What the simulator models and where the full method is explained: the explainer site's <a href="https://photonic-link-module-explained.vercel.app/method/">method</a> and its Part II chapters. This deck uses its results; it does not re-derive them.</p>
+    </div>
+    <div class="callout">
+        <div class="callout-label">The short answer</div>
+        <p>With the simulator's illustrative parameters, <strong>no AI workload screened here pays on this chip</strong>. Exact mode is held at the memory wall (1&times;) and at most near 1.1&times; when compute binds; approximate mode keeps about 3.2 effective bits and costs 32&times; a digital butterfly of matched precision. The last slides say what would have to change, by how much.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>The Stacked System</h2>
+    <p>Each item is tagged as the simulator tags it: <span class="src-tag web">public-statement</span> is what the developer has said in public about its next system; <span class="src-tag paper">paper</span> is the module paper's section V projection; <span class="src-tag inference">illustrative</span> is an engineering inference, not a measurement.</p>
+    <div class="fig" id="anim-system">
+        <div class="control-row"><label for="sys-mode">Mode</label><select id="sys-mode"><option value="exact">exact (FHE, PQC)</option><option value="approx">approximate (FFT, AI)</option></select></div>
+        <svg id="svg-system" class="wide-only" viewBox="0 30 640 250" role="img" aria-label="Two layers: the photonic layer with U four-point units, modulators and an external laser split on-chip, bonded above the logic layer with drivers, TIAs, decisions and reduction; HBM beside the logic"></svg>
+        <svg id="svg-system-n" class="narrow-only" viewBox="0 0 320 470" role="img" aria-label="The two layers stacked, top to bottom: laser, photonic layer, bond, logic layer, HBM"></svg>
+        <p class="fig-cap">One value's path, step by step (<code>systemPath</code>); the simulator's model of it is in the explainer's <a href="https://photonic-link-module-explained.vercel.app/chapters/stacked-chip/">stacked-chip chapter</a>. The mode changes what crosses the bond: in exact mode each 59-bit operand goes through as bit planes, one per pass; in approximate mode the operand is one symbol and the light can go on through several stages before it is read out.</p>
+    </div>
+    <div class="table-wrap">
+    <table class="cards">
+        <tr><th>Item</th><th>Default (swept)</th><th>Tag</th></tr>
+        <tr><td data-label="Item">Photonic layer 3D-stacked on the logic (hybrid bonding). The developer's public statement, not the paper: &sect;V describes &ldquo;a monolithic silicon photonic chip&rdquo;</td><td data-label="Default (swept)">30 fF receiver, against 300 fF packaged</td><td data-label="Tag"><span class="src-tag web">public-statement</span></td></tr>
+        <tr><td data-label="Item">U units, each a 4-point optical transform</td><td data-label="Default (swept)">64 (4&ndash;4,096)</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">Symbol rate B</td><td data-label="Default (swept)">112 GBd (14&ndash;112)</td><td data-label="Tag"><span class="src-tag paper">paper</span></td></tr>
+        <tr><td data-label="Item">W wavelengths sharing each unit's mesh</td><td data-label="Default (swept)">4 (1&ndash;8)</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">Drivers, TIAs, decisions and reduction in the logic underneath; custom high-speed logic at 28 GHz (&sect;V)</td><td data-label="Default (swept)">100 mm&sup2; of logic (5&ndash;200)</td><td data-label="Tag"><span class="src-tag paper">paper</span> <span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">One external 20 dBm laser, split on-chip</td><td data-label="Default (swept)">wall-plug 0.15</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">Thermo-optic phase shifters, 18 per unit plus 8 per wavelength</td><td data-label="Default (swept)">10 mW per &pi; (2&ndash;30, MEMS, non-volatile)</td><td data-label="Tag"><span class="src-tag patent">patent</span> <span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">One optical-electrical crossing, either direction</td><td data-label="Default (swept)">E_conv = 0.5 pJ/bit (0.05&ndash;2)</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
+    </table>
+    </div>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>The Memory Wall</h2>
+    <p>The simulator times a CKKS bootstrap kernel by kernel on the chip and on two all-digital ASICs: one with the same logic, one that spends the photonic layer's silicon on more logic. <strong>With today's HBM the chip and the ASIC take the same time</strong>: 52.97 ms (sparse16) and 70.51 ms (full14), 1&times;, because HBM binds and the optimal split sends nothing through the optics. When compute binds (unconstrained HBM, 10 mm&sup2; of logic), exact arithmetic caps the gain near 1.1&times;, since the optics remove only the modular adds, and the same silicon spent on logic is faster: the best point reaches 0.9163&times; of the equal-silicon ASIC.</p>
+    <div class="fig" id="exp-mw">
+        <div class="sim-grid">
+            <div class="control-row"><label for="mw-wl">Workload</label><select id="mw-wl"><option value="sparse16">sparse16 (N = 65,536)</option><option value="full14">full14 (N = 16,384)</option></select></div>
+            <div class="control-row"><label for="mw-hbm">HBM (left chart)</label><select id="mw-hbm"><option value="819">819 GB/s</option><option value="3276">3276 GB/s</option><option value="∞">unconstrained</option></select></div>
+            <div class="control-row"><label for="mw-u">Units U</label><select id="mw-u"><option>4</option><option selected>16</option><option>64</option><option>256</option><option>1024</option><option>4096</option></select></div>
+            <div class="control-row"><label for="mw-w">Wavelengths W</label><select id="mw-w"><option>1</option><option>2</option><option>4</option><option selected>8</option></select></div>
+            <div class="control-row"><label for="mw-b">Baud B [GBd]</label><select id="mw-b"><option>14</option><option>56</option><option selected>112</option></select></div>
+            <div class="control-row"><label for="mw-e">E_conv [pJ/bit]</label><select id="mw-e"><option selected>0.05</option><option>0.1</option><option>0.25</option><option>0.5</option><option>1</option><option>2</option></select></div>
+            <div class="control-row"><label for="mw-width">Residue width [bits]</label><select id="mw-width"><option>28</option><option>36</option><option>44</option><option selected>59</option></select></div>
+        </div>
+        <div class="fig-row">
+            <div><div class="chart-title">a &middot; speed-up vs logic area, default photonics</div><canvas id="cv-mw-logic" aria-label="Speed-up of the stacked chip over the equal-logic and equal-silicon ASICs against logic area, for the chosen HBM bandwidth"></canvas></div>
+            <div><div class="chart-title">b &middot; compute-bound: speed-up vs U at the chosen W, B, E_conv, width</div><canvas id="cv-mw-u" aria-label="Speed-up over each ASIC against the number of units in the compute-bound regime"></canvas></div>
+        </div>
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">vs equal logic</div><div class="metric-value" id="mw-logic">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">vs equal silicon</div><div class="metric-value" id="mw-silicon">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">binding</div><div class="metric-value" id="mw-binding">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">optical share</div><div class="metric-value" id="mw-optical">&mdash;</div></div>
+        </div>
+        <p class="fig-cap">Data: the simulator's e12, explained in the <a href="https://photonic-link-module-explained.vercel.app/chapters/break-even-at-scale/">break-even-at-scale chapter</a> (1,728 swept points per workload in the compute-bound regime; the left chart is its logic-area &times; HBM sweep). Ceilings for sparse16 at 59 bits: exact 1.1&times;, NTT-free 2.754&times;. <span class="src-tag derived">modelled</span></p>
+    </div>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>Exact or Approximate: Where the Conversions Go</h2>
+    <p><strong>Exact mode</strong> converts at every stage. Each radix-4 stage is decided, recombined from its bit planes and reduced mod p before its twiddle multiply, so every operand crosses out of the light and back once per stage, as 59 bit planes. <strong>Approximate mode</strong> carries one operand per symbol and chains S stages optically before the light is read out, so the conversions are shared by S stages. The animation runs a 4,096-point FFT's 6 radix-4 stages; choose the mode and S.</p>
+    <div class="fig" id="anim-fft">
+        <div class="control-row"><label for="fft-mode">Mode</label><select id="fft-mode"><option value="exact">exact: convert every stage</option><option value="approx" selected>approximate: chain S stages</option></select>
+            <label for="fft-s">S</label><select id="fft-s"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option></select></div>
+        <canvas id="cv-fft" aria-label="Six radix-4 stages of a 4096-point FFT; amber diamonds mark each crossing between light and electronics; a block of chained stages is shaded"></canvas>
+        <p class="fig-cap">Frames from <code>fftChain(mode, S)</code> (the simulator's <a href="https://photonic-link-module-explained.vercel.app/chapters/approximate-mode/">approximate-mode chapter</a> has the method); the energy figures in the caption come from the simulator's e16 table (8-bit converters, U = 64, 4 &lambda;, 112 GBd). From S = 1 to S = 6 the energy per butterfly-stage falls from 34.11 to 6.929 pJ (4.923&times;), and the rate is 59&times; the exact-mode rate. <span class="src-tag derived">modelled</span></p>
+    </div>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>Precision Available</h2>
+    <p>The simulator runs the chained FFT by Monte Carlo: DAC, S lossy unitary stages with phase error, receiver noise at the design SNR (27.47 dB per level step), ADC. With 8-bit converters and 1 dB per stage the output keeps <strong>2.74 effective bits at S = 1 and 3.198 at S = 6</strong>: fewer conversions add less noise. At 3 dB per stage the loss wins instead, 2.445 falling to 1.268. Better converters barely help, because the receiver noise sets the ceiling: 16-bit converters reach 3.22 at S = 6, and only a 40 dB receiver SNR lifts it to 4.691.</p>
+    <div class="fig" id="exp-pa">
+        <div class="sim-grid">
+            <div class="control-row"><label for="pa-s">Chained stages S</label><input type="range" id="pa-s" min="1" max="6" step="1" value="6"><span class="val" id="pa-s-val">6</span></div>
+            <div class="control-row"><label for="pa-enob">Converter ENOB</label><select id="pa-enob"><option>4</option><option>6</option><option selected>8</option><option>10</option><option>12</option><option>16</option></select></div>
+        </div>
+        <div class="fig-row">
+            <div><div class="chart-title">a &middot; effective bits vs converter ENOB, one line per S</div><canvas id="cv-pa-enob" aria-label="Effective bits against converter ENOB for S from 1 to 6"></canvas></div>
+            <div><div class="chart-title">b &middot; effective bits vs S, 1 dB and 3 dB per stage (16-bit converters)</div><canvas id="cv-pa-s" aria-label="Effective bits against chained stages for 1 dB and 3 dB loss per stage"></canvas></div>
+        </div>
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">effective bits (e16)</div><div class="metric-value" id="pa-bits">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">same, as series ENOB</div><div class="metric-value" id="pa-enob-series">&mdash;</div></div>
+        </div>
+        <p class="fig-cap">Data: e16's S &times; converter-ENOB grid (4,096-point FFT). The simulator's measure is (SNR &minus; 1.76)/6.02 of the whole FFT's relative error; the right-hand readout restates it in the series' ENOB (slide 06 explains the difference). <span class="src-tag derived">modelled</span></p>
+    </div>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Precision Needed</h2>
+    <p>A float workload does not need exact results; the analogue chain need only match the error its number format already makes. The series' rule (deck 01, slide 17) gives the ENOB that matches a format's own rounding error on a long convolution: relative RMS error = crest &times; 2<sup>&minus;ENOB</sup> &times; 2/&radic;12. <code>analysis/precision_needed.py</code> regenerates the series' signal and reproduces its three values exactly (<strong>BF16 10.3, INT8 8.0, FP8 E4M3 6.3</strong>) before computing the new ones.</p>
+    <div class="table-wrap">
+    <table class="cards" id="tbl-need">
+        <tr><th>Format</th><th>Scaling</th><th>Rounding error</th><th>ENOB needed (series rule)</th><th>Effective bits (e16 measure)</th></tr>
+        <tr><td data-label="Format">BF16</td><td data-label="Scaling">the series'</td><td data-label="Rounding error">0.00164</td><td data-label="ENOB needed (series rule)">10.32</td><td data-label="Effective bits (e16 measure)">8.96</td></tr>
+        <tr><td data-label="Format">INT8</td><td data-label="Scaling">per tensor</td><td data-label="Rounding error">0.00834</td><td data-label="ENOB needed (series rule)">7.98</td><td data-label="Effective bits (e16 measure)">6.61</td></tr>
+        <tr><td data-label="Format">FP8 E4M3</td><td data-label="Scaling">per tensor</td><td data-label="Rounding error">0.0261</td><td data-label="ENOB needed (series rule)">6.33</td><td data-label="Effective bits (e16 measure)">4.97</td></tr>
+        <tr><td data-label="Format">FP8 E5M2</td><td data-label="Scaling">per tensor</td><td data-label="Rounding error">0.0536</td><td data-label="ENOB needed (series rule)">5.29</td><td data-label="Effective bits (e16 measure)">3.93</td></tr>
+        <tr><td data-label="Format">NVFP4</td><td data-label="Scaling">E2M1, block 16, E4M3 scale (<a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVIDIA</a>)</td><td data-label="Rounding error">0.0931</td><td data-label="ENOB needed (series rule)">4.50</td><td data-label="Effective bits (e16 measure)">3.13</td></tr>
+        <tr><td data-label="Format">INT4 g32</td><td data-label="Scaling">one scale per 32 values</td><td data-label="Rounding error">0.0986</td><td data-label="ENOB needed (series rule)">4.41</td><td data-label="Effective bits (e16 measure)">3.05</td></tr>
+        <tr><td data-label="Format"><strong>FP4 E2M1</strong></td><td data-label="Scaling">per tensor</td><td data-label="Rounding error">0.114</td><td data-label="ENOB needed (series rule)"><strong>4.20</strong></td><td data-label="Effective bits (e16 measure)">2.84</td></tr>
+        <tr><td data-label="Format">MXFP4</td><td data-label="Scaling">E2M1, block 32, E8M0 power-of-two scale (<a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">OCP MX v1.0</a>)</td><td data-label="Rounding error">0.118</td><td data-label="ENOB needed (series rule)">4.16</td><td data-label="Effective bits (e16 measure)">2.79</td></tr>
+        <tr><td data-label="Format"><strong>INT4</strong></td><td data-label="Scaling">per tensor</td><td data-label="Rounding error">0.151</td><td data-label="ENOB needed (series rule)"><strong>3.80</strong></td><td data-label="Effective bits (e16 measure)">2.44</td></tr>
+    </table>
+    </div>
+    <div class="fig" id="exp-need">
+        <div class="control-row"><label for="need-measure">Measure</label><select id="need-measure"><option value="snr">e16 effective bits (comparable with slide 05)</option><option value="enob">series ENOB</option></select></div>
+        <canvas id="cv-need" aria-label="Needed precision per format as bars, with the approximate mode's available precision as vertical lines"></canvas>
+        <p class="fig-cap">Needed (bars) against available (lines: e16 at S = 1 and S = 6, 1 dB per stage, 8-bit converters; S = 6 at 3 dB). Both are converted from the same relative error, so they share an axis; the two measures differ by a crest term of 1.37 bits for this signal. <span class="src-tag derived">computed</span> <span class="src-tag derived">modelled</span></p>
+    </div>
+    <div class="callout">
+        <div class="callout-label">Reading it</div>
+        <p>FP4 and INT4 have never been computed in the series: FP4 E2M1 needs 4.20 ENOB and INT4 3.80 by the series' rule. Approximate mode's best, 3.198 effective bits, is on the scale of FP4's own rounding (2.84 to 3.13 in the same measure), and well short of FP8 (4.97) and BF16 (8.96). Matching is not enough on its own: the chain's error adds to the format's, so an FP4 workload on this chip would carry about twice the error variance of FP4 alone. Our numbers, from <code>analysis/out/results.md</code>.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>Energy at Matched Precision</h2>
+    <p><strong>Exact mode</strong> costs 485.9 pJ per 59-bit 4-point transform against 32.35 pJ in the ASIC. The 708 crossings alone cost 354 pJ; the optics replace only the cheapest part of a butterfly, its modular adds. <strong>Approximate mode</strong> at S = 6 costs 6.929 pJ per butterfly-stage, against 0.7188 pJ for a digital 8-bit complex butterfly (12 multiplies, 22 adds) and 0.2141 pJ for one at the precision the optics actually deliver (digital energies from &ldquo;Horowitz, ISSCC 2014, 45 nm&rdquo;, via <a href="https://arxiv.org/abs/1602.01528">Han et al.</a> Table I: 32-bit add 0.1 pJ, multiply 3.1 pJ, scaled by 0.25). Its throughput is 59&times; the exact-mode rate, but energy per useful operation is 32&times; the digital figure.</p>
+    <div class="fig" id="anim-energy">
+        <div class="control-row"><label for="en-mode">Mode</label><select id="en-mode"><option value="exact">exact, per 4-point transform</option><option value="approx">approximate S = 6, per butterfly-stage</option></select></div>
+        <canvas id="cv-energy" aria-label="A stacked energy bar for the photonic chip built one component at a time, beside the digital bar"></canvas>
+        <p class="fig-cap">The bar stacks the simulator's components (laser at the wall, phase shifters, conversions, recombination or boundary twiddles, logic) one per step; the digital bar is beside it (method: the <a href="https://photonic-link-module-explained.vercel.app/chapters/energy/">energy chapter</a>). HBM traffic is the same for both designs and is left out; per bootstrap it adds 1.07 J to each (sparse16). <span class="src-tag derived">modelled</span></p>
+    </div>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>What Breaks Even</h2>
+    <p>Per butterfly-stage, with S stages chained, b converter bits and R = U&middot;W&middot;B&middot;0.95 symbol slots per second, the simulator's energies reduce to one formula (<code>analysis/breakeven.py</code>, which reproduces every row of its table):</p>
+    <p class="eq">E = (8&middot;b&middot;E_conv + twiddles(b)) / S + (n_lasers&middot;P_laser/&eta;_wall + U&middot;(18 + 8W)&middot;P_&pi;) / R</p>
+    <p>It wins when E falls below a digital butterfly at the bits the optics deliver. The second term is static: laser and heaters, paid whatever S or E_conv. <strong>Where it never pays:</strong> whenever that static term alone exceeds the digital butterfly. At the defaults the laser alone is 0.3182 pJ and the heaters 1.175 pJ, against 0.2141 pJ: no conversion energy, however small, rescues it.</p>
+    <div class="fig" id="exp-be">
+        <div class="sim-grid">
+            <div class="control-row"><label for="be-s">Chained stages S</label><input type="range" id="be-s" min="1" max="6" step="1" value="6"><span class="val" id="be-s-val">6</span></div>
+            <div class="control-row"><label for="be-bits">Converter bits b</label><select id="be-bits"><option>4</option><option>6</option><option selected>8</option><option>10</option><option>12</option><option>16</option></select></div>
+            <div class="control-row"><label for="be-tech">Phase shifters</label><select id="be-tech"></select></div>
+            <div class="control-row"><label for="be-laser">Laser (fan-out at 6 dB)</label><select id="be-laser"></select></div>
+            <div class="control-row"><label for="be-e">E_conv [pJ/bit]</label><select id="be-e"><option>0.001</option><option>0.005</option><option>0.01</option><option>0.05</option><option>0.1</option><option>0.25</option><option selected>0.5</option><option>1</option><option>2</option></select></div>
+        </div>
+        <canvas id="cv-be" aria-label="The photonic energy per butterfly-stage split into its terms, against the digital butterfly at matched bits"></canvas>
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">photonic pJ</div><div class="metric-value" id="be-photonic">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">digital pJ, matched</div><div class="metric-value" id="be-digital">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">ratio</div><div class="metric-value" id="be-ratio">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">E_conv to break even</div><div class="metric-value" id="be-need" style="font-size: 0.95rem">&mdash;</div></div>
+        </div>
+        <p class="fig-cap">The matched-precision digital butterfly uses ceil(effective bits) from e16 for the chosen S and b. The crossing and twiddle terms are this deck's reconstruction: they reproduce the simulator's table exactly, but the simulator does not state which values make up its 8&middot;b converted bits. <span class="src-tag derived">computed</span> <span class="src-tag inference">illustrative</span></p>
+    </div>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Physical Limits: Light and Heat</h2>
+    <p><strong>Light.</strong> One 20 dBm laser feeds about 20 unit-wavelengths at a 6 dB margin (U &times; W = 20 at 4 &lambda;, 26 at 1 &lambda;; 8 and 12 at 10 dB), at 112 GBd with a 30 fF receiver. So the default chip needs 13 lasers, and laser power grows with U &times; W. <strong>Heat.</strong> Thermo-optic phase shifters at 10 mW per &pi; hold 0.5 W per unit (1.25 W/mm&sup2;); they alone reach the 500 W cap at U = 1000.</p>
+    <div class="fig">
+        <div class="fig-row">
+            <div><div class="chart-title">a &middot; margin vs units on one laser (4 &lambda;, 112 GBd)</div><canvas id="cv-margin" aria-label="Laser margin in dB against the number of units on one laser, with 6 and 10 dB lines"></canvas></div>
+            <div><div class="chart-title">b &middot; phase-shifter hold power vs U</div><canvas id="cv-heaters" aria-label="Phase-shifter hold power in watts against units for thermo-optic heaters at 2, 10 and 30 mW per pi, and MEMS, with the 500 W cap"></canvas></div>
+        </div>
+        <p class="fig-cap">Data: e14 (the <a href="https://photonic-link-module-explained.vercel.app/chapters/light-and-heat/">light-and-heat chapter</a>). The laser path loses power in the coupler, WDM, splitter tree, propagation and modulator; the margin is how far every noise term can grow before the worst output misses the error target. <span class="src-tag derived">modelled</span></p>
+    </div>
+    <div class="table-wrap">
+    <table class="cards labeltitle">
+        <tr><th>Laser [dBm]</th><th>Max U&times;W at 6 dB</th><th>Max U&times;W at 10 dB</th></tr>
+        <tr><td data-label="Laser [dBm]">13</td><td data-label="Max U×W at 6 dB">4</td><td data-label="Max U×W at 10 dB">0</td></tr>
+        <tr><td data-label="Laser [dBm]">17</td><td data-label="Max U×W at 6 dB">8</td><td data-label="Max U×W at 10 dB">4</td></tr>
+        <tr><td data-label="Laser [dBm]">20</td><td data-label="Max U×W at 6 dB">20</td><td data-label="Max U×W at 10 dB">8</td></tr>
+        <tr><td data-label="Laser [dBm]">23</td><td data-label="Max U×W at 6 dB">36</td><td data-label="Max U×W at 10 dB">16</td></tr>
+        <tr><td data-label="Laser [dBm]">27</td><td data-label="Max U×W at 6 dB">92</td><td data-label="Max U×W at 10 dB">44</td></tr>
+    </table>
+    </div>
+    <p>A stronger laser feeds more units but costs proportionally more at the wall: across these five lasers the laser energy per butterfly-stage stays between 0.3125 and 0.3925 pJ (<code>breakeven.py</code>), all above the 0.2141 pJ digital figure of slide 07.</p>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>Physical Limits: Temperature and Calibration</h2>
+    <p>The logic underneath heats the optics. An idle-to-busy step of the logic (0.5 W/mm&sup2;) spans 3.192 K across U = 64 and moves heater phases by up to 0.05947 rad; no unit passes the error target until 2 W/mm&sup2;. <strong>Calibration</strong> scales worse: with a controller serving 4 units at once, at least 0.9 of units stay in service up to U = 1,024 at 0.03 rad/&radic;s of drift and U = 256 at 0.1 rad/&radic;s; start-up calibration takes 4096 s for U = 16,384.</p>
+    <div class="fig-row">
+        <div class="fig"><div class="chart-title">a &middot; temperature map of the photonic layer above busy logic (U = 64)</div><canvas id="cv-tmap" aria-label="A heat map of the temperature rise across the photonic layer above the stacked logic, with hot spots"></canvas><p class="fig-cap">e14's temperature map as the simulator exports it, 0.05 mm cells; hot spots of the logic show as warm patches. <span class="src-tag derived">modelled</span></p></div>
+        <div class="fig" id="anim-cal">
+            <div class="control-row"><label for="cal-drift">Drift [rad/&radic;s]</label><select id="cal-drift"><option>0.01</option><option selected>0.03</option><option>0.1</option></select>
+                <label for="cal-p">Controller P</label><select id="cal-p"><option>1</option><option selected>4</option><option>16</option><option>64</option></select></div>
+            <canvas id="cv-cal" aria-label="A grid of units, coloured in service or recalibrating, stepping through U from 1 to 16384"></canvas>
+        </div>
+    </div>
+    <p class="fig-cap">Calibration figure: each step is one swept U (e15's queueing result, M/M/P//U; the <a href="https://photonic-link-module-explained.vercel.app/chapters/calibration-at-scale/">calibration-at-scale chapter</a>); the grid shows the share of units in service, never colour alone (hatched = out of service). <span class="src-tag derived">modelled</span></p>
+</section>
+
+<section class="slide" id="slide-11">
+    <div class="slide-number">11</div>
+    <h2>The Workload Screen: Seven Tests</h2>
+    <p>The Compute in Transit series screens candidates with five tests (<a href="https://brendanjameslynskey.github.io/CiT_01_Compute_in_Transit/#slide-10">CiT_01, slide 10</a>). On a stacked chip the data no longer passes through a link, so each test reads a little differently; this deck adds two from slides 06 and 08.</p>
+    <div class="table-wrap">
+    <table class="cards numfirst">
+        <tr><th>#</th><th>Test</th><th>On the stacked chip</th><th>Decided on</th></tr>
+        <tr><td data-label="#">1</td><td data-label="Test">Bottleneck</td><td data-label="On the stacked chip">Is the transform a large share of the workload's time (Amdahl)? Is memory not binding?</td><td data-label="Decided on">Slides 03, 13</td></tr>
+        <tr><td data-label="#">2</td><td data-label="Test">Operations</td><td data-label="On the stacked chip">Is the work a 4-point transform chain (FFT, NTT, convolution), or can it become one?</td><td data-label="Decided on">Slide 02</td></tr>
+        <tr><td data-label="#">3</td><td data-label="Test">Budget</td><td data-label="On the stacked chip">Does the logic keep up? Exact mode leaves the multiplies to the logic; approximate mode leaves the twiddles at block edges.</td><td data-label="Decided on">Slides 03, 04</td></tr>
+        <tr><td data-label="#">4</td><td data-label="Test">Noise or exactness</td><td data-label="On the stacked chip">Does it tolerate analogue noise, or need exact integers?</td><td data-label="Decided on">Slide 04</td></tr>
+        <tr><td data-label="#">5</td><td data-label="Test">Placement</td><td data-label="On the stacked chip">Is the data already on the chip, or must it cross a link to get there?</td><td data-label="Decided on">Slide 15</td></tr>
+        <tr><td data-label="#">6</td><td data-label="Test">Precision</td><td data-label="On the stacked chip">Does its format need no more than the chain delivers (about 3.2 effective bits)?</td><td data-label="Decided on">Slide 06</td></tr>
+        <tr><td data-label="#">7</td><td data-label="Test">Energy</td><td data-label="On the stacked chip">Does it beat a digital unit at matched precision?</td><td data-label="Decided on">Slide 08</td></tr>
+    </table>
+    </div>
+    <div class="callout"><p>Test 7 fails for every candidate at the simulator's illustrative parameters (slide 08), so the verdicts on the next slide say which test each candidate fails <em>first</em>, and which would remain if the energy terms changed.</p></div>
+</section>
+
+<section class="slide" id="slide-12">
+    <div class="slide-number">12</div>
+    <h2>The Workload Screen: Verdicts</h2>
+    <div class="table-wrap">
+    <table class="cards">
+        <tr><th>Candidate</th><th data-card="1 bottleneck">1</th><th data-card="2 operations">2</th><th data-card="4 noise">4</th><th data-card="6 precision">6</th><th data-card="7 energy">7</th><th data-card="Verdict">Verdict and reason</th></tr>
+        <tr><td data-label="Candidate">Fourier mixing: FNet, Hyena</td><td data-label="1 bottleneck" class="tick">&#10007;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">&#10007;</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge bad">no</span> The transform is 0.09% (FNet) and 0.20% (Hyena) of prefill FLOPs: at most 1.002&times; if it were free. BF16 needs 8.96 effective bits against 3.198.</td></tr>
+        <tr><td data-label="Candidate">Block-circulant weights</td><td data-label="1 bottleneck" class="tick">&#10003;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">~</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge warn">not as modelled</span> The only large share: 84.54% with the LM head on the last token, Amdahl 6.5&times; (speculative at LLM scale). Needs FP4-level tolerance and the energy conditions of slide 16.</td></tr>
+        <tr><td data-label="Candidate">FP4 (E2M1) MAC (paper &sect;V)</td><td data-label="1 bottleneck" class="tick">?</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">?</td><td data-label="6 precision" class="tick">~</td><td data-label="7 energy" class="tick">?</td><td data-label="Verdict"><span class="badge warn">unknown</span> A projection for a future chip, not a measurement; a MAC, not a transform. Whether it is analogue is unknown. If it is, and if it is block-scaled like NVFP4 (our reading; the paper says only &ldquo;FP4 (E2M1) MAC&rdquo;), matching NVFP4's rounding needs 3.13 effective bits before any accumulation error.</td></tr>
+        <tr><td data-label="Candidate">Low-bit KV ranking (PRISM-style)</td><td data-label="1 bottleneck" class="tick">~</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">&#10007;</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge bad">no, as modelled</span> Ranking tolerates noise: &ldquo;only rank order matters (relaxing precision to 4-6 bits)&rdquo; (PRISM). But it is a dot product, and 4 to 6 bits exceed 3.198.</td></tr>
+        <tr><td data-label="Candidate">KV compression (KIVI, KVQuant)</td><td data-label="1 bottleneck" class="tick">~</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">&#10007;</td><td data-label="6 precision" class="tick">&ndash;</td><td data-label="7 energy" class="tick">&ndash;</td><td data-label="Verdict"><span class="badge bad">no</span> Quantisation needs scaling, comparison and rounding, not a transform.</td></tr>
+        <tr><td data-label="Candidate">Training traffic: 2-bit deltas (MuLoCo), DeMo's fixed band</td><td data-label="1 bottleneck" class="tick">~</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">~</td><td data-label="6 precision" class="tick">&ndash;</td><td data-label="7 energy" class="tick">&ndash;</td><td data-label="Verdict"><span class="badge bad">no</span> Link traffic, not on-chip compute; the fixed band, the only transform route, ends more than a nat above top-k (CiT_04).</td></tr>
+        <tr><td data-label="Candidate">FHE and PQC NTTs (exact mode, for contrast)</td><td data-label="1 bottleneck" class="tick">&#10007;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">n/a</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge warn">no gain modelled</span> The developer's stated first market. HBM binds (1&times;); compute-bound, 1.099&times; over equal logic and 0.9163&times; of equal silicon; 485.9 against 32.35 pJ.</td></tr>
+    </table>
+    </div>
+    <p class="fig-cap">&#10003; passes, &#10007; fails, ~ borderline or conditional, ? unknown, &ndash; not reached. Tests 3 and 5 are omitted from the columns: test 3 passes for every candidate that passes test 2, and test 5 matters only for the traffic rows. The verdicts are this deck's judgement from the numbers cited; none is a measurement.</p>
+</section>
+
+<section class="slide" id="slide-13">
+    <div class="slide-number">13</div>
+    <h2>Fourier Layers and Circulant Weights</h2>
+    <p>Amdahl decides first. In a Llama-3-8B-shaped model at a 2,048-token prompt, Fourier mixing is a sliver of the work: an FNet-shaped mixer (<a href="https://arxiv.org/abs/2105.03824">FNet</a>) is 0.09% of prefill FLOPs, Hyena (order 2; <a href="https://arxiv.org/abs/2302.10866">arXiv:2302.10866</a>) long convolutions 0.20%. Only when the weights themselves become transforms (block-circulant, as in CirCNN, <a href="https://arxiv.org/abs/1708.08917">arXiv:1708.08917</a>) does the share matter: 13.99% with the LM head charged for every token, 84.54% with it on the last token only, as serving engines do.</p>
+    <div class="fig" id="anim-amdahl">
+        <canvas id="cv-amdahl" aria-label="For each variant, the share of prefill FLOPs that is transform work and the Amdahl bound if that work became free"></canvas>
+        <p class="fig-cap">One variant per step, from the series' FLOP ledger (<code>flop_share.py</code>, prompt 2,048). Bound = 1/(1 &minus; share). Even the circulant case's 6.5&times; assumes the optics are free and exact enough; at 3.2 effective bits, and 32&times; the energy of a matched digital butterfly, neither holds. <span class="src-tag derived">computed</span></p>
+    </div>
+</section>
+
+<section class="slide" id="slide-14">
+    <div class="slide-number">14</div>
+    <h2>The FP4 MAC: a Projection</h2>
+    <p>The module paper projects an FP4 MAC on a future link: &ldquo;45 GFLOPS of FP4 (E2M1) MAC is enabled on a 112 GBaud/s photonic transceiver link for an additional 1 pJ/bit&rdquo; (<a href="https://arxiv.org/abs/2608.21536">the paper</a>, &sect;V) <span class="src-tag paper">paper</span>. That is a projection for a future chip, not a measurement. The paper adds &ldquo;Since the core compute technology is passive&hellip;&rdquo;, but not whether the MAC itself is analogue and optical or digital in the logic. The two cases lead to different answers. The paper says only FP4 (E2M1); block scaling, below, is this deck's reading.</p>
+    <div class="fig" id="fig-fp4">
+        <svg id="svg-fp4" viewBox="0 0 640 170" role="img" aria-label="The FP4 E2M1 magnitudes on a number line: 0, 0.5, 1, 1.5, 2, 3, 4, 6; a block of 16 values shares one FP8 E4M3 scale"></svg>
+        <p class="fig-cap">FP4 E2M1 has eight magnitudes, 0 to 6 (drawn from <code>FP4_GRID</code>, tested in Python). NVFP4 &ldquo;applies a fine-grained E4M3 scaling factor to each 16-value micro-block&rdquo; with &ldquo;a second-level FP32 scalar applied per tensor&rdquo; (<a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVIDIA</a>); MXFP4 uses blocks of 32 with an E8M0 power-of-two scale (<a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">OCP MX v1.0</a>). Whether the projected MAC is block-scaled is not stated: our reading.</p>
+    </div>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border"><h4>If the MAC is analogue</h4><ul><li>Its error must stay below FP4's own: if it is block-scaled like NVFP4 (our reading), about 3.13 effective bits for NVFP4's rounding of one output, before an accumulation over K products adds its own noise.</li><li>The approximate mode's 3.198 bits are for an FFT chain, not a MAC; no MAC precision is modelled or published.</li><li>Energy: the paper projects an additional 1 pJ/bit; the simulator's static laser and heater terms (slide 08) are separate.</li></ul></div>
+        <div class="diagram-panel accent-border"><h4>If the MAC is digital</h4><ul><li>It is an ordinary FP4 MAC in the stacked logic, and the photonics does not take part in it.</li><li>Then the chip is a digital FP4 accelerator with an optical side-unit, and the question is the logic's, not the optics'.</li></ul></div>
+    </div>
+    <div class="callout"><p>Unknown, then, and it is the first question for the developer (slide 18). FP4 is not a precision the series has used before; this deck computed it on slide 06.</p></div>
+</section>
+
+<section class="slide" id="slide-15">
+    <div class="slide-number">15</div>
+    <h2>Low-Bit KV and Training Traffic</h2>
+    <div class="table-wrap">
+    <table class="cards">
+        <tr><th>Method</th><th>What it does (as cited)</th><th>On this chip</th></tr>
+        <tr><td data-label="Method">PRISM (<a href="https://arxiv.org/abs/2603.21576">arXiv:2603.21576</a>)</td><td data-label="What it does (as cited)">A photonic similarity engine for KV block selection: &ldquo;only rank order matters (relaxing precision to 4-6 bits)&rdquo;</td><td data-label="On this chip">Ranking is a dot product against the query; 4 bits already exceed the chain's 3.198</td></tr>
+        <tr><td data-label="Method">KIVI (<a href="https://arxiv.org/abs/2402.02750">arXiv:2402.02750</a>)</td><td data-label="What it does (as cited)">&ldquo;quantizing the key cache per-channel and the value cache per-token to 2bit&rdquo;</td><td data-label="On this chip">Quantisation: scaling and rounding, no transform</td></tr>
+        <tr><td data-label="Method">KVQuant (<a href="https://arxiv.org/abs/2401.18079">arXiv:2401.18079</a>)</td><td data-label="What it does (as cited)">&ldquo;&lt; 0.1 perplexity degradation with 3-bit quantization&rdquo;; &ldquo;LLaMA-7B model with 10M context length on an 8-GPU system&rdquo;</td><td data-label="On this chip">Quantisation, as above</td></tr>
+        <tr><td data-label="Method">MuLoCo (<a href="https://arxiv.org/abs/2505.23725">arXiv:2505.23725</a>)</td><td data-label="What it does (as cited)">v1: &ldquo;aggressively compress the communicated delta to 2-bits with next to no performance degradation&rdquo;. The current v3 revises this: &ldquo;Both MuLoCo and DiLoCo achieve lossless 4-bit quantization&rdquo;; at 2 bits plain linear quantisation is impractical and statistical quantisation is needed</td><td data-label="On this chip">Traffic between workers: a link, not on-chip compute</td></tr>
+        <tr><td data-label="Method">DeMo (<a href="https://arxiv.org/abs/2411.19870">arXiv:2411.19870</a>)</td><td data-label="What it does (as cited)">DCT on chunks of up to 64×64 (64 for 1-D), top-32 per chunk (its code's defaults)</td><td data-label="On this chip">Top-k is a decision, not a transform; the fixed band that would replace it fails (below)</td></tr>
+    </table>
+    </div>
+    <div class="callout">
+        <div class="callout-label">A negative result, from CiT_04</div>
+        <p>A 15.8M-parameter GPT trained on TinyStories with eight simulated workers: top-k DeMo ends 0.139 above AdamW, and &ldquo;every fixed band ends more than a nat above top-k&rdquo;; the low band keeps 0.013 of the momentum's energy against 0.643 for top-k. The data-independent band an optical transform could apply is the one that fails.</p>
+    </div>
+    <p>Placement settles the rest. These are movements of data between chips; a stacked chip computes on data already beside it. The link module of decks 01&ndash;04 was the device for traffic, and CiT_01 to CiT_04 screened it.</p>
+</section>
+
+<section class="slide" id="slide-16">
+    <div class="slide-number">16</div>
+    <h2>What Would Have to Be True</h2>
+    <p>Four conditions, each with its number from this deck, for an AI workload to pay on this chip. All must hold together.</p>
+    <div class="table-wrap">
+    <table class="cards numfirst">
+        <tr><th>#</th><th>Condition</th><th>Number</th><th data-card="Public roadmap">In the public roadmap?</th></tr>
+        <tr><td data-label="#">1</td><td data-label="Condition">Memory must not bind</td><td data-label="Number">With 819 GB/s of HBM the chip equals the ASIC (1&times;); even unconstrained, exact mode caps near 1.1&times;</td><td data-label="Public roadmap">No: the HBM generation is not stated</td></tr>
+        <tr><td data-label="#">2</td><td data-label="Condition">Static light and heat below a digital butterfly</td><td data-label="Number">Laser 0.3182 + heaters 1.175 pJ against 0.2141; needs wall-plug efficiency of 0.4302 (modelled 0.15) and near-zero hold power (MEMS or non-volatile: 0.3183 total)</td><td data-label="Public roadmap">No: laser efficiency and phase-shifter technology are not stated</td></tr>
+        <tr><td data-label="#">3</td><td data-label="Condition">Conversions nearly free</td><td data-label="Number">Even with free heaters and a lossless laser, E_conv &le; 0.005926 pJ/bit at S = 6 (modelled 0.5)</td><td data-label="Public roadmap">Partly: stacking cuts the receiver to 30 fF; the energy per crossing is not stated</td></tr>
+        <tr><td data-label="#">4</td><td data-label="Condition">A workload that is mostly transform and tolerates FP4-level error</td><td data-label="Number">Transform share like circulant weights' 84.54%; about 3.13 effective bits (NVFP4's rounding, if block-scaled: our reading) against 3.198 available</td><td data-label="Public roadmap">Partly: &ldquo;45 GFLOPS of FP4 (E2M1) MAC&rdquo; &ldquo;for an additional 1 pJ/bit&rdquo; is projected (&sect;V) <span class="src-tag paper">paper</span>; its analogue-ness is unknown</td></tr>
+    </table>
+    </div>
+    <p>Against the 8-bit digital butterfly instead of a matched one, the bar is lower but still steep: with MEMS phase shifters E_conv would need to be 0.02787 pJ/bit. These are our numbers (<code>analysis/out/results.md</code>), on the simulator's illustrative parameters.</p>
+</section>
+
+<section class="slide" id="slide-17">
+    <div class="slide-number">17</div>
+    <h2>What to Take Away</h2>
+    <ul>
+        <li><strong>The memory wall comes first.</strong> With today's HBM the stacked chip and an all-digital ASIC take the same time (1&times;). Compute-bound, exact arithmetic caps the gain near 1.1&times;, and the same silicon spent on logic does better (0.9163&times;).</li>
+        <li><strong>Approximate mode keeps about 3 effective bits:</strong> 2.74 at S = 1, 3.198 at S = 6, set by receiver noise, not converters.</li>
+        <li><strong>FP4 needs about that much.</strong> By the series' rule FP4 E2M1 needs 4.20 ENOB and INT4 3.80; in the simulator's measure FP4-class formats sit at 2.79 to 3.13 effective bits. FP8 and BF16 are out of reach.</li>
+        <li><strong>Energy fails at matched precision.</strong> 6.929 pJ per butterfly-stage against 0.2141 digital; the laser alone (0.3182) exceeds the digital figure.</li>
+        <li><strong>The screen:</strong> no candidate passes as modelled. Block-circulant weights are the only large transform share (84.54%); the FP4 MAC is a projection whose analogue-ness is unknown; KV and training traffic belong to the link, not the chip.</li>
+        <li><strong>Exact mode, the developer's first market,</strong> shows no modelled gain either: 485.9 against 32.35 pJ per transform.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-18">
+    <div class="slide-number">18</div>
+    <h2>Open Questions for the Developer</h2>
+    <div class="table-wrap">
+    <table class="cards">
+        <tr><th>Question</th><th>Why it matters</th></tr>
+        <tr><td data-label="Question">What is the native precision of the FP4 MAC, and is it analogue?</td><td data-label="Why it matters">Decides whether slide 14's left or right column applies</td></tr>
+        <tr><td data-label="Question">Which HBM generation and bandwidth?</td><td data-label="Why it matters">At 819 GB/s the chip equals the ASIC (slide 03)</td></tr>
+        <tr><td data-label="Question">What is the conversion energy per crossing, in pJ/bit, both directions?</td><td data-label="Why it matters">The simulator assumes 0.5; break-even needs about 0.005926 (slide 16)</td></tr>
+        <tr><td data-label="Question">Which phase-shifter technology, at what hold power?</td><td data-label="Why it matters">Thermo-optic heaters cost 1.175 pJ per butterfly-stage, more than the whole digital butterfly</td></tr>
+        <tr><td data-label="Question">Laser wall-plug efficiency and fan-out per laser?</td><td data-label="Why it matters">The laser alone exceeds a matched digital butterfly at 0.15</td></tr>
+        <tr><td data-label="Question">How many stages can approximate mode chain, at what loss per stage?</td><td data-label="Why it matters">At 3 dB per stage, chaining loses bits (2.445 to 1.268)</td></tr>
+        <tr><td data-label="Question">Which AI kernels are targeted, and at which number format?</td><td data-label="Why it matters">The screen finds none at FP8 or above</td></tr>
+    </table>
+    </div>
+</section>
+
+<section class="slide" id="slide-19">
+    <div class="slide-number">19</div>
+    <h2>Sources and Assumptions</h2>
+    <h3>Inputs</h3>
+    <ul class="res-list">
+        <li><a href="https://arxiv.org/abs/2608.21536">Kundu et al., &ldquo;Programmable Compute-in-Transit using Integrated Photonics&rdquo;, arXiv:2608.21536</a><span class="what">The module paper (PDF). &sect;II: 14 GBaud/s devices. &sect;V &ldquo;Future work&rdquo;: a monolithic chip with a 112 GBaud/s PIC and custom high-speed logic at 28 GHz; 45 GFLOPS of FP4 (E2M1) MAC for an additional 1 pJ/bit, projected. The 3D stacking is the developer's public statement, not &sect;V.</span></li>
+        <li>Photonic link module simulator, plms 0.3.0 at e3054d1: results sections 7 and 12&ndash;16, vendored in <code>data/plms_v0_3/</code><span class="what">Every <span class="src-tag derived">modelled</span> number. Presented in full on the explainer site: <a href="https://photonic-link-module-explained.vercel.app/method/">method</a>, and the chapters linked from slides 02&ndash;10.</span></li>
+        <li><a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">The series' FLOP-share analysis</a>, vendored in <code>data/foptinf_analysis/</code><span class="what">Amdahl shares and the series' ENOB rule.</span></li>
+        <li><code>analysis/</code> in this repository: <code>precision_needed.py</code>, <code>breakeven.py</code><span class="what">Every <span class="src-tag derived">computed</span> number; results in <code>analysis/out/results.md</code>.</span></li>
+    </ul>
+    <h3>Sources cited (every page opened, and every quote, is in <code>sources/quotes.md</code>)</h3>
+    <ul class="res-list">
+        <li>FNet, Lee-Thorp et al., <a href="https://arxiv.org/abs/2105.03824">arXiv:2105.03824</a> &middot; Hyena (order 2), Poli et al., <a href="https://arxiv.org/abs/2302.10866">arXiv:2302.10866</a> &middot; CirCNN, <a href="https://arxiv.org/abs/1708.08917">arXiv:1708.08917</a><span class="what">Fourier mixing, long convolutions and block-circulant weights.</span></li>
+        <li>KIVI, <a href="https://arxiv.org/abs/2402.02750">arXiv:2402.02750</a> &middot; KVQuant, <a href="https://arxiv.org/abs/2401.18079">arXiv:2401.18079</a> &middot; Quest, <a href="https://arxiv.org/abs/2406.10774">arXiv:2406.10774</a><span class="what">Low-bit and query-aware KV caches.</span></li>
+        <li>PRISM, Park and Park, <a href="https://arxiv.org/abs/2603.21576">arXiv:2603.21576</a><span class="what">&ldquo;only rank order matters (relaxing precision to 4-6 bits)&rdquo;; also discussed in <a href="https://brendanjameslynskey.github.io/CiT_03_Data_Movement_in_LLM_Inference/">CiT_03</a>.</span></li>
+        <li>MuLoCo, <a href="https://arxiv.org/abs/2505.23725">arXiv:2505.23725</a> (v1 and v3) &middot; DeMo, Peng, Chen, Su, Quesnelle, Kingma, Liu, <a href="https://arxiv.org/abs/2411.19870">arXiv:2411.19870</a><span class="what">MuLoCo from the paper; DeMo from its code and <a href="https://brendanjameslynskey.github.io/CiT_02_Data_Movement_in_LLM_Training/">CiT_02</a>; the negative result from <a href="https://brendanjameslynskey.github.io/CiT_04_Fixed_Band_Experiment/">CiT_04</a>.</span></li>
+        <li><a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">OCP Microscaling Formats (MX) v1.0</a><span class="what">&ldquo;MXFP4 FP4 (E2M1) 4 32 E8M0 8&rdquo;; &sect;6.3 &ldquo;Set X to be the largest power-of-two less than or equal to max(|Vi|), divided by the largest power-of-two representable in the element data type&rdquo;, which gives the 2<sup>&minus;2</sup> in <code>mxfp4()</code>.</span></li>
+        <li><a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVIDIA, &ldquo;Introducing NVFP4 for efficient and accurate low-precision inference&rdquo;</a> &middot; FP8 maxima: the Transformer Engine code<span class="what">&ldquo;a fine-grained E4M3 scaling factor to each 16-value micro-block&rdquo;, &ldquo;a second-level FP32 scalar applied per tensor&rdquo;.</span></li>
+        <li>Digital energies: &ldquo;Horowitz, ISSCC 2014, 45 nm&rdquo;, via <a href="https://arxiv.org/abs/1602.01528">Han et al., arXiv:1602.01528</a>, Table I<span class="what">&ldquo;32 bit int ADD 0.1&rdquo;, &ldquo;32 bit int MULT 3.1&rdquo; pJ, as the simulator uses them (scaled by 0.25).</span></li>
+    </ul>
+    <h3>Assumptions, with the simulator's tags</h3>
+    <div class="table-wrap"><table class="cards" id="tbl-assume"><tr><th>Parameter</th><th>Default</th><th>Tag</th></tr></table></div>
+    <p class="fig-cap">Generated from the simulator's future-chip assumptions table (<code>data/plms_v0_3/results_extract.md</code>); the deck's own reconstruction of the approximate-mode crossing count is tagged <span class="src-tag inference">illustrative</span> on slide 08.</p>
+</section>
+
+<!-- ════════════════════════════════════ Footer ════════════════════════════════════ -->
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference">Fourier Optics for Inference series</a> &middot; <a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#glossary">glossary: every concept and where it is explained</a> &middot; numbers: <a href="analysis/out/results.md">analysis/out/results.md</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;"><a href="https://brendanjameslynskey.github.io/FOptInf_04_Inside_a_Photonic_Link/">&larr; 04 Inside a Photonic Link</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">Sister series: <a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/">LLM Inference Simulators</a> &middot; <a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/">FHE Accelerator Simulators</a> &middot; <a href="https://brendanjameslynskey.github.io/LLM_Hub_Compute_in_Transit/">Compute in Transit</a> &middot; <a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/">Simulation Engineering Toolkit</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">Deck CC BY 4.0 &middot; code MIT</p>
+</footer>
+
+<script src="js/fop05_data.js"></script>
+<script src="js/fop05_models.js"></script>
+<script src="js/fopanim.js"></script>
+<script src="js/fop05_figures.js"></script>
+<script>
+    // Smooth scroll for TOC links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // Subtle fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.slide').forEach(slide => {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(30px)';
+        slide.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(slide);
+    });
+</script>
+
+</body>
+</html>

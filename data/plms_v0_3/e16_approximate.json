@@ -1,0 +1,282 @@
+{
+ "config_hash": "6409e785c8ee",
+ "experiment": "e16_approximate",
+ "figures": [
+  {
+   "annotations": [],
+   "id": "bits_vs_enob",
+   "kind": "line",
+   "series": [
+    {
+     "name": "S = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      6.0,
+      8.0,
+      10.0,
+      12.0,
+      16.0
+     ],
+     "y": [
+      0.868774,
+      2.40568,
+      2.73968,
+      2.77681,
+      2.77359,
+      2.78005
+     ]
+    },
+    {
+     "name": "S = 2",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      6.0,
+      8.0,
+      10.0,
+      12.0,
+      16.0
+     ],
+     "y": [
+      1.36223,
+      2.76223,
+      3.06114,
+      3.0918,
+      3.0984,
+      3.0985
+     ]
+    },
+    {
+     "name": "S = 3",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      6.0,
+      8.0,
+      10.0,
+      12.0,
+      16.0
+     ],
+     "y": [
+      1.58832,
+      2.91762,
+      3.18744,
+      3.2075,
+      3.2044,
+      3.21467
+     ]
+    },
+    {
+     "name": "S = 4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      6.0,
+      8.0,
+      10.0,
+      12.0,
+      16.0
+     ],
+     "y": [
+      1.58246,
+      2.89742,
+      3.16744,
+      3.19931,
+      3.18503,
+      3.18035
+     ]
+    },
+    {
+     "name": "S = 5",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      6.0,
+      8.0,
+      10.0,
+      12.0,
+      16.0
+     ],
+     "y": [
+      1.51834,
+      2.88113,
+      3.12527,
+      3.13777,
+      3.14854,
+      3.13516
+     ]
+    },
+    {
+     "name": "S = 6",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      6.0,
+      8.0,
+      10.0,
+      12.0,
+      16.0
+     ],
+     "y": [
+      1.8583,
+      2.99888,
+      3.19821,
+      3.2191,
+      3.20975,
+      3.22043
+     ]
+    }
+   ],
+   "title": "Effective bits vs converter ENOB (4,096-point FFT)",
+   "x": {
+    "label": "converter ENOB",
+    "scale": "linear",
+    "unit": "bits"
+   },
+   "y": {
+    "label": "effective bits",
+    "scale": "linear",
+    "unit": "bits"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "bits_vs_s",
+   "kind": "line",
+   "series": [
+    {
+     "name": "1 dB/stage",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0
+     ],
+     "y": [
+      2.7667,
+      3.09128,
+      3.21162,
+      3.19892,
+      3.14591,
+      3.22022
+     ]
+    },
+    {
+     "name": "3 dB/stage",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0
+     ],
+     "y": [
+      2.4451,
+      2.44992,
+      2.25297,
+      2.09367,
+      1.72134,
+      1.26796
+     ]
+    }
+   ],
+   "title": "Effective bits vs chained stages",
+   "x": {
+    "label": "chained stages S",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "effective bits",
+    "scale": "linear",
+    "unit": "bits"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "energy_vs_s",
+   "kind": "line",
+   "series": [
+    {
+     "name": "photonic",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0
+     ],
+     "y": [
+      34.1117,
+      17.8024,
+      12.3659,
+      9.64768,
+      8.01674,
+      6.92945
+     ]
+    },
+    {
+     "name": "digital, matched bits",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0
+     ],
+     "y": [
+      0.133301,
+      0.214063,
+      0.214063,
+      0.214063,
+      0.214063,
+      0.214063
+     ]
+    }
+   ],
+   "title": "Energy per butterfly-stage vs S",
+   "x": {
+    "label": "chained stages S",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "energy",
+    "scale": "log",
+    "unit": "pJ"
+   }
+  }
+ ],
+ "profile": "full",
+ "schema": "plms-web-data",
+ "schema_version": 3,
+ "sources": {
+  "asic.pJ_mul32": "textbook",
+  "future.chain_stages": "illustrative",
+  "future.conv_pJ_bit": "illustrative",
+  "future.stage_loss_dB": "illustrative",
+  "future.stage_phase_rms_rad": "illustrative"
+ },
+ "tables": [],
+ "title": "Future chip: approximate mode"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "foptinf-05-ai-workloads-stacked-photonic-chip",
+  "private": true,
+  "description": "FOptInf 05: AI workloads on a stacked photonic chip (deck, models and checks)",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test js/tests/models.test.js",
+    "check:browser": "node tools/browser_check.js"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

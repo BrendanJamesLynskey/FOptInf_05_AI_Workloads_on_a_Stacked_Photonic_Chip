@@ -1,0 +1,139 @@
+{
+ "chip": {
+  "U": 64,
+  "W": 4,
+  "B_GBd": 112.0,
+  "eta": 0.95,
+  "heaters_unit": 18,
+  "heaters_wl": 8,
+  "p_pi_mW": 10.0,
+  "laser_mW": 100.0,
+  "wall_plug": 0.15,
+  "fanout": 20,
+  "E_conv": 0.5,
+  "out_bits": 2,
+  "E_recombine": 0.05,
+  "width": 59,
+  "pJ_add32": 0.1,
+  "pJ_mul32": 3.1,
+  "node": 0.25,
+  "modmul_muls": 3,
+  "modadd_adds": 2,
+  "power_cap_W": 500.0
+ },
+ "exact": {
+  "chip": {
+   "laser": 18.772517230576444,
+   "phase_shifters": 69.3139097744361,
+   "conversions": 354.0,
+   "recombination": 11.8,
+   "logic": 31.98330078125,
+   "total": 485.86972778626256
+  },
+  "asic": 32.35205078125,
+  "rate_per_s": 461667796610.1695,
+  "crossings": 708,
+  "n_lasers": 13,
+  "breakeven_E_conv": -0.14056169068504598,
+  "free_light_and_crossings": 43.783300781250006
+ },
+ "approx": {
+  "1": {
+   "crossings": 32.0,
+   "twiddles": 0.61875,
+   "laser": 0.3181782581453635,
+   "phase_shifters": 1.1748120300751879,
+   "total": 34.11174028822055,
+   "static": 1.4929902882205512,
+   "throughput": 14081880309126.91,
+   "limit": "power",
+   "bits": 2.73968,
+   "digital_matched": 0.13330078125
+  },
+  "2": {
+   "crossings": 16.0,
+   "twiddles": 0.309375,
+   "laser": 0.3181782581453635,
+   "phase_shifters": 1.1748120300751879,
+   "total": 17.80236528822055,
+   "static": 1.4929902882205512,
+   "throughput": 27238400000000.0,
+   "limit": "optics",
+   "bits": 3.06114,
+   "digital_matched": 0.21406250000000002
+  },
+  "3": {
+   "crossings": 10.666666666666666,
+   "twiddles": 0.20625000000000002,
+   "laser": 0.3181782581453635,
+   "phase_shifters": 1.1748120300751879,
+   "total": 12.365906954887219,
+   "static": 1.4929902882205512,
+   "throughput": 27238400000000.0,
+   "limit": "optics",
+   "bits": 3.18744,
+   "digital_matched": 0.21406250000000002
+  },
+  "4": {
+   "crossings": 8.0,
+   "twiddles": 0.1546875,
+   "laser": 0.3181782581453635,
+   "phase_shifters": 1.1748120300751879,
+   "total": 9.647677788220552,
+   "static": 1.4929902882205512,
+   "throughput": 27238400000000.0,
+   "limit": "optics",
+   "bits": 3.16744,
+   "digital_matched": 0.21406250000000002
+  },
+  "5": {
+   "crossings": 6.4,
+   "twiddles": 0.12375,
+   "laser": 0.3181782581453635,
+   "phase_shifters": 1.1748120300751879,
+   "total": 8.016740288220552,
+   "static": 1.4929902882205512,
+   "throughput": 27238400000000.0,
+   "limit": "optics",
+   "bits": 3.12527,
+   "digital_matched": 0.21406250000000002
+  },
+  "6": {
+   "crossings": 5.333333333333333,
+   "twiddles": 0.10312500000000001,
+   "laser": 0.3181782581453635,
+   "phase_shifters": 1.1748120300751879,
+   "total": 6.929448621553885,
+   "static": 1.4929902882205512,
+   "throughput": 27238400000000.0,
+   "limit": "optics",
+   "bits": 3.19821,
+   "digital_matched": 0.21406250000000002
+  }
+ },
+ "digital_8bit": 0.71875,
+ "static_by_technology": {
+  "thermo 2 mW/\u03c0": 0.5531406641604011,
+  "thermo 10 mW/\u03c0": 1.4929902882205512,
+  "thermo 30 mW/\u03c0": 3.842614348370927,
+  "mems": 0.318295739348371,
+  "nv": 0.3181782581453635
+ },
+ "laser_by_power_dBm": {
+  "13.0": 0.3125410894374812,
+  "17.0": 0.39253386092361553,
+  "20.0": 0.3181782581453635,
+  "23.0": 0.39067636179685133,
+  "27.0": 0.36800049461588963
+ },
+ "conditions": {
+  "target_pJ": 0.21406250000000002,
+  "laser_pJ_default": 0.3181782581453635,
+  "heaters_pJ_default": 1.1748120300751879,
+  "wall_plug_needed_free_heaters_free_conv": 0.4302128560838717,
+  "E_conv_needed_free_heaters_wall_plug_1": 0.005926008869830828,
+  "E_conv_needed_vs_8bit_mems": 0.027874618186090216,
+  "E_conv_needed_vs_matched_default": null
+ },
+ "throughput_vs_exact": 59.0
+}

@@ -1,0 +1,6 @@
+{
+  "small_integers_up_to": 20,
+  "why_small_integers": "Integers 0-20 on the slides are slide numbers, counts in the text (4-point, 6 stages, 8 bits, step 3 of 6) and test numbers; the ones that are results (1x, 13 lasers, 20 unit-wavelengths) are also in data/.",
+  "numbers": {
+  }
+}

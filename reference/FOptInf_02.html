@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fourier Optics for Inference 02 — Transforms in Inference Workloads</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Geist+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1c1815;
+            --bg-card: #231e1a;
+            --bg-code: #2b2520;
+            --text-primary: #efe8dc;
+            --text-secondary: #a2978b;
+            --accent: #aabd59;
+            --accent-dim: #aabd5944;
+            --accent-glow: #aabd5933;
+            --border: #3a322b;
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'Geist Mono', 'Geist Mono', monospace;
+            --font-body: 'Instrument Sans', sans-serif;
+            --max-width: 900px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 17px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .series-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .accent {
+            color: var(--accent);
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Tag Pills ── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+            white-space: nowrap;
+        }
+
+        /* ── Pipeline Flow Bar ── */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            max-width: var(--max-width);
+        }
+
+        .pipeline-step {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* ── Slides ── */
+        .slide {
+            min-height: 100vh;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-number {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent-dim);
+            position: absolute;
+            top: 2rem;
+            right: 1.5rem;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .slide h2 {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            line-height: 1.25;
+        }
+
+        .slide h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .slide p strong {
+            color: var(--text-primary);
+        }
+
+        .slide ul, .slide ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .slide li {
+            margin-bottom: 0.4rem;
+        }
+
+        .slide li strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Code Blocks ── */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+            padding: 0.4rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #dad1c5;
+        }
+
+        /* Syntax highlighting (manual) */
+        .kw { color: #de805a; }
+        .fn { color: #d7bbdf; }
+        .str { color: #bcdbd4; }
+        .cm { color: #a2978b; font-style: italic; }
+        .num { color: #97cdc6; }
+        .type { color: #e3b174; }
+        .dir { color: #de805a; }
+        .mac { color: #e3b174; }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(35,30,26,0.5);
+        }
+
+        /* ── Diagrams ── */
+        .diagram-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-box {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .diagram-box.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+        }
+
+        .diagram-box.dim {
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .diagram-arrow {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Vertical flow diagrams */
+        .diagram-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-vertical .diagram-arrow {
+            font-size: 1.1rem;
+        }
+
+        /* Nested hierarchy diagram */
+        .hierarchy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .hierarchy-level {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hierarchy-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .hierarchy-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .hierarchy-item {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .hierarchy-item.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+        }
+
+        /* Grid diagram */
+        .diagram-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .diagram-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .diagram-panel {
+            padding: 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .diagram-panel.accent-border {
+            border-left: 3px solid var(--accent);
+        }
+
+        .diagram-panel h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagram-panel p, .diagram-panel ul {
+            font-size: 0.85rem;
+        }
+
+        /* ── Callout Boxes ── */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .callout p {
+            margin-bottom: 0;
+        }
+
+        .callout .callout-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ── Tier Visual ── */
+        .tier-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .tier-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tier-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .tier-fill {
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            transition: width 0.6s ease;
+        }
+
+        .tier-cost {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 70px;
+        }
+
+        /* ── Contents list ── */
+        .contents-list {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: contents;
+        }
+
+        .contents-list li {
+            counter-increment: contents;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contents-list li:last-child {
+            border-bottom: none;
+        }
+
+        .contents-list li::before {
+            content: counter(contents, decimal-leading-zero);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 2rem;
+        }
+
+        .contents-list a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contents-list a:hover {
+            color: var(--accent);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .slide {
+                padding: 3rem 1rem;
+                min-height: auto;
+            }
+
+            .slide-number {
+                font-size: 3rem;
+                top: 1.5rem;
+                right: 1rem;
+            }
+
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+
+            .diagram-grid.cols-2,
+            .diagram-grid.cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                gap: 0.15rem;
+            }
+
+            .pipeline-step {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            table {
+                font-size: 0.78rem;
+            }
+
+            .tier-label {
+                min-width: 60px;
+                font-size: 0.65rem;
+            }
+
+            .tier-fill {
+                font-size: 0.6rem;
+                height: 26px;
+            }
+        }
+
+        /* ── Interactive controls (added for Local LLM series) ── */
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .control-row label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 180px;
+        }
+        .control-row input[type="range"] {
+            flex: 1;
+            min-width: 160px;
+            accent-color: var(--accent);
+        }
+        .control-row input[type="number"],
+        .control-row select {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        .control-row .val {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 80px;
+            text-align: right;
+        }
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.9rem;
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn:hover { background: rgba(170,189,89,0.2); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn.secondary {
+            background: var(--bg-code);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .result-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-top: 0.75rem;
+        }
+        .result-box .line-label { color: var(--text-secondary); }
+        .result-box .line-val   { color: var(--accent); font-weight: 600; }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .metric {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            text-align: center;
+        }
+        .metric .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .metric .metric-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Canvas / SVG containers */
+        .canvas-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+        .canvas-wrap canvas,
+        .canvas-wrap svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        /* Small inline badge */
+        .badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+            margin-left: 0.3rem;
+        }
+        .badge.ok    { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .badge.warn  { border-color: #e3b174; color: #e3b174; background: rgba(227,177,116,0.08); }
+        .badge.bad   { border-color: #de805a; color: #de805a; background: rgba(222,128,90,0.08); }
+
+
+        /* ── LLM Inference Simulators additions ── */
+        .canvas-wrap canvas { image-rendering: auto; display: block; width: 100%; height: auto; }
+        .canvas-wrap svg { max-width: 100%; height: auto; }
+        .ladder { display: grid; gap: 0.4rem; margin: 1.25rem 0; }
+        .ladder-row {
+            display: grid; grid-template-columns: 11rem 1fr 7.5rem; gap: 0.75rem; align-items: center;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+            padding: 0.55rem 0.85rem; font-size: 0.88rem;
+        }
+        .ladder-row .rung { font-family: var(--font-display); font-weight: 600; color: var(--accent); }
+        .ladder-row .speed { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary); text-align: right; }
+        .res-list { list-style: none; padding: 0; margin: 0.75rem 0; }
+        .res-list li { padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+        .res-list li:last-child { border-bottom: none; }
+        .res-list .what { color: var(--text-secondary); display: block; font-size: 0.86rem; margin-top: 0.15rem; }
+        .res-list a { color: var(--accent); text-decoration: none; }
+        .res-list a:hover { text-decoration: underline; }
+        .qa { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin: 0.6rem 0; padding: 0.2rem 1rem; }
+        .qa summary { cursor: pointer; padding: 0.6rem 0; font-weight: 600; }
+        .qa p, .qa ul { margin-bottom: 0.75rem; font-size: 0.92rem; }
+        .sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.4rem 1.25rem; }
+        .chart-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .chart-title { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .slide a { color: var(--accent); }
+        @media (max-width: 640px) {
+            .ladder-row { grid-template-columns: 1fr; gap: 0.2rem; }
+            .ladder-row .speed { text-align: left; }
+        }
+        .concepts { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 0.75rem 1rem; margin-top: 1.25rem; font-size: 0.88rem; }
+        .concepts p { margin: 0 0 0.4rem; color: var(--text-secondary); }
+        .concepts .chips { display: flex; flex-wrap: wrap; gap: 0.35rem 0.5rem; }
+        .concepts .chips a { border: 1px solid var(--border); border-radius: 999px; padding: 0.1rem 0.6rem; text-decoration: none; font-size: 0.82rem; }
+        .concepts .chips a:hover { border-color: var(--accent); }
+        .hero { overflow: hidden; }   /* the 600px glow must not widen the page on phones */
+        .chart-pair > *, .diagram-grid > *, .sim-grid > * { min-width: 0; }   /* let wide code scroll inside its column */
+        .slide p code, .slide li code, .slide td code { overflow-wrap: anywhere; }
+        @media (max-width: 640px) { .diagram-box { white-space: normal; max-width: 100%; } }   /* long boxes must wrap on phones */
+        /* FOptInf: keep long titles clear of the slide number on phones */
+        @media (max-width: 640px) { .slide h2 { padding-right: 3.6rem; } }
+        .sim-grid select, .sim-grid input[type="range"] { max-width: 100%; min-width: 0; }   /* long option labels must not spill into the next column */
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="series-label">Fourier Optics for Inference &mdash; Presentation 02</div>
+    <h1><span class="accent">Transforms</span> in Inference Workloads</h1>
+    <p class="subtitle">Where a Fourier transform could appear in LLM inference, and how much it would matter: FNet, long convolutions (S4, H3, Hyena), causality at prefill and decode, an Amdahl analysis of prefill FLOP shares, structured weights, transform-domain KV compression, mask capacity, and an honest list of what does not map.</p>
+
+    <div class="tags">
+        <span class="tag">FNet</span>
+        <span class="tag">Hyena</span>
+        <span class="tag">Causality</span>
+        <span class="tag">Amdahl</span>
+        <span class="tag">Structured weights</span>
+        <span class="tag">Disaggregation</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">Model</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Op mix</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Transform share</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Amdahl bound</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Prefill pool</span>
+    </div>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <ul class="contents-list">
+        <li><a href="#slide-01">Where a Transform Could Hide in an LLM</a></li>
+        <li><a href="#slide-02">A Standard Decoder Has No FFT</a></li>
+        <li><a href="#slide-03">FNet: Fourier Token Mixing</a></li>
+        <li><a href="#slide-04">Long Convolutions: S4, H3 and Hyena</a></li>
+        <li><a href="#slide-05">Causality at Prefill and at Decode</a></li>
+        <li><a href="#slide-06">The Amdahl Analysis: Prefill FLOP Shares</a></li>
+        <li><a href="#slide-07">Interactive: Amdahl Explorer</a></li>
+        <li><a href="#slide-08">Structured Weights: Circulant and Monarch</a></li>
+        <li><a href="#slide-09">Transform-Domain Compression of the KV Cache</a></li>
+        <li><a href="#slide-10">Precision and Energy per Token</a></li>
+        <li><a href="#slide-11">Holding the Weights: Fourier-Plane Mask Capacity</a></li>
+        <li><a href="#slide-12">What Prefill Hands to Decode</a></li>
+        <li><a href="#slide-13">Why Disaggregation Fits</a></li>
+        <li><a href="#slide-14">What Does Not Map</a></li>
+        <li><a href="#slide-15">What to Take Away</a></li>
+    </ul>
+    <div class="concepts">
+        <p><strong>Concepts used here, and where they are explained.</strong> Each links to a glossary entry: this <a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#glossary">series glossary</a>, or the glossaries of LLM Inference Simulators, FHE Accelerator Simulators and the Simulation Engineering Toolkit for concepts those series already explain.</p>
+        <div class="chips"><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-prefill" title="Prefill processes the whole prompt in one pass (matrix-matrix, compute-bound) and produces the first token. Decode then generates one token per sequence per step (matrix-vector, memory-bound). They need different hardware balances.">Prefill and decode</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-flops" title="About 2 FLOPs per matmul parameter per token, plus attention that grows with context. A decode step must also read every weight and all of the KV cache. These two counts drive every timing and energy number in the series.">FLOP and byte counting</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-roofline" title="Attainable performance is the lower of peak compute and bandwidth × arithmetic intensity (FLOPs per byte). The ridge point is the intensity at which both limits meet; below it a kernel is memory-bound.">Roofline, arithmetic intensity and ridge point</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-transformengine" title="An optical MAC accelerates every matrix multiply (the simulator&#x27;s hypothetical optical part); a Fourier transform engine accelerates only FFT and convolution work and leaves matmuls to a digital part.">Transform engine against optical MAC</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-fnet" title="An encoder that replaces self-attention with an unparameterised 2-D Fourier transform over sequence and hidden dimensions, keeping the real part. It mixes every token with every other, including later ones, so it is not causal and cannot serve a decoder as it stands.">FNet</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-longconv" title="A convolution whose filter is as long as the sequence, computed by FFT, pointwise multiply and inverse FFT in O(L log L) instead of O(L²). It is the token mixer of S4&#x27;s convolution mode, H3 and Hyena.">Long convolution by FFT</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-hyena" title="An attention-free operator: N+1 linear projections, a short depthwise convolution, then N rounds of a long implicit convolution (by FFT) and elementwise gating. Order 2 is the usual language-model setting.">Hyena</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-ssm" title="Sequence layers built on a linear recurrence. S4&#x27;s time-invariant SSM can run as a long convolution (for training and prefill) or as a recurrence (for generation); Mamba&#x27;s selective SSM makes its parameters input-dependent, which rules out the convolution form.">State-space models (S4, H3, Mamba)</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-causalpad" title="An FFT computes a circular convolution, which wraps late inputs onto early outputs. Padding input and filter to at least 2L before the FFT makes it the linear, causal convolution a decoder needs.">Causal zero-padding</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-relaxed" title="Exact token-by-token convolution in which each completed block of 2^l inputs is convolved by FFT once and added to future outputs (Flash Inference): FFTs at decode, but small ones on the critical path.">Relaxed (tiled) online convolution</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-distill" title="Fitting each long-convolution filter with a small state-space model after training, so decode runs as an O(1)-per-token recurrence with a constant-size state instead of a growing cache.">Distilled recurrence (Laughing Hyena)</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-hybridarch" title="Models that interleave a few attention layers with cheaper mixers (Hyena, Mamba). They keep attention&#x27;s recall where it matters; the transform share falls with the attention fraction.">Hybrid architectures</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-opticalshare" title="The fraction f of prefill FLOPs a transform engine could take over (FFTs plus Fourier-plane multiplies). If it became free, prefill would speed up by at most 1/(1−f); for a Hyena-2 model of Llama-3-8B&#x27;s shape f is 0.20% at 2,048 tokens.">Optical share and the Amdahl bound</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-amdahl" title="Speeding up part of a program speeds up the whole only in proportion to that part&#x27;s share of the time. After porting a simulator&#x27;s engine, the Python code around it can dominate.">Amdahl's law for a port</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-timeshare" title="FFTs run below a GPU&#x27;s matmul rate, so their share of time exceeds their share of FLOPs. Weighting transform FLOPs by a relative efficiency r (an assumption) gives the share an engine could actually remove.">Time-weighted share</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-circulant" title="A weight matrix made of circulant blocks, each defined by one vector, so multiplying by it is an FFT, a pointwise product and an inverse FFT (CirCNN). It turns matmuls into transforms; at LLM scale it is speculative.">Block-circulant weights</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-monarch" title="Structured matrices built from products of block-diagonal and permutation factors, a family that includes the FFT. Monarch Mixer uses them along both sequence and hidden dimensions, with a causal variant.">Monarch and butterfly matrices</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-tdcompress" title="Compressing the KV cache or hidden states by keeping low-frequency DCT/Fourier coefficients along the sequence (FreqKV, FourierAttention, Fourier Transformer). It saves memory; its transforms are small.">Transform-domain KV compression</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-kvcache" title="The stored keys and values of every token of every live sequence, so attention need not recompute them. Its size (320 KiB per token for Llama-3-70B) limits batch size and is what disaggregation must move.">KV cache</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-floatenob" title="For float workloads the analogue chain must match the number format&#x27;s own rounding error, not be exact. Relative RMS error = crest × 2^−ENOB × 2/√12; matching BF16 needs about 10.3 ENOB, INT8 8.0, FP8 E4M3 6.3. FHE&#x27;s exact-rounding rule does not transfer to long convolutions.">The noise rule for floating-point workloads</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-conversion" title="Every value entering or leaving the optics costs a DAC or ADC sample, at Walden-FoM × 2^ENOB joules. With the series&#x27; illustrative FoMs a Hyena-style long convolution breaks even with a 1 pJ/FLOP digital FFT at about 12 ENOB.">Conversion-bound optics and the break-even ENOB</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-maskcap" title="A 4f pass multiplies by one mask, so every filter spectrum must be on the mask while its inputs pass. Mask values needed per forward pass divided by what the SLM holds gives rewrites per pass, each costing a frame.">Fourier-plane mask capacity</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-slm" title="A pixelated device that writes values into a light field. Liquid-crystal SLMs modulate phase or amplitude and settle in tens of milliseconds; a 2-megapixel digital micromirror device switches amplitude at about 1 kHz with 8-bit depth (20 kHz binary). Pixel count and frame rate bound how fast inputs and Fourier-plane masks can change.">Spatial light modulator (SLM)</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-handoff" title="What a disaggregated server moves from the prefill pool to the decode pool: the KV cache for attention, the cached projection inputs for direct long-convolution decode (four times larger here), or a constant recurrent state after distillation.">Prefill-to-decode hand-off</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-kvtransfer" title="Bytes = prompt tokens × KV per token (671 MB for a 2k-token Llama-3-70B prompt): 1.5 ms on NVLink, 13 ms on InfiniBand NDR, 215 ms on 25 GbE. The link and its queue can become the hot-spot.">KV-cache transfer</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-disagg" title="Running prefill and decode on separate machine pools (Splitwise, DistServe, Mooncake, NVIDIA Dynamo), so each phase is provisioned and power-managed for its own SLO. The cost is moving the KV cache.">Disaggregated (prefill/decode) serving</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-hetpool" title="Disaggregated serving with different hardware per phase: compute-heavy parts for prefill, bandwidth-rich parts for decode (Splitwise&#x27;s proposal). An optical transform engine would join the prefill pool.">Heterogeneous pools</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#g-photoniclink" title="Optical links (co-packaged optics, optical I/O chiplets) that move bytes, such as the KV cache, between chips. They are photonics but not Fourier optics: they compute nothing.">Photonic interconnect</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-quant" title="Storing weights (and sometimes activations or KV) in fewer bits. It shrinks the dominant byte term of decode, so it helps bandwidth-bound decode far more than compute-bound prefill.">Quantisation</a></div>
+    </div>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>Where a Transform Could Hide in an LLM</h2>
+    <p>Deck 01 showed what a Fourier-optical engine does well: long transforms and convolutions, with the weights held on a mask, at a cost per converted value. The question for inference is whether the work contains such transforms, and how much of the work they are. Three places to look, and two things that are photonics but not Fourier optics:</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Where</th><th>What the transform does</th><th>Slides</th></tr>
+        <tr><td><strong>Token mixing</strong></td><td>FNet's Fourier mixing; long convolutions (S4's convolution mode, H3, Hyena) computed by FFT</td><td><a href="#slide-03">03</a>&ndash;<a href="#slide-07">07</a></td></tr>
+        <tr><td><strong>Structured weights</strong></td><td>Circulant, block-circulant or Monarch matrices, whose products are transforms</td><td><a href="#slide-08">08</a></td></tr>
+        <tr><td><strong>Transform-domain compression</strong></td><td>DCT/Fourier coefficients of the KV cache or hidden states along the sequence</td><td><a href="#slide-09">09</a></td></tr>
+        <tr><td><em>Optical MACs</em> (not Fourier optics)</td><td>Matrix multiplies done optically: the simulator's hypothetical optical part</td><td><a href="#slide-02">02</a></td></tr>
+        <tr><td><em>Photonic interconnect</em> (not Fourier optics)</td><td>Moving the KV cache between pools over optical links</td><td><a href="#slide-13">13</a></td></tr>
+    </table>
+    </div>
+    <p>Every number from here on comes from <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/flop_share.py">analysis/flop_share.py</a>, which counts FLOPs for a model of Llama-3-8B's shape (<a href="https://arxiv.org/abs/2407.21783">Llama 3 report</a>) in five variants and writes <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>.</p>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>A Standard Decoder Has No FFT</h2>
+    <p>A Llama-style decoder is matrix multiplies (projections, the SwiGLU MLP, the LM head) plus attention (QK<sup>T</sup> and AV), softmax, norms and activations. None of it is a Fourier transform. The analysis reproduces the companion simulator's FLOP count exactly (<a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim">Disaggregated_Inference_Sim</a>'s cost model, checked to the FLOP), and splits it by class:</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Llama-3-8B prefill</th><th>GFLOP</th><th>Dense matmul</th><th>Attention</th></tr>
+        <tr><td>512 tokens</td><td>7,753.6</td><td>99.1%</td><td>0.9%</td></tr>
+        <tr><td>2,048 tokens</td><td>31,839.1</td><td>96.5%</td><td>3.5%</td></tr>
+        <tr><td>32,768 tokens</td><td>773,308.9</td><td>63.6%</td><td>36.4%</td></tr>
+        <tr><td>131,072 tokens</td><td>6,470,935.2</td><td>30.4%</td><td>69.6%</td></tr>
+    </table>
+    </div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>, section &ldquo;2. Prefill&rdquo;. Lengths beyond the model's trained context are shape-only extrapolations.</p>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>An optical MAC would help this model</h4>
+            <p>The simulator's <code>HYPOTHETICAL_OPTICAL</code> device is a &ldquo;what if compute were nearly free&rdquo; probe: it speeds up every dense FLOP, and, as its comment in <a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim/blob/main/src/disagg_sim/hardware.py">hardware.py</a> says, decode barely moves because decode is bandwidth-bound.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>A transform engine would not</h4>
+            <p>A Fourier transform engine accelerates only FFT and convolution work and leaves matmuls to a digital part. For this model its share is zero. The rest of the deck asks which <em>other</em> models give it something to do.</p>
+        </div>
+    </div>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>FNet: Fourier Token Mixing</h2>
+    <p>FNet replaces each self-attention sublayer of a Transformer <em>encoder</em> with an unparameterised 2-D discrete Fourier transform over the sequence and hidden dimensions, keeping the real part. Lee-Thorp et al. report 92&ndash;97% of BERT's GLUE accuracy while training 80% faster on GPUs and 70% faster on TPUs at 512 tokens (<a href="https://arxiv.org/abs/2105.03824">arXiv:2105.03824</a>).</p>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Why it looks made for optics</h4>
+            <ul>
+                <li>A 2-D DFT over (sequence &times; hidden) is exactly what a lens computes.</li>
+                <li>No weights in the mixer: no mask to rewrite.</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Why it does not help an LLM</h4>
+            <ul>
+                <li><strong>It is not causal.</strong> Every output mixes every token, including later ones. In the analysis, perturbing the last token changes the first token's mixed output by 64.0 (a 256&times;64 block): a decoder cannot use it as it stands.</li>
+                <li><strong>It is a tiny share of the work.</strong> In a model of Llama-3-8B's shape with FNet mixing, the transform is 0.09% of prefill FLOPs at 2,048 tokens: the MLP dominates.</li>
+            </ul>
+        </div>
+    </div>
+    <p>The FFT is what makes FNet cheap. Making a cheap operation free buys little: the theme of this deck.</p>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>Long Convolutions: S4, H3 and Hyena</h2>
+    <p>Causal sequence models that mix tokens with a <strong>long convolution</strong> (a filter as long as the sequence) can compute it by FFT in O(L log L):</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Model</th><th>Mixer</th><th>Convolution or recurrence?</th></tr>
+        <tr><td>S4 (Gu, Goel, R&eacute;, <a href="https://arxiv.org/abs/2111.00396">arXiv:2111.00396</a>)</td><td>A structured, time-invariant state-space model</td><td>Both: a long convolution for training, a recurrence for generation (reported 60&times; faster generation)</td></tr>
+        <tr><td>H3 (Fu, Dao et al., <a href="https://arxiv.org/abs/2212.14052">arXiv:2212.14052</a>)</td><td>Two SSMs with multiplicative gating</td><td>FFT convolution at training and prefill</td></tr>
+        <tr><td>Hyena (Poli et al., <a href="https://arxiv.org/abs/2302.10866">arXiv:2302.10866</a>)</td><td>N+1 projections, a short depthwise conv, N implicit long convolutions with gating (order 2 for language)</td><td>FFT convolution, with input and filter zero-padded to 2L &minus; 1 for causality (the paper, section 3)</td></tr>
+        <tr><td>Mamba (Gu, Dao, <a href="https://arxiv.org/abs/2312.00752">arXiv:2312.00752</a>)</td><td>A <em>selective</em> SSM: parameters depend on the input</td><td>Recurrence only: selectivity &ldquo;prevents the use of efficient convolutions&rdquo; (the abstract)</td></tr>
+    </table>
+    </div>
+    <ul>
+        <li><strong>On GPUs the FFT is the awkward part.</strong> FlashFFTConv finds that the FFT does not use matrix-multiply units well and incurs I/O between memory levels; recasting it as matrix multiplies speeds exact FFT convolutions up to 7.93&times; over PyTorch (<a href="https://arxiv.org/abs/2311.05908">arXiv:2311.05908</a>).</li>
+        <li><strong>Hyena's claim to fame is speed at length:</strong> the paper reports its operator twice as fast as optimised attention at 8K tokens and 100&times; faster at 64K.</li>
+        <li><strong>Hybrids</strong> interleave a few attention layers with these mixers, e.g. Jamba with Mamba (<a href="https://arxiv.org/abs/2403.19887">arXiv:2403.19887</a>) and the striped Hyena hybrids studied by Poli et al. (<a href="https://arxiv.org/abs/2403.17844">arXiv:2403.17844</a>). The analysis includes a 1-in-4 attention hybrid (an illustrative ratio).</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>Causality at Prefill and at Decode</h2>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Prefill: one long FFT per channel</h4>
+            <ul>
+                <li>The whole prompt is known, so each channel's long convolution is one FFT, a multiply and an inverse FFT, zero-padded to 2L so it is linear and causal.</li>
+                <li>Checked in NumPy: padded FFT against direct, 5.6e-16 of the peak; perturbing the last input moves earlier outputs by 7.1e-15. Unpadded, the wrap leaks the future by 2.75.</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Decode: one token at a time</h4>
+            <ul>
+                <li><strong>Direct:</strong> cache past inputs, take a dot product with the filter: O(context) per token, no transform. It equals the prefill output (5.8e-16).</li>
+                <li><strong>Distilled:</strong> fit each filter with a small SSM and run it as a recurrence, O(1) per token (Laughing Hyena, <a href="https://arxiv.org/abs/2310.18780">arXiv:2310.18780</a>).</li>
+                <li><strong>Relaxed tiling:</strong> convolve each completed block of 2<sup>l</sup> inputs by FFT and add it to future outputs: exact, O(L log<sup>2</sup> L) in total (Flash Inference, <a href="https://arxiv.org/abs/2410.12982">arXiv:2410.12982</a>). Checked: 4.5e-16.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="table-wrap"><table>
+<thead><tr><th>Mixer</th><th>Context</th><th>GFLOP / token</th><th>Mixer FLOPs / token</th><th>Transform share</th></tr></thead>
+<tbody>
+<tr><td>transformer</td><td>2,048</td><td>16.084</td><td>1,074.3 M</td><td>0.00%</td></tr>
+<tr><td>transformer</td><td>32,768</td><td>32.190</td><td>17,180.4 M</td><td>0.00%</td></tr>
+<tr><td>hyena_direct</td><td>2,048</td><td>17.694</td><td>1,074.3 M</td><td>0.00%</td></tr>
+<tr><td>hyena_direct</td><td>32,768</td><td>33.800</td><td>17,180.4 M</td><td>0.00%</td></tr>
+<tr><td>hyena_distilled</td><td>2,048</td><td>16.653</td><td>33.6 M</td><td>0.00%</td></tr>
+<tr><td>hyena_distilled</td><td>32,768</td><td>16.653</td><td>33.6 M</td><td>0.00%</td></tr>
+<tr><td>hyena_tiled</td><td>2,048</td><td>16.877</td><td>256.9 M</td><td>1.40%</td></tr>
+<tr><td>hyena_tiled</td><td>32,768</td><td>17.046</td><td>425.7 M</td><td>2.34%</td></tr>
+<tr><td>hyena_recompute</td><td>2,048</td><td>162.650</td><td>146,030.5 M</td><td>85.82%</td></tr>
+<tr><td>hyena_recompute</td><td>32,768</td><td>3,040.278</td><td>3,023,658.5 M</td><td>96.06%</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>, section &ldquo;4. Decode&rdquo;</p>
+    <p style="font-size:0.85rem;"><strong>So the hypothesis needs care:</strong> decode <em>can</em> use FFTs, but only in small passes on the latency-critical path. Conversions per token per channel (DAC+ADC pairs): a prefill long convolution converts each input once and each output once, <strong>1 pair per token</strong>. Relaxed tiling at decode converts, at each of its tile levels, a block of B inputs and B outputs every 2B steps, 0.5 pairs per token per level: <strong>6 pairs</strong> at context 2,048 (12 levels); <strong>8 pairs</strong> at context 32,768 (16 levels), in small passes on the latency-critical path.</p>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>The Amdahl Analysis: Prefill FLOP Shares</h2>
+    <p><strong>Optical share</strong> f = FFT FLOPs plus the pointwise multiplies in the Fourier domain (what a 4f mask does), over all prefill FLOPs. If the engine made that work free, prefill would speed up by at most 1/(1&minus;f) (<a href="https://brendanjameslynskey.github.io/InfSim_08_Accelerating_Simulators/#slide-14">Amdahl's law</a>).</p>
+    <div class="table-wrap"><table>
+<thead><tr><th>Variant</th><th>512 tokens</th><th>2,048 tokens</th><th>8,192 tokens</th><th>32,768 tokens</th><th>131,072 tokens</th></tr></thead>
+<tbody>
+<tr><td>Transformer (Llama-3-8B)</td><td>0.00%</td><td>0.00%</td><td>0.00%</td><td>0.00%</td><td>0.00%</td></tr>
+<tr><td>FNet-shaped (non-causal)</td><td>0.08%</td><td>0.09%</td><td>0.10%</td><td>0.11%</td><td>0.12%</td></tr>
+<tr><td>Hyena-2</td><td>0.17%</td><td>0.20%</td><td>0.23%</td><td>0.26%</td><td>0.29%</td></tr>
+<tr><td>Hybrid 1:3 attention:Hyena</td><td>0.13%</td><td>0.15%</td><td>0.17%</td><td>0.18%</td><td>0.15%</td></tr>
+<tr><td>Hyena-2 + block-circulant weights</td><td>13.63%</td><td>13.99%</td><td>14.35%</td><td>14.70%</td><td>15.05%</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>, section &ldquo;2. Prefill&rdquo;</p>
+    <ul>
+        <li><strong>Hyena-2 at 2,048 tokens:</strong> f = 0.20%, an Amdahl bound of 1.002x. The projections and the MLP, which stay digital, are over 99% of the work.</li>
+        <li><strong>The share barely grows with length</strong>, because FFT work is O(L log L) per channel against O(L) for the matmuls: log L grows slowly.</li>
+        <li><strong>The count is not the issue.</strong> The Hyena operator (one layer's mixer, without the MLP) counted here against the Hyena paper's own formula (appendix A.2, s = 2,048): this script 277.16 GFLOP, of which 0.76% is FFT convolution; the paper's formula 276.87 GFLOP, of which 0.67%. The difference is padding (2L here) and the FFT constant; the conclusion does not depend on it.</li>
+        <li><strong>Time, not FLOPs, is what an engine removes.</strong> If GPUs ran FFTs at 1/16 of their matmul rate (an assumption), Hyena-2's share of prefill time at 2,048 tokens would be 3.08% and the bound 1.032x.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>Interactive: Amdahl Explorer</h2>
+    <p>The FLOP ledger of <code>flop_share.py</code>, ported to JavaScript and tested to give identical numbers (<a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/js/flop_model.js">js/flop_model.js</a>). Choose a model, a prompt length, where the LM head runs, and how fast a GPU runs FFTs relative to matmuls (r, an assumption).</p>
+    <div class="control-panel">
+        <div class="sim-grid">
+            <div class="control-row"><label for="am-v">Model (Llama-3-8B shape)</label><select id="am-v"></select></div>
+            <div class="control-row"><label for="am-s">Prompt tokens</label><input type="range" id="am-s" min="9" max="17" value="11"><span class="val" id="am-s-val">2,048</span></div>
+            <div class="control-row"><label for="am-lm">LM head</label><select id="am-lm"><option value="1" selected>every prompt token</option><option value="0">last token only</option></select></div>
+            <div class="control-row"><label for="am-r">GPU FFT rate, relative to matmul</label><select id="am-r"><option value="1" selected>r = 1 (FLOPs only)</option><option value="4">r = 1/4</option><option value="16">r = 1/16</option></select></div>
+        </div>
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">Prefill GFLOP</div><div class="metric-value" id="am-g">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Optical share (FLOPs)</div><div class="metric-value" id="am-f">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Amdahl bound (FLOPs)</div><div class="metric-value" id="am-a">&mdash;</div></div>
+            <div class="metric"><div class="metric-label">Share of time / bound at r</div><div class="metric-value" id="am-t">&mdash;</div></div>
+        </div>
+        <div class="canvas-wrap" style="padding:0.4rem;"><canvas id="am-bar" width="840" height="70"></canvas></div>
+        <div class="canvas-wrap" style="padding:0.4rem;"><canvas id="am-line" width="840" height="300"></canvas></div>
+    </div>
+<script>
+// flop_model.js: JavaScript port of analysis/flop_share.py's prefill FLOP ledger, used live in
+// FOptInf deck 02. Same shape (Llama-3-8B), same variants, same counting conventions and the same
+// floating-point operation order, so the numbers are identical to results.md (tested by
+// analysis/test_flop_model.py, which runs this file in node).
+(function (root) {
+    const D = 4096, L = 32, FF = 14336, V = 128256, KV = 8 * 128;   // Llama-3-8B
+    const ORDER = 2, SHORT = 3, BLOCK = 256;
+    const VARIANTS = ['transformer', 'fnet', 'hyena', 'hybrid', 'hyena_circ'];
+    const LABEL = { transformer: 'Transformer (Llama-3-8B)', fnet: 'FNet-shaped (non-causal)', hyena: 'Hyena-2',
+                    hybrid: 'Hybrid 1:3 attention:Hyena', hyena_circ: 'Hyena-2 + block-circulant weights' };
+
+    const rfft = n => 2.5 * n * Math.log2(n);           // FFTW's convention; n is a power of two
+    const cfft = n => 5.0 * n * Math.log2(n);
+    const pow2AtLeast = n => 2 ** Math.ceil(Math.log2(n)); // exact for the integer n used here
+    const ops = () => ({ dense: 0, attention: 0, transform: 0, spectral: 0, other: 0 });
+    const KEYS = ['dense', 'attention', 'transform', 'spectral', 'other'];
+    const add = (a, b) => { for (const k of KEYS) a[k] = a[k] + b[k]; return a; };
+    const total = o => o.dense + o.attention + o.transform + o.spectral + o.other;
+    const div = (a, b) => Math.floor(a / b);
+
+    function denseMatrix(m, n, tokens, circ) {
+        const o = ops();
+        if (!circ) { o.dense = 2.0 * m * n * tokens; return o; }
+        const k = BLOCK, bins = div(k, 2) + 1;
+        o.transform = tokens * (div(n, k) * rfft(k) + div(m, k) * rfft(k));
+        o.spectral = tokens * div(m, k) * div(n, k) * bins * 6.0;
+        o.other = tokens * div(m, k) * (div(n, k) - 1) * bins * 2.0;
+        return o;
+    }
+    function mlp(tokens, circ) {
+        const o = ops();
+        for (const [m, n] of [[FF, D], [FF, D], [D, FF]]) add(o, denseMatrix(m, n, tokens, circ));
+        return o;
+    }
+    function attentionBlock(lens, tokens) {
+        const o = ops();
+        o.dense = 2.0 * tokens * (2 * D * D + 2 * D * KV);
+        let a = 0; for (const s of lens) a = a + 2.0 * D * s * (s + 1);
+        o.attention = a;
+        return o;
+    }
+    function hyenaBlock(lens, tokens, circ) {
+        const o = ops();
+        add(o, denseMatrix((ORDER + 1) * D, D, tokens, circ));
+        add(o, denseMatrix(D, D, tokens, circ));
+        o.other = o.other + tokens * 2.0 * SHORT * (ORDER + 1) * D;
+        o.other = o.other + tokens * ORDER * D;
+        for (const s of lens) {
+            const n = pow2AtLeast(2 * s);
+            o.transform = o.transform + ORDER * D * 2 * rfft(n);
+            o.spectral = o.spectral + ORDER * D * (div(n, 2) + 1) * 6.0;
+        }
+        return o;
+    }
+    function fnetBlock(lens) {
+        const o = ops();
+        for (const s of lens) o.transform = o.transform + (s * rfft(D) + D * cfft(pow2AtLeast(s)));
+        return o;
+    }
+    function prefill(variant, lens, lmAll = true) {
+        let tokens = 0; for (const s of lens) tokens += s;
+        const o = ops(), circ = variant === 'hyena_circ';
+        for (let layer = 0; layer < L; layer++) {
+            if (variant === 'transformer' || (variant === 'hybrid' && layer % 4 === 0)) add(o, attentionBlock(lens, tokens));
+            else if (variant === 'hyena' || variant === 'hybrid' || variant === 'hyena_circ') add(o, hyenaBlock(lens, tokens, circ));
+            else if (variant === 'fnet') add(o, fnetBlock(lens));
+            add(o, mlp(tokens, circ));
+        }
+        const head = ops(); head.dense = 2.0 * V * D * (lmAll ? tokens : lens.length);
+        add(o, head);
+        const t = total(o), opt = o.transform + o.spectral;
+        return { ...o, total: t, optical: opt, share: opt / t, amdahl: 1 / (1 - opt / t) };
+    }
+    // Share of *time* if transform work runs at 1/r of the dense rate (illustrative).
+    function timeShare(o, r) { const t = o.optical * r; return t / (o.total - o.optical + t); }
+
+    const api = { VARIANTS, LABEL, prefill, timeShare };
+    if (typeof module !== 'undefined') module.exports = api; else root.FlopModel = api;
+})(this);
+
+</script>
+    <script>
+    (function(){
+        const F = window.FlopModel, $ = id => document.getElementById(id);
+        const COL = { dense: '#a2978b', attention: '#97cdc6', transform: '#de805a', spectral: '#e3b174', other: '#5f564d' };
+        const LINE = { fnet: '#97cdc6', hyena: '#aabd59', hybrid: '#e3b174', hyena_circ: '#de805a' };
+        const SHORT = { fnet: 'FNet-shaped', hyena: 'Hyena-2', hybrid: 'Hybrid 1:3', hyena_circ: 'Hyena-2 + circulant' };
+        $('am-v').innerHTML = F.VARIANTS.map(v => `<option value="${v}"${v === 'hyena' ? ' selected' : ''}>${F.LABEL[v]}</option>`).join('');
+        const pct = (x, d = 2) => (100 * x).toFixed(d) + '%';
+        const fmt = (x, d = 1) => x.toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
+        function rec() {
+            const v = $('am-v').value, s = 2 ** +$('am-s').value, lm = $('am-lm').value === '1', r = +$('am-r').value;
+            $('am-s-val').textContent = s.toLocaleString('en-GB');
+            const o = F.prefill(v, [s], lm), ts = F.timeShare(o, r);
+            $('am-g').textContent = fmt(o.total / 1e9);
+            $('am-f').textContent = pct(o.share);
+            $('am-a').textContent = o.amdahl.toFixed(3) + 'x';
+            $('am-t').textContent = pct(ts) + ' / ' + (1 / (1 - ts)).toFixed(3) + 'x';
+            bar(o); line(lm, r, s);
+            window.amState = { gflop: $('am-g').textContent, share: $('am-f').textContent, amdahl: $('am-a').textContent, time: pct(ts), timeBound: (1 / (1 - ts)).toFixed(3) + 'x' };
+        }
+        function bar(o) {
+            const cv = $('am-bar'), g = cv.getContext('2d'), W = cv.width; g.clearRect(0, 0, W, cv.height);
+            g.font = '11px "Geist Mono", monospace'; let x = 10;
+            for (const k of ['dense', 'attention', 'other', 'transform', 'spectral']) {
+                const w = (W - 20) * o[k] / o.total; g.fillStyle = COL[k]; g.fillRect(x, 8, Math.max(w, o[k] > 0 ? 1 : 0), 26); x += w;
+            }
+            let lx = 10;
+            for (const k of ['dense', 'attention', 'other', 'transform', 'spectral']) {
+                g.fillStyle = COL[k]; g.fillRect(lx, 46, 10, 10); g.fillStyle = '#efe8dc';
+                const t = `${k} ${pct(o[k] / o.total, 1)}`; g.fillText(t, lx + 14, 55); lx += g.measureText(t).width + 34;
+            }
+        }
+        function line(lm, r, cur) {
+            const cv = $('am-line'), g = cv.getContext('2d'), W = cv.width, H = cv.height; g.clearRect(0, 0, W, H);
+            g.font = '11px "Geist Mono", monospace';
+            const L0 = 9, L1 = 17, Y0 = -4, Y1 = 0;                 // log2 tokens; log10 share from 0.01% to 100%
+            const B = 66;                                             // bottom margin: axis labels and the legend row
+            const X = e => 70 + (e - L0) / (L1 - L0) * (W - 100), Y = y => H - B - (Math.log10(y) - Y0) / (Y1 - Y0) * (H - B - 30);
+            g.strokeStyle = '#3a322b'; g.strokeRect(70, 30, W - 100, H - B - 30);
+            g.fillStyle = '#a2978b';
+            for (let e = L0; e <= L1; e += 2) g.fillText((2 ** e).toLocaleString('en-GB'), X(e) - 16, H - B + 16);
+            for (let y = Y0; y <= Y1; y++) { g.fillText(pct(10 ** y, y < -2 ? 2 : 0), 8, Y(10 ** y) + 4); g.strokeStyle = '#2a241f'; g.beginPath(); g.moveTo(70, Y(10 ** y)); g.lineTo(W - 30, Y(10 ** y)); g.stroke(); }
+            g.fillText('prompt tokens (log scale) →', W / 2 - 80, H - B + 32);
+            g.fillText('share of prefill ' + (r === 1 ? 'FLOPs' : 'time at r = 1/' + r) + ' (log scale)', 75, 22);
+            for (const v of ['fnet', 'hyena', 'hybrid', 'hyena_circ']) {
+                g.strokeStyle = LINE[v]; g.lineWidth = 2; g.beginPath();
+                for (let e = L0; e <= L1; e++) { const o = F.prefill(v, [2 ** e], lm), y = F.timeShare(o, r); e === L0 ? g.moveTo(X(e), Y(y)) : g.lineTo(X(e), Y(y)); }
+                g.stroke(); g.lineWidth = 1;
+            }
+            const sel = $('am-v').value;
+            if (sel !== 'transformer') { const o = F.prefill(sel, [cur], lm); g.fillStyle = '#efe8dc'; g.beginPath(); g.arc(X(Math.log2(cur)), Y(F.timeShare(o, r)), 5, 0, 7); g.fill(); }
+            let lx = 70;                                              // legend row under the axis, so it never hides a line
+            for (const v of ['hyena_circ', 'hyena', 'hybrid', 'fnet']) { g.fillStyle = LINE[v]; g.fillRect(lx, H - 12, 16, 3); g.fillStyle = '#efe8dc'; g.fillText(SHORT[v], lx + 22, H - 7); lx += g.measureText(SHORT[v]).width + 50; }
+            g.fillStyle = '#a2978b'; g.fillText('(transformer: share 0)', lx, H - 7);
+        }
+        ['am-v', 'am-s', 'am-lm', 'am-r'].forEach(id => $(id).addEventListener('input', rec));
+        window.amDemo = { set(o) { for (const [k, v] of Object.entries(o)) $(k).value = v; rec(); return window.amState; } };
+        rec();
+    })();
+    </script>
+    <p style="font-size:0.85rem;">Things to try: switch the block-circulant model's LM head to the last token only, then set r = 1/16. That is the only corner of this space where a transform engine has most of the work.</p>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>Structured Weights: Circulant and Monarch</h2>
+    <p>If token mixing is too small a share, the transforms would have to come from the <strong>weights</strong>: matrices whose product with a vector is a transform.</p>
+    <ul>
+        <li><strong>Circulant and block-circulant matrices:</strong> a circulant block is defined by one vector, and multiplying by it is an FFT, a pointwise product and an inverse FFT. Cheng et al. used circulant projections in fully connected layers (<a href="https://arxiv.org/abs/1502.03436">arXiv:1502.03436</a>); CirCNN built block-circulant CNNs with FFT-based hardware (<a href="https://arxiv.org/abs/1708.08917">arXiv:1708.08917</a>).</li>
+        <li><strong>Butterfly and Monarch matrices:</strong> products of sparse or block-diagonal factors and permutations, a family that contains the FFT (Dao et al., <a href="https://arxiv.org/abs/1903.05895">arXiv:1903.05895</a>; <a href="https://arxiv.org/abs/2204.00595">arXiv:2204.00595</a>). Monarch Mixer uses them along both sequence and hidden dimensions and has a causal variant that matched GPT-style Transformers at 360M parameters in pretraining perplexity (<a href="https://arxiv.org/abs/2310.12109">arXiv:2310.12109</a>).</li>
+    </ul>
+    <p>The analysis makes every projection and MLP matrix block-circulant (block 256, illustrative) in the Hyena-2 model. The LM head then dominates, so where it runs decides the answer:</p>
+    <div class="table-wrap"><table>
+<thead><tr><th>Variant</th><th>Prompt</th><th>GFLOP</th><th>Optical share</th><th>Amdahl bound</th></tr></thead>
+<tbody>
+<tr><td>Hyena-2</td><td>2,048</td><td>31,959.9</td><td>0.21%</td><td>1.002x</td></tr>
+<tr><td>Hyena-2</td><td>32,768</td><td>511,686.3</td><td>0.28%</td><td>1.003x</td></tr>
+<tr><td>Hyena-2 + block-circulant weights</td><td>2,048</td><td>426.6</td><td>84.54%</td><td>6.469x</td></tr>
+<tr><td>Hyena-2 + block-circulant weights</td><td>32,768</td><td>7,152.8</td><td>85.47%</td><td>6.883x</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>, section &ldquo;2. Prefill&rdquo;</p>
+    <div class="callout">
+        <div class="callout-label">Speculative</div>
+        <p>This is the only variant where a transform engine has most of the work, and it is the least established: phase A of this work found no published LLM of this size with block-circulant weights throughout. Quality at that scale is unknown, and the weights live on the Fourier-plane mask (<a href="#slide-11">slide 11</a>).</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Transform-Domain Compression of the KV Cache</h2>
+    <p>A third place transforms appear: compressing what the model stores, along the sequence, by keeping a few frequency coefficients. This literature exists and is recent:</p>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Work</th><th>What it transforms</th><th>Reported result</th></tr>
+        <tr><td>Fourier Transformer (He et al., <a href="https://arxiv.org/abs/2305.15099">arXiv:2305.15099</a>)</td><td>Hidden states, with a DCT computed by FFT, progressively removing sequence redundancy</td><td>Inherits pretrained weights (BART); strong long-range benchmark results</td></tr>
+        <tr><td>FreqKV (Kai et al., <a href="https://arxiv.org/abs/2505.00570">arXiv:2505.00570</a>)</td><td>The KV cache, iteratively compressed in the frequency domain, keeping low frequencies</td><td>Extends LLaMA-2-7B's context to 256K tokens with minimal training at 8K</td></tr>
+        <tr><td>FourierAttention (Liu et al., <a href="https://arxiv.org/abs/2506.11886">arXiv:2506.11886</a>)</td><td>The long-context-insensitive head dimensions, projected onto fixed-length Fourier bases</td><td>Training-free; a fused Triton kernel</td></tr>
+    </table>
+    </div>
+    <ul>
+        <li><strong>What it saves is memory and bandwidth,</strong> which is what decode is short of (<a href="https://brendanjameslynskey.github.io/InfSim_03_LLM_Inference_Workloads/#slide-06">LLM Inference Simulators 03, &ldquo;KV-Cache Arithmetic&rdquo;</a>). The transforms themselves are small next to the model's matmuls.</li>
+        <li><strong>A possible optical role (speculation):</strong> the prefill pool compresses the KV cache before it crosses the link, so the transform runs where optics is strong and shrinks the hand-off (<a href="#slide-12">slide 12</a>). Whether these methods' accuracy survives analogue noise is untested.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>Precision and Energy per Token</h2>
+    <p><strong>Precision:</strong> float workloads need the analogue error to match the number format's own rounding (<a href="https://brendanjameslynskey.github.io/FOptInf_01_Fourier_Optics_for_Engineers/#slide-17">deck 01, &ldquo;Precision: ENOB, Noise and Crosstalk&rdquo;</a>): about 8.0 ENOB for INT8-like error, 6.3 for FP8 E4M3 and 10.3 for BF16. Below that, averaging costs 4&times; the passes per bit.</p>
+    <p><strong>Energy:</strong> DAC+ADC pairs per prompt token, and their energy at each ENOB, against the digital energy of the transform work they replace, in &micro;J per prompt token (Walden FoMs 10/20 fJ and 1 pJ/FLOP, both illustrative):</p>
+    <div class="table-wrap"><table>
+<thead><tr><th>Variant</th><th>Pairs / token</th><th>Digital uJ</th><th>ENOB 8 uJ</th><th>ENOB 12 uJ</th><th>Break-even ENOB</th></tr></thead>
+<tbody>
+<tr><td>FNet-shaped (non-causal)</td><td>131,072</td><td>11.1</td><td>1.0</td><td>16.1</td><td>11.5</td></tr>
+<tr><td>Hyena-2</td><td>262,144</td><td>33.0</td><td>2.0</td><td>32.2</td><td>12.0</td></tr>
+<tr><td>Hybrid 1:3 attention:Hyena</td><td>196,608</td><td>24.8</td><td>1.5</td><td>24.2</td><td>12.0</td></tr>
+<tr><td>Hyena-2 + block-circulant weights</td><td>2,162,688</td><td>176.1</td><td>16.6</td><td>265.8</td><td>11.4</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>, section &ldquo;7. Conversion energy&rdquo;</p>
+    <ul>
+        <li><strong>The break-even ENOB is about 12</strong> for every variant, because each output sample of an FFT convolution replaces a similar number of FLOPs whatever the model. At ENOB 8, Hyena-2's conversions cost 2.0 &micro;J per token against 33.0 &micro;J for the same work done digitally.</li>
+        <li><strong>But that work is small.</strong> For scale: the whole Hyena-2 prefill costs 16,656 uJ per prompt token of dynamic FLOP energy at 1 pJ/FLOP; the transform work is a small slice of it.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-11">
+    <div class="slide-number">11</div>
+    <h2>Holding the Weights: Fourier-Plane Mask Capacity</h2>
+    <p>A 4f pass multiplies by one mask. Each Hyena channel's filter spectrum (or each circulant block) must be on the mask while its inputs pass, so the mask is the weight store, and rewriting it costs a frame of the spatial light modulator (<a href="https://brendanjameslynskey.github.io/FOptInf_01_Fourier_Optics_for_Engineers/#slide-09">deck 01, &ldquo;Spatial Light Modulators&rdquo;</a>). Time to rewrite a 2-megapixel mask enough times for one forward pass, at three device rates: a micromirror device at 1-bit depth (20 kHz) and 8-bit depth (1.03 kHz), and a liquid-crystal SLM (30 Hz):</p>
+    <div class="table-wrap"><table>
+<thead><tr><th>Variant</th><th>Prompt</th><th>Rewrites</th><th>DMD 20 kHz</th><th>DMD 1.03 kHz</th><th>LC 30 Hz</th></tr></thead>
+<tbody>
+<tr><td>Hyena-2</td><td>2,048</td><td>269</td><td>13.4 ms</td><td>261 ms</td><td>9.0 s</td></tr>
+<tr><td>Hyena-2</td><td>32,768</td><td>4,296</td><td>214.8 ms</td><td>4,167 ms</td><td>143.2 s</td></tr>
+<tr><td>Hyena-2 + block-circulant weights</td><td>2,048</td><td>277</td><td>13.8 ms</td><td>269 ms</td><td>9.2 s</td></tr>
+<tr><td>Hyena-2 + block-circulant weights</td><td>32,768</td><td>4,303</td><td>215.2 ms</td><td>4,174 ms</td><td>143.4 s</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>, section &ldquo;8. Holding the filters&rdquo;</p>
+    <ul>
+        <li><strong>Filter spectra are big:</strong> 2 &times; 4,096 channels &times; (L+1) frequency bins per layer, for 32 layers. A 2-megapixel mask holds a fraction of one forward pass's worth.</li>
+        <li><strong>Rewrites are amortised over the batch.</strong> Every sequence in a prefill batch uses the same filters, so one pass over the mask serves all of them: large prefill batches help, and token-by-token decode cannot amortise at all.</li>
+        <li><strong>For comparison,</strong> the simulator prefills a 2,048-token Llama-3-8B prompt on one H100 in 59.033 ms (its <a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim/blob/main/examples/results.md">results.md</a>, &sect;1). At the 8-bit device rate the mask alone takes longer, unless batches are large or the mask is much bigger or faster. The device figures are illustrative, from one paper (Miscuglio et al., <a href="https://arxiv.org/abs/2008.05853">arXiv:2008.05853</a>).</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-12">
+    <div class="slide-number">12</div>
+    <h2>What Prefill Hands to Decode</h2>
+    <p>Disaggregated serving moves state from the prefill pool to the decode pool once per request (<a href="https://brendanjameslynskey.github.io/InfSim_05_Disaggregated_Inference/#slide-04">LLM Inference Simulators 05, &ldquo;What the KV Transfer Costs&rdquo;</a>). What that state is depends on the mixer:</p>
+    <div class="table-wrap"><table>
+<thead><tr><th>Decode style</th><th>Bytes per prompt token</th><th>Bytes for a 2,048-token prompt</th><th>Grows with the prompt</th></tr></thead>
+<tbody>
+<tr><td>Transformer KV cache (GQA)</td><td>131,072</td><td>268.4 MB</td><td>yes</td></tr>
+<tr><td>Hyena direct: cached projection inputs</td><td>524,288</td><td>1,073.7 MB</td><td>yes</td></tr>
+<tr><td>Hyena distilled recurrence state</td><td>n/a</td><td>16.8 MB</td><td>no</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">results.md</a>, section &ldquo;9. What prefill hands to decode&rdquo;</p>
+    <ul>
+        <li><strong>Direct long-convolution decode is heavier than attention.</strong> Hyena-2 caches 2 &times; d values per layer per token against GQA's 2 &times; 8 heads &times; 128: four times the bytes to store, to read every decode step, and to transfer.</li>
+        <li><strong>Distillation changes the hand-off completely:</strong> a constant-size state, independent of prompt length. That lever is larger than any choice of link.</li>
+        <li>The phase-B simulator will measure both levers: the link (electrical or photonic) and what crosses it.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-13">
+    <div class="slide-number">13</div>
+    <h2>Why Disaggregation Fits</h2>
+    <div class="canvas-wrap">
+        <svg viewBox="0 0 760 200" width="760" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Prefill pool with an optical transform engine, a link carrying the KV cache or state, and a decode pool of HBM-rich digital devices">
+            <style>
+                .bx { fill: rgba(151,205,198,0.08); stroke: #97cdc6; }
+                .bo { fill: rgba(222,128,90,0.10); stroke: #de805a; }
+                .ar { stroke: #a2978b; stroke-width: 1.5; fill: none; marker-end: url(#ah); }
+                .t  { fill: #efe8dc; font-family: 'Geist Mono', monospace; font-size: 12px; }
+                .d  { fill: #a2978b; font-family: 'Geist Mono', monospace; font-size: 10px; }
+            </style>
+            <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#a2978b"/></marker></defs>
+            <rect x="20" y="30" width="250" height="140" rx="8" class="bx"/>
+            <text x="35" y="52" class="t">Prefill pool (compute-bound)</text>
+            <rect x="35" y="66" width="105" height="88" rx="6" class="bo"/><text x="45" y="88" class="t">optical</text><text x="45" y="104" class="t">transform</text><text x="45" y="120" class="d">FFT / conv</text><text x="45" y="134" class="d">mask = filters</text>
+            <rect x="150" y="66" width="105" height="88" rx="6" class="bx"/><text x="160" y="88" class="t">digital</text><text x="160" y="104" class="t">part</text><text x="160" y="120" class="d">matmuls, MLP,</text><text x="160" y="134" class="d">LM head</text>
+            <path d="M270 100 L460 100" class="ar"/>
+            <text x="290" y="88" class="t">KV cache or state</text><text x="290" y="122" class="d">link: electrical or photonic</text><text x="290" y="136" class="d">(photonic links are not</text><text x="290" y="150" class="d">Fourier optics)</text>
+            <rect x="470" y="30" width="270" height="140" rx="8" class="bx"/>
+            <text x="485" y="52" class="t">Decode pool (memory-bound)</text>
+            <text x="485" y="84" class="d">HBM-rich digital devices</text><text x="485" y="102" class="d">one token per step</text><text x="485" y="120" class="d">direct cache or recurrence</text><text x="485" y="138" class="d">no long transforms</text>
+        </svg>
+    </div>
+    <ul>
+        <li><strong>The phases want different hardware.</strong> Prefill is compute-bound, decode memory-bound (<a href="https://brendanjameslynskey.github.io/InfSim_03_LLM_Inference_Workloads/#slide-01">LLM Inference Simulators 03, &ldquo;Two Phases: Prefill and Decode&rdquo;</a>); Splitwise proposes different machines for each (<a href="https://arxiv.org/abs/2311.18677">arXiv:2311.18677</a>), and DistServe provisions them separately for goodput (<a href="https://arxiv.org/abs/2401.09670">arXiv:2401.09670</a>).</li>
+        <li><strong>Prefill is where a transform engine could work:</strong> long transforms, and filters held on the mask across a whole batch. Decode keeps its token-by-token recurrence on digital parts. If the transforms were a large share, disaggregation would let the optical engine join only the pool that can use it.</li>
+        <li><strong>Photonic interconnect is a separate topic:</strong> optical I/O chiplets (Wade et al., TeraPHY, <a href="https://doi.org/10.1109/MM.2020.2976067">IEEE Micro 2020</a>) and data-centre optics (Cheng et al., <a href="https://doi.org/10.1364/OPTICA.5.001354">Optica 2018</a>) move the KV cache; they compute nothing.</li>
+    </ul>
+    <div class="callout">
+        <div class="callout-label">Public material, and this deck's speculation</div>
+        <p>Optical-computing companies publish little about inference mapping. Several publicly describe photonic computing systems for AI and for FHE, and published optical computing for FHE centres on Fourier transforms (<a href="https://brendanjameslynskey.github.io/FHESim_04_Optical_NTT_Engines/">FHESim 04</a>). The mapping in this deck is the author's own analysis and <strong>speculation</strong>, attributed to no company.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-14">
+    <div class="slide-number">14</div>
+    <h2>What Does Not Map</h2>
+    <div class="table-wrap">
+    <table>
+        <tr><th>Work</th><th>Why a Fourier transform engine does not help</th></tr>
+        <tr><td>Attention (QK<sup>T</sup>, softmax, AV)</td><td>A data-dependent, causal, softmax-normalised product: not a convolution. At long context it is the biggest term (69.6% of Llama-3-8B prefill at 131,072 tokens), and none of it is a transform</td></tr>
+        <tr><td>Dense projections, MLP, LM head</td><td>General matmuls: work for an optical MAC, not a Fourier engine, unless the weights are structured (<a href="#slide-08">slide 08</a>)</td></tr>
+        <tr><td>Mamba's selective scan</td><td>Input-dependent parameters rule out the convolution form; it is a recurrence</td></tr>
+        <tr><td>Decode, generally</td><td>One token per step: direct dot products or recurrences, memory-bound; relaxed tiling uses FFTs only in small latency-critical passes (<a href="#slide-05">slide 05</a>)</td></tr>
+        <tr><td>Norms, activations, softmax, sampling, MoE routing</td><td>Non-linear or data-dependent; stay digital</td></tr>
+        <tr><td>FNet mixing in a decoder</td><td>Not causal (<a href="#slide-03">slide 03</a>)</td></tr>
+        <tr><td>KV-cache reads</td><td>A bandwidth problem; optics could shrink it only through compression (<a href="#slide-09">slide 09</a>) or move it over photonic links</td></tr>
+    </table>
+    </div>
+    <p>And the hidden costs that apply even where it maps: conversions per value, precision passes, mask rewrites, sign recovery at the detector, and static power whether or not work arrives.</p>
+</section>
+
+<section class="slide" id="slide-15">
+    <div class="slide-number">15</div>
+    <h2>What to Take Away</h2>
+    <ul>
+        <li><strong>Standard decoders have no Fourier transforms.</strong> Optical MACs and Fourier engines are different bets; this series is about the second.</li>
+        <li><strong>Where FFTs do appear, they are what makes a model cheap,</strong> so they are a small share. A Llama-3-8B-shaped <strong>Hyena-2</strong> model spends 0.20% of its prefill FLOPs on transform work at 2,048 tokens: if the optics made it free, prefill would be at most 1.002x faster (Amdahl). The FFT is what makes Hyena cheap; the MLP and projections stay digital and dominate.</li>
+        <li>Only when the <strong>weights themselves are structured</strong> (block-circulant, speculative at LLM scale) does transform work matter: 13.99% of a far smaller total (Amdahl bound 1.16x) with the LM head charged for every prompt token, because the dense LM head is then the bulk of the work; with the LM head on the last token only, 84.54% and 6.5x.</li>
+        <li><strong>Causality splits the phases:</strong> prefill has long, padded FFTs with weights held across the batch; decode is token by token, and its FFT option (relaxed tiling) uses small passes on the critical path. That is why, if anything, a transform engine belongs in a <strong>prefill pool</strong>.</li>
+        <li><strong>The bill:</strong> about 8 ENOB for INT8-like error and 10 for BF16-like, break-even with digital FFT energy near 12 ENOB, and mask rewrites that can exceed a GPU's whole prefill time.</li>
+        <li><strong>Next (planned):</strong> deck 03 puts an optical transform device into the prefill pool of <a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim">Disaggregated_Inference_Sim</a> and measures TTFT, TPOT, goodput, joules per token and PPA against all-GPU pools, with the break-even point.</li>
+    </ul>
+</section>
+
+<!-- ════════════════════════════════════ Footer ════════════════════════════════════ -->
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference">Fourier Optics for Inference series</a> &middot; <a href="https://brendanjameslynskey.github.io/LLM_Hub_Fourier_Optics_Inference/#glossary">glossary: every concept and where it is explained</a> &middot; numbers: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">analysis/results.md</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;"><a href="https://brendanjameslynskey.github.io/FOptInf_01_Fourier_Optics_for_Engineers/">&larr; 01 Fourier Optics for Engineers</a> &nbsp;&middot;&nbsp; <a href="https://brendanjameslynskey.github.io/FOptInf_03_Optical_Prefill_Pools/">03 Optical Prefill Pools: Simulated Results &rarr;</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">Sister series: <a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/">LLM Inference Simulators</a> &middot; <a href="https://brendanjameslynskey.github.io/FHE_Hub_Accelerator_Simulators/">FHE Accelerator Simulators</a> &middot; <a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/">Simulation Engineering Toolkit</a></p>
+</footer>
+
+<script>
+    // Smooth scroll for TOC links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // Subtle fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.slide').forEach(slide => {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(30px)';
+        slide.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(slide);
+    });
+</script>
+
+</body>
+</html>
