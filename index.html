@@ -1048,6 +1048,10 @@
         </div>
         <p class="fig-cap">Data: e16's S &times; converter-ENOB grid (4,096-point FFT). The simulator's measure is (SNR &minus; 1.76)/6.02 of the whole FFT's relative error; the right-hand readout restates it in the series' ENOB (slide 06 explains the difference). <span class="src-tag derived">modelled</span></p>
     </div>
+    <div class="callout">
+        <div class="callout-label">New in plms 0.4: wavelengths sharing one mesh</div>
+        <p>These bits are for one wavelength. A mesh's phases scale with wavelength, so when W wavelengths share one mesh every channel away from the centre sees a slightly wrong transform. On a 200 GHz grid around 1310 nm the worst channel keeps <strong>2.731 bits at S = 1 and 3.19 at S = 6 with 4 &lambda;</strong> (2.74 and 3.198 alone), and 2.558 at S = 6 with 32. Exact mode barely notices: the worst of 16 channels is 0.01558 off the ideal transform and loses 0.04545 dB of margin. See the explainer's <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>. <span class="src-tag derived">modelled</span></p>
+    </div>
 </section>
 
 <section class="slide" id="slide-06">
@@ -1137,6 +1141,10 @@
     </table>
     </div>
     <p>A stronger laser feeds more units but costs proportionally more at the wall: across these five lasers the laser energy per butterfly-stage stays between 0.3125 and 0.3925 pJ (<code>breakeven.py</code>), all above the 0.2141 pJ digital figure of slide 07.</p>
+    <div class="callout">
+        <div class="callout-label">New in plms 0.4: one mesh, many wavelengths</div>
+        <p>The light budget holds: with the wavelength error included, one laser still feeds U &times; W = 20 at 4 &lambda; and 6 dB. Two other limits come first. The 5 &micro;m rings' free spectral range, 14.01 nm, holds at most 8 channels at 200 GHz. The signal and LO paths must match to 0.08156&nbsp;&micro;m, or the LO must be trimmed per channel (an unmatched 1 mm rotates the edge channel of 16 &times; 200 GHz by 122.6 rad). Heaters cannot calibrate the error away: it is a tilt across the band, and one set of phases serves every channel. A mesh per wavelength removes it, but at 4 &lambda; and U = 64 that takes 64 mm&sup2; and 66.56 W of heaters, against 25.6 mm&sup2; and 32 W shared. See the explainer's <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>. <span class="src-tag derived">modelled</span></p>
+    </div>
 </section>
 
 <section class="slide" id="slide-10">
@@ -1239,7 +1247,7 @@
 <section class="slide" id="slide-16">
     <div class="slide-number">16</div>
     <h2>What Would Have to Be True</h2>
-    <p>Four conditions, each with its number from this deck, for an AI workload to pay on this chip. All must hold together.</p>
+    <p>Five conditions, each with its number from this deck, for an AI workload to pay on this chip. All must hold together.</p>
     <div class="table-wrap">
     <table class="cards numfirst">
         <tr><th>#</th><th>Condition</th><th>Number</th><th data-card="Public roadmap">In the public roadmap?</th></tr>
@@ -1247,6 +1255,7 @@
         <tr><td data-label="#">2</td><td data-label="Condition">Static light and heat below a digital butterfly</td><td data-label="Number">Laser 0.3182 + heaters 1.175 pJ against 0.2141; needs wall-plug efficiency of 0.4302 (modelled 0.15) and near-zero hold power (MEMS or non-volatile: 0.3183 total)</td><td data-label="Public roadmap">No: laser efficiency and phase-shifter technology are not stated</td></tr>
         <tr><td data-label="#">3</td><td data-label="Condition">Conversions nearly free</td><td data-label="Number">Even with free heaters and a lossless laser, E_conv &le; 0.005926 pJ/bit at S = 6 (modelled 0.5)</td><td data-label="Public roadmap">Partly: stacking cuts the receiver to 30 fF; the energy per crossing is not stated</td></tr>
         <tr><td data-label="#">4</td><td data-label="Condition">A workload that is mostly transform and tolerates FP4-level error</td><td data-label="Number">Transform share like circulant weights' 84.54%; about 3.13 effective bits (NVFP4's rounding, if block-scaled: our reading) against 3.198 available</td><td data-label="Public roadmap">Partly: &ldquo;45 GFLOPS of FP4 (E2M1) MAC&rdquo; &ldquo;for an additional 1 pJ/bit&rdquo; is projected (&sect;V) <span class="src-tag paper">paper</span>; its analogue-ness is unknown</td></tr>
+        <tr><td data-label="#">5</td><td data-label="Condition">If wavelengths share a mesh: achromatic phases, or one mesh per wavelength <span class="src-tag derived">modelled</span></td><td data-label="Number">With 4 &lambda; on one mesh the worst channel keeps 3.19 bits at S = 6 (3.198 alone), with 32 only 2.558; a mesh per wavelength removes the error but at 4 &lambda; and U = 64 takes 64 mm&sup2; and 66.56 W of heaters, against 25.6 mm&sup2; and 32 W shared</td><td data-label="Public roadmap">No: the wavelength plan and how the mesh handles it are not stated</td></tr>
     </table>
     </div>
     <p>Against the 8-bit digital butterfly instead of a matched one, the bar is lower but still steep: with MEMS phase shifters E_conv would need to be 0.02787 pJ/bit. These are our numbers (<code>analysis/out/results.md</code>), on the simulator's illustrative parameters.</p>
@@ -1289,6 +1298,7 @@
     <ul class="res-list">
         <li><a href="https://arxiv.org/abs/2608.21536">Kundu et al., &ldquo;Programmable Compute-in-Transit using Integrated Photonics&rdquo;, arXiv:2608.21536</a><span class="what">The module paper (PDF). &sect;II: 14 GBaud/s devices. &sect;V &ldquo;Future work&rdquo;: a monolithic chip with a 112 GBaud/s PIC and custom high-speed logic at 28 GHz; 45 GFLOPS of FP4 (E2M1) MAC for an additional 1 pJ/bit, projected. The 3D stacking is the developer's public statement, not &sect;V.</span></li>
         <li>Photonic link module simulator, plms 0.3.0 at e3054d1: results sections 7 and 12&ndash;16, vendored in <code>data/plms_v0_3/</code><span class="what">Every <span class="src-tag derived">modelled</span> number. Presented in full on the explainer site: <a href="https://photonic-link-module-explained.vercel.app/method/">method</a>, and the chapters linked from slides 02&ndash;10.</span></li>
+        <li>The same simulator, plms 0.4.0 at fe2ee0a: results section 17 (wavelength-dependent transform error), vendored in <code>data/plms_v0_4/</code><span class="what">The plms 0.4 notes on slides 05, 09 and 16. Sections 7 and 12&ndash;16 are unchanged in 0.4.0. Explained in the <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>.</span></li>
         <li><a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">The series' FLOP-share analysis</a>, vendored in <code>data/foptinf_analysis/</code><span class="what">Amdahl shares and the series' ENOB rule.</span></li>
         <li><code>analysis/</code> in this repository: <code>precision_needed.py</code>, <code>breakeven.py</code><span class="what">Every <span class="src-tag derived">computed</span> number; results in <code>analysis/out/results.md</code>.</span></li>
     </ul>

@@ -2,7 +2,9 @@
 
 ``data/`` is never edited. This module checks its SHA-256 sums, loads the simulator's web JSON
 (plms 0.3.0 at e3054d1) and parses the tables of ``results_extract.md`` so that tests can check
-that every value the deck reads from the JSON matches the simulator's own report.
+that every value the deck reads from the JSON matches the simulator's own report. Experiment 17
+(wavelength-dependent transform error) is vendored separately from plms 0.4.0 at fe2ee0a in
+``data/plms_v0_4/``; sections 7 and 12-16 did not change in 0.4.0, so ``data/plms_v0_3/`` stays.
 """
 
 from __future__ import annotations
@@ -16,9 +18,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 PLMS = DATA / "plms_v0_3"
+PLMS_V04 = DATA / "plms_v0_4"
 SERIES = DATA / "foptinf_analysis"
 
 SIMULATOR = {"package": "plms", "version": "0.3.0", "commit": "e3054d1"}
+SIMULATOR_V04 = {"package": "plms", "version": "0.4.0", "commit": "fe2ee0a"}   # experiment 17 only
 
 
 def verify_checksums() -> dict[str, bool]:
@@ -37,8 +41,11 @@ def verify_checksums() -> dict[str, bool]:
 
 @lru_cache(maxsize=None)
 def experiment(name: str) -> dict:
-    """One experiment's web JSON, e.g. experiment('e16_approximate')."""
-    return json.loads((PLMS / f"{name}.json").read_text())
+    """One experiment's web JSON, e.g. experiment('e16_approximate'); e17 comes from plms_v0_4/."""
+    path = PLMS / f"{name}.json"
+    if not path.exists():
+        path = PLMS_V04 / f"{name}.json"
+    return json.loads(path.read_text())
 
 
 def figure(name: str, fig_id: str) -> dict:
@@ -79,16 +86,16 @@ def num(cell: str) -> float | None:
 
 
 @lru_cache(maxsize=None)
-def extract_text() -> str:
-    return (PLMS / "results_extract.md").read_text()
+def extract_text(version: str = "v0_3") -> str:
+    return (DATA / f"plms_{version}" / "results_extract.md").read_text()
 
 
 @lru_cache(maxsize=None)
-def extract_tables() -> list[dict]:
+def extract_tables(version: str = "v0_3") -> list[dict]:
     """Every markdown table in results_extract.md, with the section (##), subsection (###) and the
     nearest preceding prose line, so a table can be found by what it is about."""
     out, sec, sub, lead = [], "", "", ""
-    lines = extract_text().splitlines()
+    lines = extract_text(version).splitlines()
     i = 0
     while i < len(lines):
         ln = lines[i]
@@ -111,9 +118,10 @@ def extract_tables() -> list[dict]:
     return out
 
 
-def find_table(section_prefix: str, head0: str, sub: str = "", lead_contains: str = "") -> dict:
+def find_table(section_prefix: str, head0: str, sub: str = "", lead_contains: str = "",
+               version: str = "v0_3") -> dict:
     """The first table in a section whose first header cell is head0 (and optional filters)."""
-    for t in extract_tables():
+    for t in extract_tables(version):
         if (t["section"].startswith(section_prefix) and t["head"][0] == head0
                 and (not sub or t["sub"] == sub) and lead_contains in t["lead"]):
             return t

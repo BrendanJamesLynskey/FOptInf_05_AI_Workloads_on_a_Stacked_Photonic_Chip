@@ -4,7 +4,7 @@
 Reads the visible text of index.html (scripts and styles removed; numbers that the page computes at run time come
 from the tested JS models and are not in the HTML). Each number is accepted if it appears
 
-  - as written in data/plms_v0_3/results_extract.md, data/foptinf_analysis/results.md or sources/quotes.md;
+  - as written in data/plms_v0_3/ or data/plms_v0_4/results_extract.md, data/foptinf_analysis/results.md or sources/quotes.md;
   - as a value in data/*.json or analysis/out/*.json, rounded to the number of significant figures or decimal
     places the slide uses (a slide may round 3.198 to 3.2, never invent 3.3);
   - in tools/number_exemptions.json, each with its reason (slide numbers, small counts, years, identifiers).
@@ -22,7 +22,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TEXT_SOURCES = [ROOT / "data/plms_v0_3/results_extract.md", ROOT / "data/foptinf_analysis/results.md",
+TEXT_SOURCES = [ROOT / "data/plms_v0_3/results_extract.md", ROOT / "data/plms_v0_4/results_extract.md",
+                ROOT / "data/foptinf_analysis/results.md",
                 ROOT / "sources/quotes.md", ROOT / "analysis/out/results.md"]
 JSON_SOURCES = sorted((ROOT / "data").rglob("*.json")) + sorted((ROOT / "analysis/out").glob("*.json"))
 NUM = re.compile(r"(?<![\w.:/-])[-−]?\d[\d,]*(?:\.\d+)?(?:e[-+]?\d+)?(?![\w])")

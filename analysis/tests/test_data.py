@@ -194,3 +194,59 @@ def test_assumption_tags():
     assert tags <= {"public-statement", "paper", "illustrative", "patent", "textbook", "datasheet"}
     assert D.assumption("future.stacked")["source"] == "public-statement"
     assert D.assumption("future.baud_GBd")["source"] == "paper"
+
+
+# ── e17: wavelength-dependent transform error (plms 0.4.0, data/plms_v0_4/) ──
+V4 = "v0_4"
+WS = [1, 2, 4, 8, 16, 32]
+
+
+def test_e17_version_recorded():
+    first = D.extract_text(V4).splitlines()[0]
+    assert "fe2ee0a" in first and "plms 0.4.0" in first
+    assert D.experiment("e17_wavelength_error")["experiment"] == "e17_wavelength_error"
+
+
+def test_e17_shared_mesh_worst_channel():
+    rows = [r for r in D.table("e17_wavelength_error", "plans")["rows"] if r["grid"] == "200 GHz" and r["W"] == 16]
+    lsq = rows[0]["least_squares"]
+    close(lsq["fro_max"], 0.01558)
+    close(10 - lsq["margin_min_dB"], 0.04545)          # exact mode's cost against the 10 dB reference
+    assert rows[0]["ring_feasible"] is False
+    assert "it costs 0.04545 dB" in D.extract_text(V4)
+
+
+def test_e17_bits_table_matches_json():
+    t = D.find_table("17.", "grid", lead_contains="Approximate mode", version=V4)
+    for r in t["rows"]:
+        if r[0] != "200 GHz":
+            continue
+        s = D.series("e17_wavelength_error", "bits_vs_span", f"S = {r[1]}")
+        for y, cell in zip(s["y"], r[2:]):
+            close(y, D.num(cell))
+    s6 = D.series("e17_wavelength_error", "bits_vs_span", "S = 6")["y"]
+    s1 = D.series("e17_wavelength_error", "bits_vs_span", "S = 1")["y"]
+    close(s6[WS.index(32)], 2.558)
+    close(s6[WS.index(1)], 3.198)                      # one wavelength reproduces e16 (v0.3)
+    close(s1[WS.index(4)], 2.731)
+    close(s6[WS.index(4)], 3.19)
+
+
+def test_e17_per_wavelength_mesh():
+    t = D.find_table("17.", "W", lead_contains="A mesh per wavelength", version=V4)
+    names = {"shared area [mm²]": 1, "per-λ area [mm²]": 2, "shared heaters [W]": 3, "per-λ heaters [W]": 4}
+    for name, col in names.items():
+        s = D.series("e17_wavelength_error", "per_wavelength_mesh", name)
+        for y, r in zip(s["y"], t["rows"]):
+            close(y, D.num(r[col]))
+    row4 = [r for r in t["rows"] if r[0] == "4"][0]
+    assert [D.num(c) for c in row4[1:5]] == [25.6, 64, 32, 66.56]
+
+
+def test_e17_ring_and_lo_path():
+    t = D.find_table("17.", "ring radius [µm]", version=V4)
+    r5 = [r for r in t["rows"] if r[0] == "5"][0]
+    assert D.num(r5[1]) == 14.01 and D.num(r5[t["head"].index("max W at 200 GHz")]) == 8
+    text = D.extract_text(V4)
+    assert "matched to 0.08156 µm, or the LO trimmed per channel" in text
+    assert "a deterministic tilt across the band that one set of heaters cannot remove" in text
