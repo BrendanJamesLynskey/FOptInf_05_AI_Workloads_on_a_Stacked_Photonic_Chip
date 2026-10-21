@@ -1266,7 +1266,7 @@
     <h2>What to Take Away</h2>
     <ul>
         <li><strong>The memory wall comes first.</strong> With today's HBM the stacked chip and an all-digital ASIC take the same time (1&times;). Compute-bound, exact arithmetic caps the gain near 1.1&times;, and the same silicon spent on logic does better (0.9163&times;).</li>
-        <li><strong>Approximate mode keeps about 3 effective bits:</strong> 2.74 at S = 1, 3.198 at S = 6, set by receiver noise, not converters.</li>
+        <li><strong>Approximate mode keeps about 3 effective bits:</strong> 2.74 at S = 1, 3.198 at S = 6, set by receiver noise, not converters. That is for one wavelength: with 4 &lambda; sharing a mesh the worst channel keeps 3.19 at S = 6, with 32 only 2.558.</li>
         <li><strong>FP4 needs about that much.</strong> By the series' rule FP4 E2M1 needs 4.20 ENOB and INT4 3.80; in the simulator's measure FP4-class formats sit at 2.79 to 3.13 effective bits. FP8 and BF16 are out of reach.</li>
         <li><strong>Energy fails at matched precision.</strong> 6.929 pJ per butterfly-stage against 0.2141 digital; the laser alone (0.3182) exceeds the digital figure.</li>
         <li><strong>The screen:</strong> no candidate passes as modelled. Block-circulant weights are the only large transform share (84.54%); the FP4 MAC is a projection whose analogue-ness is unknown; KV and training traffic belong to the link, not the chip.</li>
@@ -1286,6 +1286,7 @@
         <tr><td data-label="Question">Which phase-shifter technology, at what hold power?</td><td data-label="Why it matters">Thermo-optic heaters cost 1.175 pJ per butterfly-stage, more than the whole digital butterfly</td></tr>
         <tr><td data-label="Question">Laser wall-plug efficiency and fan-out per laser?</td><td data-label="Why it matters">The laser alone exceeds a matched digital butterfly at 0.15</td></tr>
         <tr><td data-label="Question">How many stages can approximate mode chain, at what loss per stage?</td><td data-label="Why it matters">At 3 dB per stage, chaining loses bits (2.445 to 1.268)</td></tr>
+        <tr><td data-label="Question">How many wavelengths share each mesh, and are its phases achromatic or trimmed per channel?</td><td data-label="Why it matters">With 32 &lambda; on one mesh the worst channel falls to 2.558 bits at S = 6; a mesh per wavelength costs area and heater power (slide 16)</td></tr>
         <tr><td data-label="Question">Which AI kernels are targeted, and at which number format?</td><td data-label="Why it matters">The screen finds none at FP8 or above</td></tr>
     </table>
     </div>
