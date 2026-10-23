@@ -1,0 +1,1396 @@
+{
+ "config_hash": "fd0a12a4c5da",
+ "experiment": "e17_wavelength_error",
+ "figures": [
+  {
+   "annotations": [
+    {
+     "label": "ring FSR",
+     "type": "vline",
+     "x": 14.0065
+    },
+    {
+     "label": "slab at λ0",
+     "type": "hline",
+     "y": 0.0275592
+    }
+   ],
+   "id": "error_vs_span",
+   "kind": "line",
+   "series": [
+    {
+     "name": "100 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.14486,
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177
+     ],
+     "y": [
+      0.027794,
+      0.0283205,
+      0.0295865,
+      0.0328444,
+      0.0413753
+     ]
+    },
+    {
+     "name": "200 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355
+     ],
+     "y": [
+      0.0280479,
+      0.0292449,
+      0.0323916,
+      0.0407876,
+      0.061577
+     ]
+    },
+    {
+     "name": "400 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355,
+      73.271
+     ],
+     "y": [
+      0.0286113,
+      0.0315224,
+      0.0396297,
+      0.0602048,
+      0.106141
+     ]
+    },
+    {
+     "name": "800 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      9.15887,
+      18.3177,
+      36.6355,
+      73.271,
+      146.542
+     ],
+     "y": [
+      0.0299449,
+      0.0373935,
+      0.0574802,
+      0.103243,
+      0.196907
+     ]
+    },
+    {
+     "name": "20 nm",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      40.0,
+      80.0,
+      160.0,
+      320.0,
+      640.0
+     ],
+     "y": [
+      0.0437995,
+      0.0923289,
+      0.194824,
+      0.386663,
+      0.707947
+     ]
+    },
+    {
+     "name": "ring-infeasible plan",
+     "source": "illustrative",
+     "style": "marker",
+     "x": [
+      18.3177,
+      18.3177,
+      36.6355,
+      18.3177,
+      36.6355,
+      73.271,
+      18.3177,
+      36.6355,
+      73.271,
+      146.542,
+      40.0,
+      80.0,
+      160.0,
+      320.0,
+      640.0
+     ],
+     "y": [
+      0.0413753,
+      0.0407876,
+      0.061577,
+      0.0396297,
+      0.0602048,
+      0.106141,
+      0.0373935,
+      0.0574802,
+      0.103243,
+      0.196907,
+      0.0437995,
+      0.0923289,
+      0.194824,
+      0.386663,
+      0.707947
+     ]
+    }
+   ],
+   "title": "Worst-channel transform error vs plan span (slab)",
+   "x": {
+    "label": "span W·Δλ",
+    "scale": "log",
+    "unit": "nm"
+   },
+   "y": {
+    "label": "‖U − DFT4‖ / ‖DFT4‖",
+    "scale": "log",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [],
+   "id": "per_channel",
+   "kind": "line",
+   "series": [
+    {
+     "name": "centre",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      -8.58644,
+      -7.44158,
+      -6.29672,
+      -5.15186,
+      -4.00701,
+      -2.86215,
+      -1.71729,
+      -0.572429,
+      0.572429,
+      1.71729,
+      2.86215,
+      4.00701,
+      5.15186,
+      6.29672,
+      7.44158,
+      8.58644
+     ],
+     "y": [
+      0.0303939,
+      0.0289765,
+      0.0278336,
+      0.0269993,
+      0.0265021,
+      0.0263605,
+      0.0265793,
+      0.0271492,
+      0.0280479,
+      0.0292445,
+      0.0307034,
+      0.0323886,
+      0.034266,
+      0.0363051,
+      0.0384796,
+      0.0407673
+     ]
+    },
+    {
+     "name": "least squares",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      -8.58644,
+      -7.44158,
+      -6.29672,
+      -5.15186,
+      -4.00701,
+      -2.86215,
+      -1.71729,
+      -0.572429,
+      0.572429,
+      1.71729,
+      2.86215,
+      4.00701,
+      5.15186,
+      6.29672,
+      7.44158,
+      8.58644
+     ],
+     "y": [
+      0.0303664,
+      0.0289515,
+      0.0278116,
+      0.0269807,
+      0.0264875,
+      0.02635,
+      0.0265731,
+      0.0271472,
+      0.0280499,
+      0.0292502,
+      0.0307125,
+      0.0324006,
+      0.0342805,
+      0.0363218,
+      0.0384983,
+      0.0407876
+     ]
+    }
+   ],
+   "title": "Per channel, 16 × 200 GHz (slab)",
+   "x": {
+    "label": "channel offset",
+    "scale": "linear",
+    "unit": "nm"
+   },
+   "y": {
+    "label": "‖U − DFT4‖ / ‖DFT4‖",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "design margin",
+     "type": "hline",
+     "y": 6.0
+    },
+    {
+     "label": "ring FSR",
+     "type": "vline",
+     "x": 14.0065
+    }
+   ],
+   "id": "margin_vs_span",
+   "kind": "line",
+   "series": [
+    {
+     "name": "100 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.14486,
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177
+     ],
+     "y": [
+      9.99982,
+      9.99926,
+      9.99734,
+      9.99038,
+      9.96359
+     ]
+    },
+    {
+     "name": "200 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355
+     ],
+     "y": [
+      9.99957,
+      9.99792,
+      9.99148,
+      9.9658,
+      9.60276
+     ]
+    },
+    {
+     "name": "400 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355,
+      73.271
+     ],
+     "y": [
+      9.99888,
+      9.99348,
+      9.97,
+      9.67394,
+      6.84398
+     ]
+    },
+    {
+     "name": "800 GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      9.15887,
+      18.3177,
+      36.6355,
+      73.271,
+      146.542
+     ],
+     "y": [
+      9.9967,
+      9.97753,
+      9.81319,
+      7.0561,
+      -7.09815
+     ]
+    },
+    {
+     "name": "20 nm",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      40.0,
+      80.0,
+      160.0,
+      320.0,
+      640.0
+     ],
+     "y": [
+      9.95439,
+      7.80903,
+      -6.2795,
+      "-inf",
+      "-inf"
+     ]
+    },
+    {
+     "name": "ring-infeasible plan",
+     "source": "illustrative",
+     "style": "marker",
+     "x": [
+      18.3177,
+      18.3177,
+      36.6355,
+      18.3177,
+      36.6355,
+      73.271,
+      18.3177,
+      36.6355,
+      73.271,
+      146.542,
+      40.0,
+      80.0,
+      160.0,
+      320.0,
+      640.0
+     ],
+     "y": [
+      9.96359,
+      9.9658,
+      9.60276,
+      9.97,
+      9.67394,
+      6.84398,
+      9.97753,
+      9.81319,
+      7.0561,
+      -7.09815,
+      9.95439,
+      7.80903,
+      -6.2795,
+      "-inf",
+      "-inf"
+     ]
+    }
+   ],
+   "title": "Exact mode: worst-channel margin vs span (slab)",
+   "x": {
+    "label": "span W·Δλ",
+    "scale": "log",
+    "unit": "nm"
+   },
+   "y": {
+    "label": "margin",
+    "scale": "linear",
+    "unit": "dB"
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "ring FSR",
+     "type": "vline",
+     "x": 14.0065
+    }
+   ],
+   "id": "bits_vs_span",
+   "kind": "line",
+   "series": [
+    {
+     "name": "S = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.14486,
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355
+     ],
+     "y": [
+      2.74616,
+      2.73657,
+      2.71389,
+      2.66159,
+      2.51491,
+      2.15744
+     ]
+    },
+    {
+     "name": "S = 2",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.14486,
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355
+     ],
+     "y": [
+      2.75791,
+      2.74744,
+      2.72446,
+      2.66209,
+      2.48589,
+      2.07039
+     ]
+    },
+    {
+     "name": "S = 4",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.14486,
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355
+     ],
+     "y": [
+      2.53563,
+      2.52976,
+      2.51213,
+      2.45989,
+      2.31131,
+      1.93845
+     ]
+    },
+    {
+     "name": "S = 6",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      1.14486,
+      2.28972,
+      4.57943,
+      9.15887,
+      18.3177,
+      36.6355
+     ],
+     "y": [
+      1.87205,
+      1.86951,
+      1.86226,
+      1.84034,
+      1.76807,
+      1.55133
+     ]
+    },
+    {
+     "name": "ring-infeasible plan",
+     "source": "illustrative",
+     "style": "marker",
+     "x": [
+      18.3177,
+      36.6355,
+      18.3177,
+      36.6355,
+      18.3177,
+      36.6355,
+      18.3177,
+      36.6355
+     ],
+     "y": [
+      2.51491,
+      2.15744,
+      2.48589,
+      2.07039,
+      2.31131,
+      1.93845,
+      1.76807,
+      1.55133
+     ]
+    }
+   ],
+   "title": "Approximate mode: effective bits, 200 GHz grid (slab)",
+   "x": {
+    "label": "span W·Δλ",
+    "scale": "log",
+    "unit": "nm"
+   },
+   "y": {
+    "label": "effective bits",
+    "scale": "linear",
+    "unit": "bits"
+   }
+  }
+ ],
+ "profile": "full",
+ "schema": "plms-web-data",
+ "schema_version": 5,
+ "sources": {
+  "laser.margin_dB": "illustrative",
+  "oft.kind": "paper",
+  "oft.ng_over_ns": "illustrative",
+  "wdm.band_nm": "textbook",
+  "wdm.lambda0_nm": "illustrative",
+  "wdm.ref_margin_dB": "illustrative",
+  "wdm.ring_radius_um": "illustrative",
+  "wdm.spacing_GHz": "illustrative"
+ },
+ "tables": [
+  {
+   "id": "plans",
+   "rows": [
+    {
+     "W": 1,
+     "centre": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 0.0,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16708e-47,
+      "worst_out_max": 0.060487
+     },
+     "dlambda_nm": 0.572429,
+     "edge_delta": 0.0,
+     "grid": "100 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 3.63505e-07,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16707e-47,
+      "worst_out_max": 0.0604871
+     },
+     "ring_feasible": true,
+     "span_nm": 0.572429
+    },
+    {
+     "W": 2,
+     "centre": {
+      "fro_max": 0.027794,
+      "fro_mean": 0.0275691,
+      "increment_max": 0.000769567,
+      "margin_min_dB": 9.99982,
+      "mse": 0.000760103,
+      "ser_max": 3.18803e-47,
+      "worst_out_max": 0.0606841
+     },
+     "dlambda_nm": 0.572429,
+     "edge_delta": 0.000218484,
+     "grid": "100 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.027794,
+      "fro_mean": 0.0275691,
+      "increment_max": 0.000769555,
+      "margin_min_dB": 9.99982,
+      "mse": 0.000760103,
+      "ser_max": 3.18802e-47,
+      "worst_out_max": 0.0606842
+     },
+     "ring_feasible": true,
+     "span_nm": 1.14486
+    },
+    {
+     "W": 4,
+     "centre": {
+      "fro_max": 0.0283205,
+      "fro_mean": 0.0276084,
+      "increment_max": 0.00230909,
+      "margin_min_dB": 9.99926,
+      "mse": 0.000762475,
+      "ser_max": 3.26423e-47,
+      "worst_out_max": 0.0611196
+     },
+     "dlambda_nm": 0.572429,
+     "edge_delta": 0.000655453,
+     "grid": "100 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0283205,
+      "fro_mean": 0.0276084,
+      "increment_max": 0.00230854,
+      "margin_min_dB": 9.99926,
+      "mse": 0.000762475,
+      "ser_max": 3.2642e-47,
+      "worst_out_max": 0.0611198
+     },
+     "ring_feasible": true,
+     "span_nm": 2.28972
+    },
+    {
+     "W": 8,
+     "centre": {
+      "fro_max": 0.0295861,
+      "fro_mean": 0.0277649,
+      "increment_max": 0.00538964,
+      "margin_min_dB": 9.99734,
+      "mse": 0.000771959,
+      "ser_max": 3.56607e-47,
+      "worst_out_max": 0.0630287
+     },
+     "dlambda_nm": 0.572429,
+     "edge_delta": 0.00152939,
+     "grid": "100 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0295865,
+      "fro_mean": 0.0277649,
+      "increment_max": 0.00538739,
+      "margin_min_dB": 9.99734,
+      "mse": 0.000771959,
+      "ser_max": 3.56588e-47,
+      "worst_out_max": 0.0630295
+     },
+     "ring_feasible": true,
+     "span_nm": 4.57943
+    },
+    {
+     "W": 16,
+     "centre": {
+      "fro_max": 0.0328412,
+      "fro_mean": 0.0283812,
+      "increment_max": 0.0115567,
+      "margin_min_dB": 9.99037,
+      "mse": 0.000809896,
+      "ser_max": 4.99948e-47,
+      "worst_out_max": 0.0711941
+     },
+     "dlambda_nm": 0.572429,
+     "edge_delta": 0.00327727,
+     "grid": "100 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0328444,
+      "fro_mean": 0.0283811,
+      "increment_max": 0.0115475,
+      "margin_min_dB": 9.99038,
+      "mse": 0.000809896,
+      "ser_max": 4.99698e-47,
+      "worst_out_max": 0.0711976
+     },
+     "ring_feasible": true,
+     "span_nm": 9.15887
+    },
+    {
+     "W": 32,
+     "centre": {
+      "fro_max": 0.0413547,
+      "fro_mean": 0.0306952,
+      "increment_max": 0.0239129,
+      "margin_min_dB": 9.9635,
+      "mse": 0.000961617,
+      "ser_max": 1.82438e-46,
+      "worst_out_max": 0.0896249
+     },
+     "dlambda_nm": 0.572429,
+     "edge_delta": 0.00677302,
+     "grid": "100 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0413753,
+      "fro_mean": 0.0306935,
+      "increment_max": 0.0238767,
+      "margin_min_dB": 9.96359,
+      "mse": 0.000961615,
+      "ser_max": 1.81667e-46,
+      "worst_out_max": 0.0896508
+     },
+     "ring_feasible": false,
+     "span_nm": 18.3177
+    },
+    {
+     "W": 1,
+     "centre": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 0.0,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16708e-47,
+      "worst_out_max": 0.060487
+     },
+     "dlambda_nm": 1.14486,
+     "edge_delta": 0.0,
+     "grid": "200 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 3.63505e-07,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16707e-47,
+      "worst_out_max": 0.0604871
+     },
+     "ring_feasible": true,
+     "span_nm": 1.14486
+    },
+    {
+     "W": 2,
+     "centre": {
+      "fro_max": 0.0280479,
+      "fro_mean": 0.0275985,
+      "increment_max": 0.00153926,
+      "margin_min_dB": 9.99957,
+      "mse": 0.000761882,
+      "ser_max": 3.22032e-47,
+      "worst_out_max": 0.060895
+     },
+     "dlambda_nm": 1.14486,
+     "edge_delta": 0.000436969,
+     "grid": "200 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0280479,
+      "fro_mean": 0.0275985,
+      "increment_max": 0.00153914,
+      "margin_min_dB": 9.99957,
+      "mse": 0.000761882,
+      "ser_max": 3.2203e-47,
+      "worst_out_max": 0.0608952
+     },
+     "ring_feasible": true,
+     "span_nm": 2.28972
+    },
+    {
+     "W": 4,
+     "centre": {
+      "fro_max": 0.0292445,
+      "fro_mean": 0.0277552,
+      "increment_max": 0.00461932,
+      "margin_min_dB": 9.99792,
+      "mse": 0.000771367,
+      "ser_max": 3.47032e-47,
+      "worst_out_max": 0.0620659
+     },
+     "dlambda_nm": 1.14486,
+     "edge_delta": 0.00131091,
+     "grid": "200 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0292449,
+      "fro_mean": 0.0277552,
+      "increment_max": 0.00461707,
+      "margin_min_dB": 9.99792,
+      "mse": 0.000771367,
+      "ser_max": 3.47017e-47,
+      "worst_out_max": 0.0620666
+     },
+     "ring_feasible": true,
+     "span_nm": 4.57943
+    },
+    {
+     "W": 8,
+     "centre": {
+      "fro_max": 0.0323886,
+      "fro_mean": 0.028372,
+      "increment_max": 0.0107854,
+      "margin_min_dB": 9.99147,
+      "mse": 0.000809304,
+      "ser_max": 4.73775e-47,
+      "worst_out_max": 0.0701309
+     },
+     "dlambda_nm": 1.14486,
+     "edge_delta": 0.00305878,
+     "grid": "200 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0323916,
+      "fro_mean": 0.0283718,
+      "increment_max": 0.0107764,
+      "margin_min_dB": 9.99148,
+      "mse": 0.000809304,
+      "ser_max": 4.73563e-47,
+      "worst_out_max": 0.0701344
+     },
+     "ring_feasible": true,
+     "span_nm": 9.15887
+    },
+    {
+     "W": 16,
+     "centre": {
+      "fro_max": 0.0407673,
+      "fro_mean": 0.0306873,
+      "increment_max": 0.0231399,
+      "margin_min_dB": 9.96572,
+      "mse": 0.000961025,
+      "ser_max": 1.64353e-46,
+      "worst_out_max": 0.0884026
+     },
+     "dlambda_nm": 1.14486,
+     "edge_delta": 0.00655453,
+     "grid": "200 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0407876,
+      "fro_mean": 0.0306856,
+      "increment_max": 0.0231036,
+      "margin_min_dB": 9.9658,
+      "mse": 0.000961022,
+      "ser_max": 1.63681e-46,
+      "worst_out_max": 0.0884279
+     },
+     "ring_feasible": false,
+     "span_nm": 18.3177
+    },
+    {
+     "W": 32,
+     "centre": {
+      "fro_max": 0.0614673,
+      "fro_mean": 0.0382711,
+      "increment_max": 0.0479275,
+      "margin_min_dB": 9.60684,
+      "mse": 0.00156747,
+      "ser_max": 1.43278e-39,
+      "worst_out_max": 0.131337
+     },
+     "dlambda_nm": 1.14486,
+     "edge_delta": 0.013546,
+     "grid": "200 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.061577,
+      "fro_mean": 0.0382593,
+      "increment_max": 0.0477824,
+      "margin_min_dB": 9.60276,
+      "mse": 0.00156743,
+      "ser_max": 1.57949e-39,
+      "worst_out_max": 0.131492
+     },
+     "ring_feasible": false,
+     "span_nm": 36.6355
+    },
+    {
+     "W": 1,
+     "centre": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 0.0,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16708e-47,
+      "worst_out_max": 0.060487
+     },
+     "dlambda_nm": 2.28972,
+     "edge_delta": 0.0,
+     "grid": "400 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 3.63505e-07,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16707e-47,
+      "worst_out_max": 0.0604871
+     },
+     "ring_feasible": true,
+     "span_nm": 2.28972
+    },
+    {
+     "W": 2,
+     "centre": {
+      "fro_max": 0.0286111,
+      "fro_mean": 0.0277163,
+      "increment_max": 0.00307904,
+      "margin_min_dB": 9.99888,
+      "mse": 0.000768995,
+      "ser_max": 3.32015e-47,
+      "worst_out_max": 0.0613578
+     },
+     "dlambda_nm": 2.28972,
+     "edge_delta": 0.000873938,
+     "grid": "400 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0286113,
+      "fro_mean": 0.0277163,
+      "increment_max": 0.00307849,
+      "margin_min_dB": 9.99888,
+      "mse": 0.000768995,
+      "ser_max": 3.3201e-47,
+      "worst_out_max": 0.0613581
+     },
+     "ring_feasible": true,
+     "span_nm": 4.57943
+    },
+    {
+     "W": 4,
+     "centre": {
+      "fro_max": 0.0315199,
+      "fro_mean": 0.0283347,
+      "increment_max": 0.00924312,
+      "margin_min_dB": 9.99348,
+      "mse": 0.000806933,
+      "ser_max": 4.29665e-47,
+      "worst_out_max": 0.0680397
+     },
+     "dlambda_nm": 2.28972,
+     "edge_delta": 0.00262181,
+     "grid": "400 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0315224,
+      "fro_mean": 0.0283346,
+      "increment_max": 0.00923458,
+      "margin_min_dB": 9.99348,
+      "mse": 0.000806933,
+      "ser_max": 4.29512e-47,
+      "worst_out_max": 0.0680424
+     },
+     "ring_feasible": true,
+     "span_nm": 9.15887
+    },
+    {
+     "W": 8,
+     "centre": {
+      "fro_max": 0.0396106,
+      "fro_mean": 0.0306557,
+      "increment_max": 0.021594,
+      "margin_min_dB": 9.96993,
+      "mse": 0.000958655,
+      "ser_max": 1.34624e-46,
+      "worst_out_max": 0.0859837
+     },
+     "dlambda_nm": 2.28972,
+     "edge_delta": 0.00611757,
+     "grid": "400 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0396297,
+      "fro_mean": 0.030654,
+      "increment_max": 0.0215583,
+      "margin_min_dB": 9.97,
+      "mse": 0.000958653,
+      "ser_max": 1.34122e-46,
+      "worst_out_max": 0.0860074
+     },
+     "ring_feasible": false,
+     "span_nm": 18.3177
+    },
+    {
+     "W": 16,
+     "centre": {
+      "fro_max": 0.0600964,
+      "fro_mean": 0.0382501,
+      "increment_max": 0.0463755,
+      "margin_min_dB": 9.67788,
+      "mse": 0.00156511,
+      "ser_max": 3.1409e-40,
+      "worst_out_max": 0.12842
+     },
+     "dlambda_nm": 2.28972,
+     "edge_delta": 0.0131091,
+     "grid": "400 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0602048,
+      "fro_mean": 0.0382382,
+      "increment_max": 0.0462309,
+      "margin_min_dB": 9.67394,
+      "mse": 0.00156507,
+      "ser_max": 3.46386e-40,
+      "worst_out_max": 0.128575
+     },
+     "ring_feasible": false,
+     "span_nm": 36.6355
+    },
+    {
+     "W": 32,
+     "centre": {
+      "fro_max": 0.105644,
+      "fro_mean": 0.0584367,
+      "increment_max": 0.0961675,
+      "margin_min_dB": 6.87129,
+      "mse": 0.00398394,
+      "ser_max": 6.21889e-22,
+      "worst_out_max": 0.222123
+     },
+     "dlambda_nm": 2.28972,
+     "edge_delta": 0.0270921,
+     "grid": "400 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.106141,
+      "fro_mean": 0.0583858,
+      "increment_max": 0.0955877,
+      "margin_min_dB": 6.84398,
+      "mse": 0.00398332,
+      "ser_max": 8.21759e-22,
+      "worst_out_max": 0.222691
+     },
+     "ring_feasible": false,
+     "span_nm": 73.271
+    },
+    {
+     "W": 1,
+     "centre": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 0.0,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16708e-47,
+      "worst_out_max": 0.060487
+     },
+     "dlambda_nm": 4.57943,
+     "edge_delta": 0.0,
+     "grid": "800 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 3.63505e-07,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16707e-47,
+      "worst_out_max": 0.0604871
+     },
+     "ring_feasible": true,
+     "span_nm": 4.57943
+    },
+    {
+     "W": 2,
+     "centre": {
+      "fro_max": 0.0299435,
+      "fro_mean": 0.0281843,
+      "increment_max": 0.00616009,
+      "margin_min_dB": 9.9967,
+      "mse": 0.000797449,
+      "ser_max": 3.67684e-47,
+      "worst_out_max": 0.0640051
+     },
+     "dlambda_nm": 4.57943,
+     "edge_delta": 0.00174788,
+     "grid": "800 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0299449,
+      "fro_mean": 0.0281842,
+      "increment_max": 0.00615861,
+      "margin_min_dB": 9.9967,
+      "mse": 0.000797449,
+      "ser_max": 3.67618e-47,
+      "worst_out_max": 0.0640067
+     },
+     "ring_feasible": true,
+     "span_nm": 9.15887
+    },
+    {
+     "W": 4,
+     "centre": {
+      "fro_max": 0.0373769,
+      "fro_mean": 0.0305285,
+      "increment_max": 0.0185036,
+      "margin_min_dB": 9.97747,
+      "mse": 0.000949176,
+      "ser_max": 9.376e-47,
+      "worst_out_max": 0.0812536
+     },
+     "dlambda_nm": 4.57943,
+     "edge_delta": 0.00524363,
+     "grid": "800 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0373935,
+      "fro_mean": 0.0305269,
+      "increment_max": 0.0184696,
+      "margin_min_dB": 9.97753,
+      "mse": 0.000949174,
+      "ser_max": 9.34768e-47,
+      "worst_out_max": 0.0812734
+     },
+     "ring_feasible": false,
+     "span_nm": 18.3177
+    },
+    {
+     "W": 8,
+     "centre": {
+      "fro_max": 0.0573752,
+      "fro_mean": 0.0381658,
+      "increment_max": 0.0432727,
+      "margin_min_dB": 9.81687,
+      "mse": 0.00155565,
+      "ser_max": 1.45342e-41,
+      "worst_out_max": 0.122588
+     },
+     "dlambda_nm": 4.57943,
+     "edge_delta": 0.0122351,
+     "grid": "800 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0574802,
+      "fro_mean": 0.038154,
+      "increment_max": 0.0431296,
+      "margin_min_dB": 9.81319,
+      "mse": 0.00155561,
+      "ser_max": 1.60404e-41,
+      "worst_out_max": 0.122743
+     },
+     "ring_feasible": false,
+     "span_nm": 36.6355
+    },
+    {
+     "W": 16,
+     "centre": {
+      "fro_max": 0.102748,
+      "fro_mean": 0.0583906,
+      "increment_max": 0.0930495,
+      "margin_min_dB": 7.08261,
+      "mse": 0.00397456,
+      "ser_max": 6.64943e-23,
+      "worst_out_max": 0.216227
+     },
+     "dlambda_nm": 4.57943,
+     "edge_delta": 0.0262181,
+     "grid": "800 GHz",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.103243,
+      "fro_mean": 0.0583398,
+      "increment_max": 0.0924714,
+      "margin_min_dB": 7.0561,
+      "mse": 0.00397394,
+      "ser_max": 8.84269e-23,
+      "worst_out_max": 0.216794
+     },
+     "ring_feasible": false,
+     "span_nm": 73.271
+    },
+    {
+     "W": 32,
+     "centre": {
+      "fro_max": 0.194903,
+      "fro_mean": 0.103913,
+      "increment_max": 0.192797,
+      "margin_min_dB": -6.57697,
+      "mse": 0.0135392,
+      "ser_max": 0.00161036,
+      "worst_out_max": 0.409122
+     },
+     "dlambda_nm": 4.57943,
+     "edge_delta": 0.0541842,
+     "grid": "800 GHz",
+     "in_band": false,
+     "least_squares": {
+      "fro_max": 0.196907,
+      "fro_mean": 0.103752,
+      "increment_max": 0.190526,
+      "margin_min_dB": -7.09815,
+      "mse": 0.0135298,
+      "ser_max": 0.00208884,
+      "worst_out_max": 0.411722
+     },
+     "ring_feasible": false,
+     "span_nm": 146.542
+    },
+    {
+     "W": 1,
+     "centre": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 0.0,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16708e-47,
+      "worst_out_max": 0.060487
+     },
+     "dlambda_nm": 20.0,
+     "edge_delta": 0.0,
+     "grid": "20 nm",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0275592,
+      "fro_mean": 0.0275592,
+      "increment_max": 3.63505e-07,
+      "margin_min_dB": 10.0,
+      "mse": 0.000759511,
+      "ser_max": 3.16707e-47,
+      "worst_out_max": 0.0604871
+     },
+     "ring_feasible": true,
+     "span_nm": 20.0
+    },
+    {
+     "W": 2,
+     "centre": {
+      "fro_max": 0.0437207,
+      "fro_mean": 0.038095,
+      "increment_max": 0.026959,
+      "margin_min_dB": 9.95402,
+      "mse": 0.00148288,
+      "ser_max": 2.83552e-46,
+      "worst_out_max": 0.0945173
+     },
+     "dlambda_nm": 20.0,
+     "edge_delta": 0.00763359,
+     "grid": "20 nm",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0437995,
+      "fro_mean": 0.0380808,
+      "increment_max": 0.0269301,
+      "margin_min_dB": 9.95439,
+      "mse": 0.00148285,
+      "ser_max": 2.78742e-46,
+      "worst_out_max": 0.094619
+     },
+     "ring_feasible": false,
+     "span_nm": 40.0
+    },
+    {
+     "W": 4,
+     "centre": {
+      "fro_max": 0.0917819,
+      "fro_mean": 0.0614803,
+      "increment_max": 0.0812195,
+      "margin_min_dB": 7.83593,
+      "mse": 0.00436644,
+      "ser_max": 8.41152e-27,
+      "worst_out_max": 0.193918
+     },
+     "dlambda_nm": 20.0,
+     "edge_delta": 0.0229008,
+     "grid": "20 nm",
+     "in_band": true,
+     "least_squares": {
+      "fro_max": 0.0923289,
+      "fro_mean": 0.0614158,
+      "increment_max": 0.0805716,
+      "margin_min_dB": 7.80903,
+      "mse": 0.00436566,
+      "ser_max": 1.19343e-26,
+      "worst_out_max": 0.194564
+     },
+     "ring_feasible": false,
+     "span_nm": 80.0
+    },
+    {
+     "W": 8,
+     "centre": {
+      "fro_max": 0.192471,
+      "fro_mean": 0.11201,
+      "increment_max": 0.190134,
+      "margin_min_dB": -5.72434,
+      "mse": 0.0157431,
+      "ser_max": 0.000988695,
+      "worst_out_max": 0.403877
+     },
+     "dlambda_nm": 20.0,
+     "edge_delta": 0.0534351,
+     "grid": "20 nm",
+     "in_band": false,
+     "least_squares": {
+      "fro_max": 0.194824,
+      "fro_mean": 0.11181,
+      "increment_max": 0.187474,
+      "margin_min_dB": -6.2795,
+      "mse": 0.0157302,
+      "ser_max": 0.00137169,
+      "worst_out_max": 0.40691
+     },
+     "ring_feasible": false,
+     "span_nm": 160.0
+    },
+    {
+     "W": 16,
+     "centre": {
+      "fro_max": 0.395892,
+      "fro_mean": 0.213177,
+      "increment_max": 0.401011,
+      "margin_min_dB": "-inf",
+      "mse": 0.058799,
+      "ser_max": 0.517464,
+      "worst_out_max": 0.889526
+     },
+     "dlambda_nm": 20.0,
+     "edge_delta": 0.114504,
+     "grid": "20 nm",
+     "in_band": false,
+     "least_squares": {
+      "fro_max": 0.386663,
+      "fro_mean": 0.212738,
+      "increment_max": 0.391713,
+      "margin_min_dB": "-inf",
+      "mse": 0.0586291,
+      "ser_max": 0.511791,
+      "worst_out_max": 0.870176
+     },
+     "ring_feasible": false,
+     "span_nm": 320.0
+    },
+    {
+     "W": 32,
+     "centre": {
+      "fro_max": 0.726834,
+      "fro_mean": 0.392309,
+      "increment_max": 0.728772,
+      "margin_min_dB": "-inf",
+      "mse": 0.196628,
+      "ser_max": 0.9375,
+      "worst_out_max": 1.77138
+     },
+     "dlambda_nm": 20.0,
+     "edge_delta": 0.236641,
+     "grid": "20 nm",
+     "in_band": false,
+     "least_squares": {
+      "fro_max": 0.707947,
+      "fro_mean": 0.392214,
+      "increment_max": 0.709816,
+      "margin_min_dB": "-inf",
+      "mse": 0.195435,
+      "ser_max": 0.936789,
+      "worst_out_max": 1.74277
+     },
+     "ring_feasible": false,
+     "span_nm": 640.0
+    }
+   ]
+  }
+ ],
+ "title": "Future chip: wavelength-dependent transform error"
+}

@@ -2,27 +2,27 @@
  "reference": {
   "length": 4096,
   "seed": 20261004,
-  "crest": 3.6436557505973672
+  "crest": 3.6436557505973663
  },
  "rule": "ENOB = log2(crest x 2 / (sqrt(12) x rel)); e16 bits = (-20 log10 rel - 1.76)/6.02",
- "crest_offset_bits": 1.3652642146413299,
+ "crest_offset_bits": 1.3652642146413294,
  "formats": {
   "BF16": {
-   "rel_rms": 0.001641491680874102,
-   "enob_needed": 10.323682257006233,
-   "snr_bits": 8.959339913440811,
+   "rel_rms": 0.0016414916808740977,
+   "enob_needed": 10.323682257006237,
+   "snr_bits": 8.959339913440814,
    "description": "the series' rounding (8 mantissa bits incl. hidden)",
    "bits_per_value": 16.0
   },
   "FP8 E4M3": {
-   "rel_rms": 0.026101122881484033,
-   "enob_needed": 6.332649726940621,
+   "rel_rms": 0.02610112288148403,
+   "enob_needed": 6.33264972694062,
    "snr_bits": 4.967909663538953,
    "description": "the series' rounding, per-tensor scale",
    "bits_per_value": 8.0
   },
   "INT8": {
-   "rel_rms": 0.008342949203278122,
+   "rel_rms": 0.008342949203278117,
    "enob_needed": 7.978132233849802,
    "snr_bits": 6.6135561483231,
    "description": "the series' rounding, per-tensor scale",
@@ -37,29 +37,29 @@
   },
   "INT4": {
    "rel_rms": 0.1506302222880726,
-   "enob_needed": 3.803822245686521,
+   "enob_needed": 3.8038222456865207,
    "snr_bits": 2.4388301761074644,
    "description": "symmetric, per-tensor scale",
    "bits_per_value": 4.0
   },
   "INT4 g32": {
-   "rel_rms": 0.09863648756741786,
+   "rel_rms": 0.09863648756741783,
    "enob_needed": 4.414640173957963,
-   "snr_bits": 3.0497089744431256,
+   "snr_bits": 3.049708974443127,
    "description": "symmetric, one scale per 32 values",
    "bits_per_value": 4.5
   },
   "FP4 E2M1": {
-   "rel_rms": 0.11408888529242248,
+   "rel_rms": 0.11408888529242245,
    "enob_needed": 4.204675256549574,
    "snr_bits": 2.839723133323407,
    "description": "per-tensor scale",
    "bits_per_value": 4.0
   },
   "MXFP4": {
-   "rel_rms": 0.11770675351569945,
+   "rel_rms": 0.11770675351569944,
    "enob_needed": 4.159636407051018,
-   "snr_bits": 2.7946797955517746,
+   "snr_bits": 2.794679795551775,
    "description": "E2M1, block 32, E8M0 scale",
    "bits_per_value": 4.25
   },

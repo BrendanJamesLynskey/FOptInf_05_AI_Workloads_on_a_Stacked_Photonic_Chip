@@ -799,7 +799,7 @@
 <header class="hero">
     <div class="series-label">Fourier Optics for Inference &mdash; Presentation 05</div>
     <h1><span class="accent">AI Workloads</span> on a Stacked Photonic Chip</h1>
-    <p class="subtitle">Which AI workloads could a future dense, 3D-stacked photonic chip run well, and under what conditions? The future system its developer has described in public stacks a photonic layer on its logic. A simulator now models it: throughput against an all-digital ASIC, energy per useful operation, laser and heat limits, calibration, and an approximate mode that chains optical stages for FFT- and AI-style work. This deck asks what precision AI formats need, what the chip's approximate mode delivers, what each costs in energy, and runs the candidate workloads through one screen. Every number comes from the simulator's data, from tested code in this repository, or from a cited source; every mechanism has a figure driven by a tested model.</p>
+    <p class="subtitle">Which AI workloads could a future dense, 3D-stacked photonic chip run well, and under what conditions? The future system its developer has described in public stacks a photonic layer on its logic. A simulator now models it: throughput against an all-digital ASIC, energy per useful operation, laser and heat limits, calibration, and an approximate mode that chains optical stages for FFT- and AI-style work. Since plms 0.5.0 it models the optical transform as what the module paper and its patent describe, a passive diffractive slab, not an MZI mesh; slide 01b says what that changes. This deck asks what precision AI formats need, what the chip's approximate mode delivers, what each costs in energy, and runs the candidate workloads through one screen. Every number comes from the simulator's data, from tested code in this repository, or from a cited source; every mechanism has a figure driven by a tested model.</p>
 
     <div class="tags">
         <span class="tag">3D stacking</span>
@@ -916,6 +916,7 @@
     </div>
     <ul class="contents-list">
         <li data-n="01"><a href="#slide-01">The Question, and What Changed</a></li>
+        <li data-n="01b"><a href="#slide-01b">Does a Slab Change the Verdict? No.</a></li>
         <li data-n="02"><a href="#slide-02">The Stacked System</a></li>
         <li data-n="03"><a href="#slide-03">The Memory Wall</a></li>
         <li data-n="04"><a href="#slide-04">Exact or Approximate: Where the Conversions Go</a></li>
@@ -931,6 +932,7 @@
         <li data-n="14"><a href="#slide-14">The FP4 MAC: a Projection</a></li>
         <li data-n="15"><a href="#slide-15">Low-Bit KV and Training Traffic</a></li>
         <li data-n="16"><a href="#slide-16">What Would Have to Be True</a></li>
+        <li data-n="16b"><a href="#slide-16b">Native Size N: Does a Bigger Slab Help?</a></li>
         <li data-n="17"><a href="#slide-17">What to Take Away</a></li>
         <li data-n="18"><a href="#slide-18">Open Questions for the Developer</a></li>
         <li data-n="19"><a href="#slide-19">Sources and Assumptions</a></li>
@@ -944,7 +946,7 @@
 <section class="slide" id="slide-01">
     <div class="slide-number">01</div>
     <h2>The Question, and What Changed</h2>
-    <p>Decks 01&ndash;03 asked what a Fourier-optical engine costs in general; deck 04 and the simulator after it asked what today's pluggable photonic link module (<a href="https://arxiv.org/abs/2608.21536">arXiv:2608.21536</a>) does. <strong>What changed:</strong> the simulator (plms 0.3.0) now models the future system its developer has described in public, a photonic layer stacked on its logic, and runs it against an all-digital ASIC of the same logic and of the same silicon. This deck asks which AI workloads that chip could run well, and under what conditions.</p>
+    <p>Decks 01&ndash;03 asked what a Fourier-optical engine costs in general; deck 04 and the simulator after it asked what today's pluggable photonic link module (<a href="https://arxiv.org/abs/2608.21536">arXiv:2608.21536</a>) does. <strong>What changed:</strong> the simulator (since plms 0.3.0) models the future system its developer has described in public, a photonic layer stacked on its logic, and runs it against an all-digital ASIC of the same logic and of the same silicon. This deck asks which AI workloads that chip could run well, and under what conditions. Its numbers are from plms 0.5.0, which models each unit's transform as a passive diffractive slab (slide 01b).</p>
     <div class="fig">
         <div class="fig-row">
             <div class="diagram-panel accent-border">
@@ -953,14 +955,39 @@
             </div>
             <div class="diagram-panel accent-border">
                 <h4>The future chip: stacked</h4>
-                <p>U optical transform units bonded onto the logic that drives them, with W wavelengths, so there is no package port between optics and logic: the 3D stacking is the developer's public statement. The paper's &sect;V describes a <em>monolithic</em> chip, &ldquo;a 112 GBaud/s Photonic Integrated circuit (PIC)&rdquo; with &ldquo;custom high-speed logic operating at 28 GHz&rdquo;; the simulator takes the 112 GBd and 28 GHz from there. Two modes: <strong>exact</strong> (integers, for FHE and PQC) and <strong>approximate</strong> (a few effective bits, for FFT- and AI-style work). <span class="src-tag web">public-statement</span> <span class="src-tag paper">paper</span></p>
+                <p>U optical transform units (each a passive slab, as on today's module) bonded onto the logic that drives them, with W wavelengths, so there is no package port between optics and logic: the 3D stacking is the developer's public statement. The paper's &sect;V describes a <em>monolithic</em> chip, &ldquo;a 112 GBaud/s Photonic Integrated circuit (PIC)&rdquo; with &ldquo;custom high-speed logic operating at 28 GHz&rdquo;; the simulator takes the 112 GBd and 28 GHz from there. Two modes: <strong>exact</strong> (integers, for FHE and PQC) and <strong>approximate</strong> (a few effective bits, for FFT- and AI-style work). <span class="src-tag web">public-statement</span> <span class="src-tag paper">paper</span></p>
             </div>
         </div>
         <p class="fig-cap">What the simulator models and where the full method is explained: the explainer site's <a href="https://photonic-link-module-explained.vercel.app/method/">method</a> and its Part II chapters. This deck uses its results; it does not re-derive them.</p>
     </div>
     <div class="callout">
         <div class="callout-label">The short answer</div>
-        <p>With the simulator's illustrative parameters, <strong>no AI workload screened here pays on this chip</strong>. Exact mode is held at the memory wall (1&times;) and at most near 1.1&times; when compute binds; approximate mode keeps about 3.2 effective bits and costs 32&times; a digital butterfly of matched precision. The last slides say what would have to change, by how much.</p>
+        <p>With the simulator's illustrative parameters, <strong>no AI workload screened here pays on this chip</strong>. Exact mode is held at the memory wall (1&times;) and at most near 1.1&times; when compute binds; approximate mode on the 4-point slab keeps at most 2.758 effective bits (1.872 with all six stages of a 4,096-point FFT chained) and at S = 6 costs 101.1&times; a digital butterfly of matched precision. The slab does not change this (slide 01b). The last slides say what would have to change, by how much, including a larger native slab (slide 16b).</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-01b">
+    <div class="slide-number">01b</div>
+    <h2>Does a Slab Change the Verdict? No.</h2>
+    <p>The module paper calls its optical transform a &ldquo;passive diffractive device&rdquo; (&sect;II) and its patent EP4677399A1 describes &ldquo;a slab waveguide&rdquo;; plms 0.1&ndash;0.4 modelled it as an MZI mesh. plms 0.5.0 models the slab from its physics (a 4-point slab, R = 33.91 &micro;m) and re-runs every result. <strong>No: on a slab the future chip's exact mode still loses to the all-digital ASIC</strong> on energy (498.9 against 32.35 pJ per 59-bit 4-point transform), and a larger native slab does not rescue it; the slab's insertion loss shrinks the laser budget; only approximate mode gains, and only from a larger native slab.</p>
+    <div class="table-wrap">
+    <table class="cards">
+        <tr><th>Quantity</th><th>v0.4 mesh</th><th>v0.5 slab</th><th>Why</th></tr>
+        <tr><td data-label="Quantity">Exact-mode energy floor, free light and crossings</td><td data-label="v0.4 mesh">43.78 pJ</td><td data-label="v0.5 slab">43.78 pJ (ASIC 32.35)</td><td data-label="Why">unchanged: the optics replace only the modular adds, whatever computes the transform</td></tr>
+        <tr><td data-label="Quantity">Exact-mode speed ceiling; best vs the equal-silicon ASIC</td><td data-label="v0.4 mesh">1.1&times;; 0.9163&times;</td><td data-label="v0.5 slab">1.1&times;; 0.9163&times;</td><td data-label="Why">unchanged (slide 03)</td></tr>
+        <tr><td data-label="Quantity">Phase shifters per unit; hold power</td><td data-label="v0.4 mesh">18; 0.5 W per unit</td><td data-label="v0.5 slab">18 (15 to 18 by recount); 0.5 W per unit</td><td data-label="Why">unchanged: the chip's count never included phase shifters inside the transform</td></tr>
+        <tr><td data-label="Quantity">Insertion loss of the transform</td><td data-label="v0.4 mesh">lossless</td><td data-label="v0.5 slab">1.977 dB (0.6343 of the input power reaches the 4 outputs)</td><td data-label="Why">the slab's mode overlap and 0.5 dB assumed excess loss</td></tr>
+        <tr><td data-label="Quantity">Module margin at &minus;5 dBm LO, output 1</td><td data-label="v0.4 mesh">10.43 dB</td><td data-label="v0.5 slab">7.196 dB</td><td data-label="Why">the loss flows into every margin</td></tr>
+        <tr><td data-label="Quantity">U &times; W per 20 dBm laser, 4 &lambda;, 6 dB</td><td data-label="v0.4 mesh">20</td><td data-label="v0.5 slab">12</td><td data-label="Why">the loss again (slide 09)</td></tr>
+        <tr><td data-label="Quantity">Exact mode, pJ per transform (laser share)</td><td data-label="v0.4 mesh">485.9 (18.77)</td><td data-label="v0.5 slab">498.9 (31.77)</td><td data-label="Why">more lasers for the same units (slide 07)</td></tr>
+        <tr><td data-label="Quantity">Approximate mode, effective bits at S = 1</td><td data-label="v0.4 mesh">2.74</td><td data-label="v0.5 slab">2.746</td><td data-label="Why">fewer units share each laser, so the design SNR rises (27.47 to 31.15 dB)</td></tr>
+        <tr><td data-label="Quantity">Approximate mode, all 6 stages chained</td><td data-label="v0.4 mesh">3.198</td><td data-label="v0.5 slab">1.872 (a 64-point slab: 3.092)</td><td data-label="Why">each chained slab adds its loss (2.949 dB) and residual (0.02756)</td></tr>
+        <tr><td data-label="Quantity">Availability at 0.1 rad/&radic;s per heater (module)</td><td data-label="v0.4 mesh">0.605 (17 heaters)</td><td data-label="v0.5 slab">0.6917 (13 heaters)</td><td data-label="Why">fewer heaters drift less (slide 10)</td></tr>
+    </table>
+    </div>
+    <div class="callout">
+        <div class="callout-label">The verdict, negative first</div>
+        <p>Exact mode: still no modelled gain, on energy or speed, and no native size above 4 keeps it exact (slide 16b). Light: worse, from the slab's loss. Heat and drift: hold power unchanged, drift slightly better. Approximate mode: worse when chained on the 4-point slab, better only with a larger native slab, and even a 64-point slab chained (3.092) stays under the v0.4 mesh's 3.198. Every AI verdict on the following slides therefore stands or gets harder. Numbers from the simulator's verdict section (<code>data/plms_v0_5/results_extract.md</code>), which binds each to its result key. <span class="src-tag derived">modelled</span></p>
     </div>
 </section>
 
@@ -978,12 +1005,12 @@
     <table class="cards">
         <tr><th>Item</th><th>Default (swept)</th><th>Tag</th></tr>
         <tr><td data-label="Item">Photonic layer 3D-stacked on the logic (hybrid bonding). The developer's public statement, not the paper: &sect;V describes &ldquo;a monolithic silicon photonic chip&rdquo;</td><td data-label="Default (swept)">30 fF receiver, against 300 fF packaged</td><td data-label="Tag"><span class="src-tag web">public-statement</span></td></tr>
-        <tr><td data-label="Item">U units, each a 4-point optical transform</td><td data-label="Default (swept)">64 (4&ndash;4,096)</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">U units, each a 4-point optical transform: a passive diffractive slab waveguide (&ldquo;passive diffractive device&rdquo;, the paper &sect;II; &ldquo;a slab waveguide&rdquo;, EP4677399A1), with no phase shifters inside it</td><td data-label="Default (swept)">64 (4&ndash;4,096); the slab delivers 0.6343 of its input power to the 4 outputs (1.977 dB)</td><td data-label="Tag"><span class="src-tag paper">paper</span> <span class="src-tag patent">patent</span> <span class="src-tag inference">illustrative</span></td></tr>
         <tr><td data-label="Item">Symbol rate B</td><td data-label="Default (swept)">112 GBd (14&ndash;112)</td><td data-label="Tag"><span class="src-tag paper">paper</span></td></tr>
-        <tr><td data-label="Item">W wavelengths sharing each unit's mesh</td><td data-label="Default (swept)">4 (1&ndash;8)</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">W wavelengths sharing each unit's slab</td><td data-label="Default (swept)">4 (1&ndash;8)</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
         <tr><td data-label="Item">Drivers, TIAs, decisions and reduction in the logic underneath; custom high-speed logic at 28 GHz (&sect;V)</td><td data-label="Default (swept)">100 mm&sup2; of logic (5&ndash;200)</td><td data-label="Tag"><span class="src-tag paper">paper</span> <span class="src-tag inference">illustrative</span></td></tr>
         <tr><td data-label="Item">One external 20 dBm laser, split on-chip</td><td data-label="Default (swept)">wall-plug 0.15</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
-        <tr><td data-label="Item">Thermo-optic phase shifters, 18 per unit plus 8 per wavelength</td><td data-label="Default (swept)">10 mW per &pi; (2&ndash;30, MEMS, non-volatile)</td><td data-label="Tag"><span class="src-tag patent">patent</span> <span class="src-tag inference">illustrative</span></td></tr>
+        <tr><td data-label="Item">Thermo-optic phase shifters, 18 per unit (15 to 18 by recount, all outside the transform) plus 8 per wavelength</td><td data-label="Default (swept)">10 mW per &pi; (2&ndash;30, MEMS, non-volatile)</td><td data-label="Tag"><span class="src-tag inference">inferred</span> <span class="src-tag inference">illustrative</span></td></tr>
         <tr><td data-label="Item">One optical-electrical crossing, either direction</td><td data-label="Default (swept)">E_conv = 0.5 pJ/bit (0.05&ndash;2)</td><td data-label="Tag"><span class="src-tag inference">illustrative</span></td></tr>
     </table>
     </div>
@@ -1025,14 +1052,14 @@
         <div class="control-row"><label for="fft-mode">Mode</label><select id="fft-mode"><option value="exact">exact: convert every stage</option><option value="approx" selected>approximate: chain S stages</option></select>
             <label for="fft-s">S</label><select id="fft-s"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option></select></div>
         <canvas id="cv-fft" aria-label="Six radix-4 stages of a 4096-point FFT; amber diamonds mark each crossing between light and electronics; a block of chained stages is shaded"></canvas>
-        <p class="fig-cap">Frames from <code>fftChain(mode, S)</code> (the simulator's <a href="https://photonic-link-module-explained.vercel.app/chapters/approximate-mode/">approximate-mode chapter</a> has the method); the energy figures in the caption come from the simulator's e16 table (8-bit converters, U = 64, 4 &lambda;, 112 GBd). From S = 1 to S = 6 the energy per butterfly-stage falls from 34.11 to 6.929 pJ (4.923&times;), and the rate is 59&times; the exact-mode rate. <span class="src-tag derived">modelled</span></p>
+        <p class="fig-cap">Frames from <code>fftChain(mode, S)</code> (the simulator's <a href="https://photonic-link-module-explained.vercel.app/chapters/approximate-mode/">approximate-mode chapter</a> has the method); the energy figures in the caption come from the simulator's e16 table (8-bit converters, U = 64, 4 &lambda;, 112 GBd). From S = 1 to S = 6 the energy per butterfly-stage falls from 34.33 to 7.15 pJ (4.802&times;), and the rate is 59&times; the exact-mode rate; but on the slab every chained stage also adds its loss and residual, so chaining costs bits (slide 05). <span class="src-tag derived">modelled</span></p>
     </div>
 </section>
 
 <section class="slide" id="slide-05">
     <div class="slide-number">05</div>
     <h2>Precision Available</h2>
-    <p>The simulator runs the chained FFT by Monte Carlo: DAC, S lossy unitary stages with phase error, receiver noise at the design SNR (27.47 dB per level step), ADC. With 8-bit converters and 1 dB per stage the output keeps <strong>2.74 effective bits at S = 1 and 3.198 at S = 6</strong>: fewer conversions add less noise. At 3 dB per stage the loss wins instead, 2.445 falling to 1.268. Better converters barely help, because the receiver noise sets the ceiling: 16-bit converters reach 3.22 at S = 6, and only a 40 dB receiver SNR lifts it to 4.691.</p>
+    <p>The simulator runs the chained FFT by Monte Carlo: DAC, S stages that are each the calibrated slab (its 2.949 dB per stage and its residual, 0.02756 from DFT4 after the chip's knobs) with phase error, receiver noise at the design SNR (31.15 dB per level step), ADC. With 8-bit converters the output keeps <strong>2.746 effective bits at S = 1, 2.758 at S = 2 (the best) and 1.872 at S = 6</strong>: each chained slab's loss and residual cost more than the conversions saved. On the lossless v0.4 mesh (1 dB per stage) chaining helped instead, 2.74 at S = 1 and 3.198 at S = 6. Better converters barely help, because the receiver noise and the residual set the ceiling: 16-bit converters reach 2.783 at S = 1 and 1.871 at S = 6, and a 40 dB receiver SNR lifts them to 3.354 and 2.96.</p>
     <div class="fig" id="exp-pa">
         <div class="sim-grid">
             <div class="control-row"><label for="pa-s">Chained stages S</label><input type="range" id="pa-s" min="1" max="6" step="1" value="6"><span class="val" id="pa-s-val">6</span></div>
@@ -1040,7 +1067,7 @@
         </div>
         <div class="fig-row">
             <div><div class="chart-title">a &middot; effective bits vs converter ENOB, one line per S</div><canvas id="cv-pa-enob" aria-label="Effective bits against converter ENOB for S from 1 to 6"></canvas></div>
-            <div><div class="chart-title">b &middot; effective bits vs S, 1 dB and 3 dB per stage (16-bit converters)</div><canvas id="cv-pa-s" aria-label="Effective bits against chained stages for 1 dB and 3 dB loss per stage"></canvas></div>
+            <div><div class="chart-title">b &middot; effective bits vs S, the slab's 2.949 dB and 3 dB per stage (16-bit converters)</div><canvas id="cv-pa-s" aria-label="Effective bits against chained stages for the slab's 2.949 dB and for 3 dB loss per stage"></canvas></div>
         </div>
         <div class="metric-grid">
             <div class="metric"><div class="metric-label">effective bits (e16)</div><div class="metric-value" id="pa-bits">&mdash;</div></div>
@@ -1049,8 +1076,8 @@
         <p class="fig-cap">Data: e16's S &times; converter-ENOB grid (4,096-point FFT). The simulator's measure is (SNR &minus; 1.76)/6.02 of the whole FFT's relative error; the right-hand readout restates it in the series' ENOB (slide 06 explains the difference). <span class="src-tag derived">modelled</span></p>
     </div>
     <div class="callout">
-        <div class="callout-label">New in plms 0.4: wavelengths sharing one mesh</div>
-        <p>These bits are for one wavelength. A mesh's phases scale with wavelength, so when W wavelengths share one mesh every channel away from the centre sees a slightly wrong transform. On a 200 GHz grid around 1310 nm the worst channel keeps <strong>2.731 bits at S = 1 and 3.19 at S = 6 with 4 &lambda;</strong> (2.74 and 3.198 alone), and 2.558 at S = 6 with 32. Exact mode barely notices: the worst of 16 channels is 0.01558 off the ideal transform and loses 0.04545 dB of margin. See the explainer's <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>. <span class="src-tag derived">modelled</span></p>
+        <div class="callout-label">Wavelengths sharing one slab</div>
+        <p>These bits are for one wavelength. A slab's phases scale with wavelength, so when W wavelengths share one slab every channel away from the centre sees a slightly wrong transform. On a 200 GHz grid around 1310 nm the worst channel keeps <strong>2.714 bits at S = 1 and 1.862 at S = 6 with 4 &lambda;</strong> (2.746 and 1.872 alone), and 1.551 at S = 6 with 32. Exact mode barely notices: the worst of 16 channels is 0.04079 off the ideal transform, most of it the slab's own residual at the centre wavelength (0.02756), and loses 0.0342 dB of margin. See the explainer's <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>. <span class="src-tag derived">modelled</span></p>
     </div>
 </section>
 
@@ -1075,18 +1102,18 @@
     <div class="fig" id="exp-need">
         <div class="control-row"><label for="need-measure">Measure</label><select id="need-measure"><option value="snr">e16 effective bits (comparable with slide 05)</option><option value="enob">series ENOB</option></select></div>
         <canvas id="cv-need" aria-label="Needed precision per format as bars, with the approximate mode's available precision as vertical lines"></canvas>
-        <p class="fig-cap">Needed (bars) against available (lines: e16 at S = 1 and S = 6, 1 dB per stage, 8-bit converters; S = 6 at 3 dB). Both are converted from the same relative error, so they share an axis; the two measures differ by a crest term of 1.37 bits for this signal. <span class="src-tag derived">computed</span> <span class="src-tag derived">modelled</span></p>
+        <p class="fig-cap">Needed (bars) against available (lines: e16 on the 4-point slab at S = 2, its best, and S = 6, 8-bit converters; and e19's 64-point slab with every stage chained). Both are converted from the same relative error, so they share an axis; the two measures differ by a crest term of 1.37 bits for this signal. <span class="src-tag derived">computed</span> <span class="src-tag derived">modelled</span></p>
     </div>
     <div class="callout">
         <div class="callout-label">Reading it</div>
-        <p>FP4 and INT4 have never been computed in the series: FP4 E2M1 needs 4.20 ENOB and INT4 3.80 by the series' rule. Approximate mode's best, 3.198 effective bits, is on the scale of FP4's own rounding (2.84 to 3.13 in the same measure), and well short of FP8 (4.97) and BF16 (8.96). Matching is not enough on its own: the chain's error adds to the format's, so an FP4 workload on this chip would carry about twice the error variance of FP4 alone. Our numbers, from <code>analysis/out/results.md</code>.</p>
+        <p>FP4 and INT4 have never been computed in the series: FP4 E2M1 needs 4.20 ENOB and INT4 3.80 by the series' rule. Approximate mode's best on the 4-point slab, 2.758 effective bits, falls just short of FP4's own rounding (2.79 to 3.13 in the same measure) and well short of FP8 (4.97) and BF16 (8.96); only per-tensor INT4 (2.44) sits below it. A 64-point native slab, fully chained, keeps 3.092 (slide 16b). Matching is not enough on its own: the chain's error adds to the format's, so even where the chain matches a format, the workload would carry about twice the error variance of the format alone. Our numbers, from <code>analysis/out/results.md</code>.</p>
     </div>
 </section>
 
 <section class="slide" id="slide-07">
     <div class="slide-number">07</div>
     <h2>Energy at Matched Precision</h2>
-    <p><strong>Exact mode</strong> costs 485.9 pJ per 59-bit 4-point transform against 32.35 pJ in the ASIC. The 708 crossings alone cost 354 pJ; the optics replace only the cheapest part of a butterfly, its modular adds. <strong>Approximate mode</strong> at S = 6 costs 6.929 pJ per butterfly-stage, against 0.7188 pJ for a digital 8-bit complex butterfly (12 multiplies, 22 adds) and 0.2141 pJ for one at the precision the optics actually deliver (digital energies from &ldquo;Horowitz, ISSCC 2014, 45 nm&rdquo;, via <a href="https://arxiv.org/abs/1602.01528">Han et al.</a> Table I: 32-bit add 0.1 pJ, multiply 3.1 pJ, scaled by 0.25). Its throughput is 59&times; the exact-mode rate, but energy per useful operation is 32&times; the digital figure.</p>
+    <p><strong>Exact mode</strong> costs 498.9 pJ per 59-bit 4-point transform against 32.35 pJ in the ASIC (485.9 on the v0.4 mesh: the slab's loss means fewer units per laser, so the laser's share rises from 18.77 to 31.77 pJ). The 708 crossings alone cost 354 pJ; the optics replace only the cheapest part of a butterfly, its modular adds. <strong>Approximate mode</strong> at S = 6 costs 7.15 pJ per butterfly-stage, against 0.7188 pJ for a digital 8-bit complex butterfly (12 multiplies, 22 adds) and 0.0707 pJ for one at the precision the optics actually deliver (1.872 bits, so 2) (digital energies from &ldquo;Horowitz, ISSCC 2014, 45 nm&rdquo;, via <a href="https://arxiv.org/abs/1602.01528">Han et al.</a> Table I: 32-bit add 0.1 pJ, multiply 3.1 pJ, scaled by 0.25). Its throughput is 59&times; the exact-mode rate, but energy per useful operation is 101.1&times; the digital figure.</p>
     <div class="fig" id="anim-energy">
         <div class="control-row"><label for="en-mode">Mode</label><select id="en-mode"><option value="exact">exact, per 4-point transform</option><option value="approx">approximate S = 6, per butterfly-stage</option></select></div>
         <canvas id="cv-energy" aria-label="A stacked energy bar for the photonic chip built one component at a time, beside the digital bar"></canvas>
@@ -1099,7 +1126,7 @@
     <h2>What Breaks Even</h2>
     <p>Per butterfly-stage, with S stages chained, b converter bits and R = U&middot;W&middot;B&middot;0.95 symbol slots per second, the simulator's energies reduce to one formula (<code>analysis/breakeven.py</code>, which reproduces every row of its table):</p>
     <p class="eq">E = (8&middot;b&middot;E_conv + twiddles(b)) / S + (n_lasers&middot;P_laser/&eta;_wall + U&middot;(18 + 8W)&middot;P_&pi;) / R</p>
-    <p>It wins when E falls below a digital butterfly at the bits the optics deliver. The second term is static: laser and heaters, paid whatever S or E_conv. <strong>Where it never pays:</strong> whenever that static term alone exceeds the digital butterfly. At the defaults the laser alone is 0.3182 pJ and the heaters 1.175 pJ, against 0.2141 pJ: no conversion energy, however small, rescues it.</p>
+    <p>It wins when E falls below a digital butterfly at the bits the optics deliver. The second term is static: laser and heaters, paid whatever S or E_conv. <strong>Where it never pays:</strong> whenever that static term alone exceeds the digital butterfly. At the defaults the laser alone is 0.5385 pJ and the heaters 1.175 pJ, against 0.0707 pJ: no conversion energy, however small, rescues it. On the slab even the 8-bit boundary twiddles alone (0.1031 pJ at S = 6) exceed the matched digital butterfly.</p>
     <div class="fig" id="exp-be">
         <div class="sim-grid">
             <div class="control-row"><label for="be-s">Chained stages S</label><input type="range" id="be-s" min="1" max="6" step="1" value="6"><span class="val" id="be-s-val">6</span></div>
@@ -1122,7 +1149,7 @@
 <section class="slide" id="slide-09">
     <div class="slide-number">09</div>
     <h2>Physical Limits: Light and Heat</h2>
-    <p><strong>Light.</strong> One 20 dBm laser feeds about 20 unit-wavelengths at a 6 dB margin (U &times; W = 20 at 4 &lambda;, 26 at 1 &lambda;; 8 and 12 at 10 dB), at 112 GBd with a 30 fF receiver. So the default chip needs 13 lasers, and laser power grows with U &times; W. <strong>Heat.</strong> Thermo-optic phase shifters at 10 mW per &pi; hold 0.5 W per unit (1.25 W/mm&sup2;); they alone reach the 500 W cap at U = 1000.</p>
+    <p><strong>Light.</strong> One 20 dBm laser feeds 12 unit-wavelengths at a 6 dB margin (U &times; W = 12 at 4 &lambda;, 17 at 1 &lambda;; 4 and 8 at 10 dB), at 112 GBd with a 30 fF receiver. The slab's insertion loss (1.977 dB) is why: the lossless v0.4 mesh fed 20. So the default chip needs 22 lasers, and laser power grows with U &times; W. <strong>Heat.</strong> Thermo-optic phase shifters at 10 mW per &pi; hold 0.5 W per unit (1.25 W/mm&sup2;); they alone reach the 500 W cap at U = 1000.</p>
     <div class="fig">
         <div class="fig-row">
             <div><div class="chart-title">a &middot; margin vs units on one laser (4 &lambda;, 112 GBd)</div><canvas id="cv-margin" aria-label="Laser margin in dB against the number of units on one laser, with 6 and 10 dB lines"></canvas></div>
@@ -1133,24 +1160,24 @@
     <div class="table-wrap">
     <table class="cards labeltitle">
         <tr><th>Laser [dBm]</th><th>Max U&times;W at 6 dB</th><th>Max U&times;W at 10 dB</th></tr>
-        <tr><td data-label="Laser [dBm]">13</td><td data-label="Max U×W at 6 dB">4</td><td data-label="Max U×W at 10 dB">0</td></tr>
-        <tr><td data-label="Laser [dBm]">17</td><td data-label="Max U×W at 6 dB">8</td><td data-label="Max U×W at 10 dB">4</td></tr>
-        <tr><td data-label="Laser [dBm]">20</td><td data-label="Max U×W at 6 dB">20</td><td data-label="Max U×W at 10 dB">8</td></tr>
-        <tr><td data-label="Laser [dBm]">23</td><td data-label="Max U×W at 6 dB">36</td><td data-label="Max U×W at 10 dB">16</td></tr>
-        <tr><td data-label="Laser [dBm]">27</td><td data-label="Max U×W at 6 dB">92</td><td data-label="Max U×W at 10 dB">44</td></tr>
+        <tr><td data-label="Laser [dBm]">13</td><td data-label="Max U×W at 6 dB">0</td><td data-label="Max U×W at 10 dB">0</td></tr>
+        <tr><td data-label="Laser [dBm]">17</td><td data-label="Max U×W at 6 dB">4</td><td data-label="Max U×W at 10 dB">0</td></tr>
+        <tr><td data-label="Laser [dBm]">20</td><td data-label="Max U×W at 6 dB">12</td><td data-label="Max U×W at 10 dB">4</td></tr>
+        <tr><td data-label="Laser [dBm]">23</td><td data-label="Max U×W at 6 dB">24</td><td data-label="Max U×W at 10 dB">12</td></tr>
+        <tr><td data-label="Laser [dBm]">27</td><td data-label="Max U×W at 6 dB">60</td><td data-label="Max U×W at 10 dB">28</td></tr>
     </table>
     </div>
-    <p>A stronger laser feeds more units but costs proportionally more at the wall: across these five lasers the laser energy per butterfly-stage stays between 0.3125 and 0.3925 pJ (<code>breakeven.py</code>), all above the 0.2141 pJ digital figure of slide 07.</p>
+    <p>A stronger laser feeds more units but costs proportionally more at the wall: across the four lasers that feed at least one unit the laser energy per butterfly-stage stays between 0.5372 and 0.7851 pJ (<code>breakeven.py</code>), all above the 0.0707 pJ digital figure of slide 07.</p>
     <div class="callout">
-        <div class="callout-label">New in plms 0.4: one mesh, many wavelengths</div>
-        <p>The light budget holds: with the wavelength error included, one laser still feeds U &times; W = 20 at 4 &lambda; and 6 dB. Two other limits come first. The 5 &micro;m rings' free spectral range, 14.01 nm, holds at most 8 channels at 200 GHz. The signal and LO paths must match to 0.08156&nbsp;&micro;m, or the LO must be trimmed per channel (an unmatched 1 mm rotates the edge channel of 16 &times; 200 GHz by 122.6 rad). Heaters cannot calibrate the error away: it is a tilt across the band, and one set of phases serves every channel. A mesh per wavelength removes it, but at 4 &lambda; and U = 64 that takes 64 mm&sup2; and 66.56 W of heaters, against 25.6 mm&sup2; and 32 W shared. See the explainer's <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>. <span class="src-tag derived">modelled</span></p>
+        <div class="callout-label">One slab, many wavelengths</div>
+        <p>The light budget holds: with the wavelength error included, one laser still feeds U &times; W = 12 at 4 &lambda; and 6 dB (12 with every channel at the centre). Two other limits come first, as on the mesh. The 5 &micro;m rings' free spectral range, 14.01 nm, holds at most 8 channels at 200 GHz. The signal and LO paths must match to 0.08156&nbsp;&micro;m, or the LO must be trimmed per channel (an unmatched 1 mm rotates the edge channel of 16 &times; 200 GHz by 122.6 rad). The slab has no phase shifters inside to trim, and its own residual at the centre wavelength (0.02756) is larger than the wavelength term (at most 0.0231 at 16 &times; 200 GHz); one slab serves every channel of the largest ring-feasible plan (8 &times; 200 GHz). A slab per wavelength removes the wavelength term but keeps that residual, and at 4 &lambda; and U = 64 takes 64 mm&sup2; and 66.56 W of heaters, against 25.6 mm&sup2; and 32 W shared. See the explainer's <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>. <span class="src-tag derived">modelled</span></p>
     </div>
 </section>
 
 <section class="slide" id="slide-10">
     <div class="slide-number">10</div>
     <h2>Physical Limits: Temperature and Calibration</h2>
-    <p>The logic underneath heats the optics. An idle-to-busy step of the logic (0.5 W/mm&sup2;) spans 3.192 K across U = 64 and moves heater phases by up to 0.05947 rad; no unit passes the error target until 2 W/mm&sup2;. <strong>Calibration</strong> scales worse: with a controller serving 4 units at once, at least 0.9 of units stay in service up to U = 1,024 at 0.03 rad/&radic;s of drift and U = 256 at 0.1 rad/&radic;s; start-up calibration takes 4096 s for U = 16,384.</p>
+    <p>The logic underneath heats the optics. An idle-to-busy step of the logic (0.5 W/mm&sup2;) spans 3.192 K across U = 64 and moves heater phases by up to 0.05888 rad; no unit passes the error target until 2 W/mm&sup2;. <strong>Calibration</strong> scales worse: with a controller serving 4 units at once, at least 0.9 of units stay in service up to U = 1,024 at 0.03 rad/&radic;s of drift and U = 256 at 0.1 rad/&radic;s (at equal received power: the slab's lanes raised by its 1.977 dB loss); start-up calibration takes 4096 s for U = 16,384. The slab's fewer phase shifters help a little: on the module at 0.1 rad/&radic;s per heater its 13 data-path shifters keep availability 0.6917, against 0.605 for the mesh's 17.</p>
     <div class="fig-row">
         <div class="fig"><div class="chart-title">a &middot; temperature map of the photonic layer above busy logic (U = 64)</div><canvas id="cv-tmap" aria-label="A heat map of the temperature rise across the photonic layer above the stacked logic, with hot spots"></canvas><p class="fig-cap">e14's temperature map as the simulator exports it, 0.05 mm cells; hot spots of the logic show as warm patches. <span class="src-tag derived">modelled</span></p></div>
         <div class="fig" id="anim-cal">
@@ -1174,7 +1201,7 @@
         <tr><td data-label="#">3</td><td data-label="Test">Budget</td><td data-label="On the stacked chip">Does the logic keep up? Exact mode leaves the multiplies to the logic; approximate mode leaves the twiddles at block edges.</td><td data-label="Decided on">Slides 03, 04</td></tr>
         <tr><td data-label="#">4</td><td data-label="Test">Noise or exactness</td><td data-label="On the stacked chip">Does it tolerate analogue noise, or need exact integers?</td><td data-label="Decided on">Slide 04</td></tr>
         <tr><td data-label="#">5</td><td data-label="Test">Placement</td><td data-label="On the stacked chip">Is the data already on the chip, or must it cross a link to get there?</td><td data-label="Decided on">Slide 15</td></tr>
-        <tr><td data-label="#">6</td><td data-label="Test">Precision</td><td data-label="On the stacked chip">Does its format need no more than the chain delivers (about 3.2 effective bits)?</td><td data-label="Decided on">Slide 06</td></tr>
+        <tr><td data-label="#">6</td><td data-label="Test">Precision</td><td data-label="On the stacked chip">Does its format need no more than the chain delivers (at most 2.758 effective bits on the 4-point slab)?</td><td data-label="Decided on">Slide 06</td></tr>
         <tr><td data-label="#">7</td><td data-label="Test">Energy</td><td data-label="On the stacked chip">Does it beat a digital unit at matched precision?</td><td data-label="Decided on">Slide 08</td></tr>
     </table>
     </div>
@@ -1187,13 +1214,13 @@
     <div class="table-wrap">
     <table class="cards">
         <tr><th>Candidate</th><th data-card="1 bottleneck">1</th><th data-card="2 operations">2</th><th data-card="4 noise">4</th><th data-card="6 precision">6</th><th data-card="7 energy">7</th><th data-card="Verdict">Verdict and reason</th></tr>
-        <tr><td data-label="Candidate">Fourier mixing: FNet, Hyena</td><td data-label="1 bottleneck" class="tick">&#10007;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">&#10007;</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge bad">no</span> The transform is 0.09% (FNet) and 0.20% (Hyena) of prefill FLOPs: at most 1.002&times; if it were free. BF16 needs 8.96 effective bits against 3.198.</td></tr>
-        <tr><td data-label="Candidate">Block-circulant weights</td><td data-label="1 bottleneck" class="tick">&#10003;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">~</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge warn">not as modelled</span> The only large share: 84.54% with the LM head on the last token, Amdahl 6.5&times; (speculative at LLM scale). Needs FP4-level tolerance and the energy conditions of slide 16.</td></tr>
+        <tr><td data-label="Candidate">Fourier mixing: FNet, Hyena</td><td data-label="1 bottleneck" class="tick">&#10007;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">&#10007;</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge bad">no</span> The transform is 0.09% (FNet) and 0.20% (Hyena) of prefill FLOPs: at most 1.002&times; if it were free. BF16 needs 8.96 effective bits against at most 2.758.</td></tr>
+        <tr><td data-label="Candidate">Block-circulant weights</td><td data-label="1 bottleneck" class="tick">&#10003;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">&#10007;</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge warn">not as modelled</span> The only large share: 84.54% with the LM head on the last token, Amdahl 6.5&times; (speculative at LLM scale). Needs FP4-level tolerance (2.79 to 3.13 effective bits, above the 4-point slab's 2.758; a 64-point slab chained reaches 3.092, slide 16b) and the energy conditions of slide 16.</td></tr>
         <tr><td data-label="Candidate">FP4 (E2M1) MAC (paper &sect;V)</td><td data-label="1 bottleneck" class="tick">?</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">?</td><td data-label="6 precision" class="tick">~</td><td data-label="7 energy" class="tick">?</td><td data-label="Verdict"><span class="badge warn">unknown</span> A projection for a future chip, not a measurement; a MAC, not a transform. Whether it is analogue is unknown. If it is, and if it is block-scaled like NVFP4 (our reading; the paper says only &ldquo;FP4 (E2M1) MAC&rdquo;), matching NVFP4's rounding needs 3.13 effective bits before any accumulation error.</td></tr>
-        <tr><td data-label="Candidate">Low-bit KV ranking (PRISM-style)</td><td data-label="1 bottleneck" class="tick">~</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">&#10007;</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge bad">no, as modelled</span> Ranking tolerates noise: &ldquo;only rank order matters (relaxing precision to 4-6 bits)&rdquo; (PRISM). But it is a dot product, and 4 to 6 bits exceed 3.198.</td></tr>
+        <tr><td data-label="Candidate">Low-bit KV ranking (PRISM-style)</td><td data-label="1 bottleneck" class="tick">~</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">&#10007;</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge bad">no, as modelled</span> Ranking tolerates noise: &ldquo;only rank order matters (relaxing precision to 4-6 bits)&rdquo; (PRISM). But it is a dot product, and 4 to 6 bits exceed 2.758.</td></tr>
         <tr><td data-label="Candidate">KV compression (KIVI, KVQuant)</td><td data-label="1 bottleneck" class="tick">~</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">&#10007;</td><td data-label="6 precision" class="tick">&ndash;</td><td data-label="7 energy" class="tick">&ndash;</td><td data-label="Verdict"><span class="badge bad">no</span> Quantisation needs scaling, comparison and rounding, not a transform.</td></tr>
         <tr><td data-label="Candidate">Training traffic: 2-bit deltas (MuLoCo), DeMo's fixed band</td><td data-label="1 bottleneck" class="tick">~</td><td data-label="2 operations" class="tick">&#10007;</td><td data-label="4 noise" class="tick">~</td><td data-label="6 precision" class="tick">&ndash;</td><td data-label="7 energy" class="tick">&ndash;</td><td data-label="Verdict"><span class="badge bad">no</span> Link traffic, not on-chip compute; the fixed band, the only transform route, ends more than a nat above top-k (CiT_04).</td></tr>
-        <tr><td data-label="Candidate">FHE and PQC NTTs (exact mode, for contrast)</td><td data-label="1 bottleneck" class="tick">&#10007;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">n/a</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge warn">no gain modelled</span> The developer's stated first market. HBM binds (1&times;); compute-bound, 1.099&times; over equal logic and 0.9163&times; of equal silicon; 485.9 against 32.35 pJ.</td></tr>
+        <tr><td data-label="Candidate">FHE and PQC NTTs (exact mode, for contrast)</td><td data-label="1 bottleneck" class="tick">&#10007;</td><td data-label="2 operations" class="tick">&#10003;</td><td data-label="4 noise" class="tick">&#10003;</td><td data-label="6 precision" class="tick">n/a</td><td data-label="7 energy" class="tick">&#10007;</td><td data-label="Verdict"><span class="badge warn">no gain modelled</span> The developer's stated first market. HBM binds (1&times;); compute-bound, 1.099&times; over equal logic and 0.9163&times; of equal silicon; 498.9 against 32.35 pJ.</td></tr>
     </table>
     </div>
     <p class="fig-cap">&#10003; passes, &#10007; fails, ~ borderline or conditional, ? unknown, &ndash; not reached. Tests 3 and 5 are omitted from the columns: test 3 passes for every candidate that passes test 2, and test 5 matters only for the traffic rows. The verdicts are this deck's judgement from the numbers cited; none is a measurement.</p>
@@ -1205,7 +1232,7 @@
     <p>Amdahl decides first. In a Llama-3-8B-shaped model at a 2,048-token prompt, Fourier mixing is a sliver of the work: an FNet-shaped mixer (<a href="https://arxiv.org/abs/2105.03824">FNet</a>) is 0.09% of prefill FLOPs, Hyena (order 2; <a href="https://arxiv.org/abs/2302.10866">arXiv:2302.10866</a>) long convolutions 0.20%. Only when the weights themselves become transforms (block-circulant, as in CirCNN, <a href="https://arxiv.org/abs/1708.08917">arXiv:1708.08917</a>) does the share matter: 13.99% with the LM head charged for every token, 84.54% with it on the last token only, as serving engines do.</p>
     <div class="fig" id="anim-amdahl">
         <canvas id="cv-amdahl" aria-label="For each variant, the share of prefill FLOPs that is transform work and the Amdahl bound if that work became free"></canvas>
-        <p class="fig-cap">One variant per step, from the series' FLOP ledger (<code>flop_share.py</code>, prompt 2,048). Bound = 1/(1 &minus; share). Even the circulant case's 6.5&times; assumes the optics are free and exact enough; at 3.2 effective bits, and 32&times; the energy of a matched digital butterfly, neither holds. <span class="src-tag derived">computed</span></p>
+        <p class="fig-cap">One variant per step, from the series' FLOP ledger (<code>flop_share.py</code>, prompt 2,048). Bound = 1/(1 &minus; share). Even the circulant case's 6.5&times; assumes the optics are free and exact enough; at 2.758 effective bits at best, and 101.1&times; the energy of a matched digital butterfly at S = 6, neither holds. <span class="src-tag derived">computed</span></p>
     </div>
 </section>
 
@@ -1218,7 +1245,7 @@
         <p class="fig-cap">FP4 E2M1 has eight magnitudes, 0 to 6 (drawn from <code>FP4_GRID</code>, tested in Python). NVFP4 &ldquo;applies a fine-grained E4M3 scaling factor to each 16-value micro-block&rdquo; with &ldquo;a second-level FP32 scalar applied per tensor&rdquo; (<a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">NVIDIA</a>); MXFP4 uses blocks of 32 with an E8M0 power-of-two scale (<a href="https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf">OCP MX v1.0</a>). Whether the projected MAC is block-scaled is not stated: our reading.</p>
     </div>
     <div class="diagram-grid cols-2">
-        <div class="diagram-panel accent-border"><h4>If the MAC is analogue</h4><ul><li>Its error must stay below FP4's own: if it is block-scaled like NVFP4 (our reading), about 3.13 effective bits for NVFP4's rounding of one output, before an accumulation over K products adds its own noise.</li><li>The approximate mode's 3.198 bits are for an FFT chain, not a MAC; no MAC precision is modelled or published.</li><li>Energy: the paper projects an additional 1 pJ/bit; the simulator's static laser and heater terms (slide 08) are separate.</li></ul></div>
+        <div class="diagram-panel accent-border"><h4>If the MAC is analogue</h4><ul><li>Its error must stay below FP4's own: if it is block-scaled like NVFP4 (our reading), about 3.13 effective bits for NVFP4's rounding of one output, before an accumulation over K products adds its own noise.</li><li>The approximate mode's 2.758 bits (its best, on the 4-point slab) are for an FFT chain, not a MAC; no MAC precision is modelled or published.</li><li>Energy: the paper projects an additional 1 pJ/bit; the simulator's static laser and heater terms (slide 08) are separate.</li></ul></div>
         <div class="diagram-panel accent-border"><h4>If the MAC is digital</h4><ul><li>It is an ordinary FP4 MAC in the stacked logic, and the photonics does not take part in it.</li><li>Then the chip is a digital FP4 accelerator with an optical side-unit, and the question is the logic's, not the optics'.</li></ul></div>
     </div>
     <div class="callout"><p>Unknown, then, and it is the first question for the developer (slide 18). FP4 is not a precision the series has used before; this deck computed it on slide 06.</p></div>
@@ -1230,7 +1257,7 @@
     <div class="table-wrap">
     <table class="cards">
         <tr><th>Method</th><th>What it does (as cited)</th><th>On this chip</th></tr>
-        <tr><td data-label="Method">PRISM (<a href="https://arxiv.org/abs/2603.21576">arXiv:2603.21576</a>)</td><td data-label="What it does (as cited)">A photonic similarity engine for KV block selection: &ldquo;only rank order matters (relaxing precision to 4-6 bits)&rdquo;</td><td data-label="On this chip">Ranking is a dot product against the query; 4 bits already exceed the chain's 3.198</td></tr>
+        <tr><td data-label="Method">PRISM (<a href="https://arxiv.org/abs/2603.21576">arXiv:2603.21576</a>)</td><td data-label="What it does (as cited)">A photonic similarity engine for KV block selection: &ldquo;only rank order matters (relaxing precision to 4-6 bits)&rdquo;</td><td data-label="On this chip">Ranking is a dot product against the query; 4 bits already exceed the chain's 2.758</td></tr>
         <tr><td data-label="Method">KIVI (<a href="https://arxiv.org/abs/2402.02750">arXiv:2402.02750</a>)</td><td data-label="What it does (as cited)">&ldquo;quantizing the key cache per-channel and the value cache per-token to 2bit&rdquo;</td><td data-label="On this chip">Quantisation: scaling and rounding, no transform</td></tr>
         <tr><td data-label="Method">KVQuant (<a href="https://arxiv.org/abs/2401.18079">arXiv:2401.18079</a>)</td><td data-label="What it does (as cited)">&ldquo;&lt; 0.1 perplexity degradation with 3-bit quantization&rdquo;; &ldquo;LLaMA-7B model with 10M context length on an 8-GPU system&rdquo;</td><td data-label="On this chip">Quantisation, as above</td></tr>
         <tr><td data-label="Method">MuLoCo (<a href="https://arxiv.org/abs/2505.23725">arXiv:2505.23725</a>)</td><td data-label="What it does (as cited)">v1: &ldquo;aggressively compress the communicated delta to 2-bits with next to no performance degradation&rdquo;. The current v3 revises this: &ldquo;Both MuLoCo and DiLoCo achieve lossless 4-bit quantization&rdquo;; at 2 bits plain linear quantisation is impractical and statistical quantisation is needed</td><td data-label="On this chip">Traffic between workers: a link, not on-chip compute</td></tr>
@@ -1252,13 +1279,40 @@
     <table class="cards numfirst">
         <tr><th>#</th><th>Condition</th><th>Number</th><th data-card="Public roadmap">In the public roadmap?</th></tr>
         <tr><td data-label="#">1</td><td data-label="Condition">Memory must not bind</td><td data-label="Number">With 819 GB/s of HBM the chip equals the ASIC (1&times;); even unconstrained, exact mode caps near 1.1&times;</td><td data-label="Public roadmap">No: the HBM generation is not stated</td></tr>
-        <tr><td data-label="#">2</td><td data-label="Condition">Static light and heat below a digital butterfly</td><td data-label="Number">Laser 0.3182 + heaters 1.175 pJ against 0.2141; needs wall-plug efficiency of 0.4302 (modelled 0.15) and near-zero hold power (MEMS or non-volatile: 0.3183 total)</td><td data-label="Public roadmap">No: laser efficiency and phase-shifter technology are not stated</td></tr>
-        <tr><td data-label="#">3</td><td data-label="Condition">Conversions nearly free</td><td data-label="Number">Even with free heaters and a lossless laser, E_conv &le; 0.005926 pJ/bit at S = 6 (modelled 0.5)</td><td data-label="Public roadmap">Partly: stacking cuts the receiver to 30 fF; the energy per crossing is not stated</td></tr>
-        <tr><td data-label="#">4</td><td data-label="Condition">A workload that is mostly transform and tolerates FP4-level error</td><td data-label="Number">Transform share like circulant weights' 84.54%; about 3.13 effective bits (NVFP4's rounding, if block-scaled: our reading) against 3.198 available</td><td data-label="Public roadmap">Partly: &ldquo;45 GFLOPS of FP4 (E2M1) MAC&rdquo; &ldquo;for an additional 1 pJ/bit&rdquo; is projected (&sect;V) <span class="src-tag paper">paper</span>; its analogue-ness is unknown</td></tr>
-        <tr><td data-label="#">5</td><td data-label="Condition">If wavelengths share a mesh: achromatic phases, or one mesh per wavelength <span class="src-tag derived">modelled</span></td><td data-label="Number">With 4 &lambda; on one mesh the worst channel keeps 3.19 bits at S = 6 (3.198 alone), with 32 only 2.558; a mesh per wavelength removes the error but at 4 &lambda; and U = 64 takes 64 mm&sup2; and 66.56 W of heaters, against 25.6 mm&sup2; and 32 W shared</td><td data-label="Public roadmap">No: the wavelength plan and how the mesh handles it are not stated</td></tr>
+        <tr><td data-label="#">2</td><td data-label="Condition">Static light and heat below a digital butterfly</td><td data-label="Number">Laser 0.5385 + heaters 1.175 pJ against 0.0707; with MEMS or non-volatile phase shifters still 0.5386 or 0.5385. On the slab no wall-plug efficiency suffices: the 8-bit boundary twiddles alone (0.1031) exceed the matched digital butterfly</td><td data-label="Public roadmap">No: laser efficiency and phase-shifter technology are not stated</td></tr>
+        <tr><td data-label="#">3</td><td data-label="Condition">Conversions nearly free</td><td data-label="Number">At matched precision no E_conv pays, even with free heaters and a lossless laser; against the 8-bit digital butterfly, E_conv &le; 0.05014 pJ/bit at S = 6 with both free (modelled 0.5)</td><td data-label="Public roadmap">Partly: stacking cuts the receiver to 30 fF; the energy per crossing is not stated</td></tr>
+        <tr><td data-label="#">4</td><td data-label="Condition">A workload that is mostly transform and tolerates FP4-level error</td><td data-label="Number">Transform share like circulant weights' 84.54%; about 3.13 effective bits (NVFP4's rounding, if block-scaled: our reading) against 2.758 available on the 4-point slab; a 64-point slab, fully chained, keeps 3.092 (slide 16b)</td><td data-label="Public roadmap">Partly: &ldquo;45 GFLOPS of FP4 (E2M1) MAC&rdquo; &ldquo;for an additional 1 pJ/bit&rdquo; is projected (&sect;V) <span class="src-tag paper">paper</span>; its analogue-ness is unknown</td></tr>
+        <tr><td data-label="#">5</td><td data-label="Condition">If wavelengths share a slab: few channels, or one slab per wavelength <span class="src-tag derived">modelled</span></td><td data-label="Number">With 4 &lambda; on one slab the worst channel keeps 1.862 bits at S = 6 (1.872 alone), with 32 only 1.551; a slab per wavelength removes the wavelength term but keeps the slab's own 0.02756 residual, and at 4 &lambda; and U = 64 takes 64 mm&sup2; and 66.56 W of heaters, against 25.6 mm&sup2; and 32 W shared</td><td data-label="Public roadmap">No: the wavelength plan and how the slab handles it are not stated</td></tr>
     </table>
     </div>
-    <p>Against the 8-bit digital butterfly instead of a matched one, the bar is lower but still steep: with MEMS phase shifters E_conv would need to be 0.02787 pJ/bit. These are our numbers (<code>analysis/out/results.md</code>), on the simulator's illustrative parameters.</p>
+    <p>Against the 8-bit digital butterfly instead of a matched one, the bar is lower but still steep: with MEMS phase shifters E_conv would need to be 0.007224 pJ/bit. These are our numbers (<code>analysis/out/results.md</code>), on the simulator's illustrative parameters.</p>
+</section>
+
+<section class="slide" id="slide-16b">
+    <div class="slide-number">16b</div>
+    <h2>Native Size N: Does a Bigger Slab Help?</h2>
+    <p>A slab is not limited to 4 points: an N-point slab computes an N-point DFT in one pass, so a 4,096-point FFT needs 2 stages at N = 64 instead of 6. plms 0.5.0 (experiment 19) asks whether that is the lever that moves the verdict. <strong>For exact mode, no.</strong> Beyond 4 points the outputs of a DFT of bits are not integers: an output takes 15 distinct levels at N = 8, 375 at N = 16, 234,375 at N = 32 and 91,552,734,375 at N = 64, with the smallest gap between two of them 0.1213, 0.006272, 3.11e-7 and 4.447e-10 of a level step. No N above 4 keeps the design margin at the 4-point unit's reference power, and mapping the outputs back to integers mod p costs up to 651 constant multiplies per 64-point transform (a naive count, an upper bound). Even with free light and power, the bootstrap bound (the table's fourth column) against the equal-logic ASIC falls from 1.1&times; at N = 4 to 0.4204&times; at N = 64.</p>
+    <div class="fig">
+        <div class="fig-row">
+            <div><div class="chart-title">a &middot; distinct levels on one output vs native size N</div><canvas id="cv-n-levels" aria-label="The number of distinct output levels against native slab size N on a log scale, from 5 at N = 4 to about 9.2e10 at N = 64"></canvas></div>
+            <div><div class="chart-title">b &middot; approximate mode, 4,096-point FFT: effective bits vs N</div><canvas id="cv-n-bits" aria-label="Effective bits against native slab size N, at S = 1 and with all stages chained, with the v0.4 mesh's fully chained value as a reference line"></canvas></div>
+        </div>
+        <p class="fig-cap">Data: e19 (8-bit converters, design SNR 31.15 dB, each stage the calibrated slab of its radix). The slab's efficiency hardly changes with N (0.6343 at 4 points, 0.622 at 64). <span class="src-tag derived">modelled</span></p>
+    </div>
+    <div class="table-wrap">
+    <table class="cards">
+        <tr><th>N</th><th>Levels on one output</th><th>Exact keeps 6 dB</th><th>Bootstrap bound</th><th>Bits, all chained</th></tr>
+        <tr><td data-label="N">4</td><td data-label="Levels on one output">5</td><td data-label="Exact keeps 6 dB">yes</td><td data-label="Bootstrap bound">1.1&times;</td><td data-label="Bits, all chained">1.864 bits</td></tr>
+        <tr><td data-label="N">8</td><td data-label="Levels on one output">15</td><td data-label="Exact keeps 6 dB">no</td><td data-label="Bootstrap bound">1.015&times;</td><td data-label="Bits, all chained">2.246 bits</td></tr>
+        <tr><td data-label="N">16</td><td data-label="Levels on one output">375</td><td data-label="Exact keeps 6 dB">no</td><td data-label="Bootstrap bound">0.834&times;</td><td data-label="Bits, all chained">2.605 bits</td></tr>
+        <tr><td data-label="N">32</td><td data-label="Levels on one output">234,375</td><td data-label="Exact keeps 6 dB">no</td><td data-label="Bootstrap bound">0.6673&times;</td><td data-label="Bits, all chained">2.71 bits</td></tr>
+        <tr><td data-label="N">64</td><td data-label="Levels on one output">91,552,734,375</td><td data-label="Exact keeps 6 dB">no</td><td data-label="Bootstrap bound">0.4204&times;</td><td data-label="Bits, all chained">3.092 bits</td></tr>
+    </table>
+    </div>
+    <div class="callout">
+        <div class="callout-label">Reading it</div>
+        <p><strong>Approximate mode is where size helps</strong>: fewer chained stages mean fewer slab losses and residuals, so a fully chained 4,096-point FFT keeps 1.864 effective bits at N = 4 and 3.092 at N = 64. That clears MXFP4, FP4 E2M1 and INT4 g32 rounding in the simulator's measure (2.79 to 3.05, slide 06) but not NVFP4 (3.13) or FP8 (4.97), and stays under the v0.4 mesh's 3.198; the energy terms of slide 08 still apply. Joint decoding across the outputs could in principle recover integers at a good SNR, but it is itself an N/2-point linear inverse in logic, so the exact-mode direction stands. The simulator could not read WO2026057669A1 and models the plain mixed-radix decomposition.</p>
+    </div>
 </section>
 
 <section class="slide" id="slide-17">
@@ -1266,11 +1320,12 @@
     <h2>What to Take Away</h2>
     <ul>
         <li><strong>The memory wall comes first.</strong> With today's HBM the stacked chip and an all-digital ASIC take the same time (1&times;). Compute-bound, exact arithmetic caps the gain near 1.1&times;, and the same silicon spent on logic does better (0.9163&times;).</li>
-        <li><strong>Approximate mode keeps about 3 effective bits:</strong> 2.74 at S = 1, 3.198 at S = 6, set by receiver noise, not converters. That is for one wavelength: with 4 &lambda; sharing a mesh the worst channel keeps 3.19 at S = 6, with 32 only 2.558.</li>
-        <li><strong>FP4 needs about that much.</strong> By the series' rule FP4 E2M1 needs 4.20 ENOB and INT4 3.80; in the simulator's measure FP4-class formats sit at 2.79 to 3.13 effective bits. FP8 and BF16 are out of reach.</li>
-        <li><strong>Energy fails at matched precision.</strong> 6.929 pJ per butterfly-stage against 0.2141 digital; the laser alone (0.3182) exceeds the digital figure.</li>
+        <li><strong>The slab does not change the verdict</strong> (slide 01b). It costs loss (1.977 dB): margins fall (10.43 to 7.196 dB), one laser feeds fewer units (20 to 12), and exact mode costs more (485.9 to 498.9 pJ).</li>
+        <li><strong>Approximate mode keeps under 3 effective bits:</strong> 2.746 at S = 1, 2.758 at S = 2, 1.872 at S = 6; on the slab chaining loses bits. That is for one wavelength: with 4 &lambda; sharing a slab the worst channel keeps 1.862 at S = 6, with 32 only 1.551.</li>
+        <li><strong>FP4 needs a little more.</strong> By the series' rule FP4 E2M1 needs 4.20 ENOB and INT4 3.80; in the simulator's measure FP4-class formats sit at 2.79 to 3.13 effective bits. FP8 and BF16 are out of reach. A 64-point native slab, fully chained, keeps 3.092, still under the v0.4 mesh's 3.198, and no native size above 4 keeps exact mode (slide 16b).</li>
+        <li><strong>Energy fails at matched precision.</strong> 7.15 pJ per butterfly-stage against 0.0707 digital; the laser alone (0.5385) exceeds the digital figure.</li>
         <li><strong>The screen:</strong> no candidate passes as modelled. Block-circulant weights are the only large transform share (84.54%); the FP4 MAC is a projection whose analogue-ness is unknown; KV and training traffic belong to the link, not the chip.</li>
-        <li><strong>Exact mode, the developer's first market,</strong> shows no modelled gain either: 485.9 against 32.35 pJ per transform.</li>
+        <li><strong>Exact mode, the developer's first market,</strong> shows no modelled gain either: 498.9 against 32.35 pJ per transform.</li>
     </ul>
 </section>
 
@@ -1282,11 +1337,12 @@
         <tr><th>Question</th><th>Why it matters</th></tr>
         <tr><td data-label="Question">What is the native precision of the FP4 MAC, and is it analogue?</td><td data-label="Why it matters">Decides whether slide 14's left or right column applies</td></tr>
         <tr><td data-label="Question">Which HBM generation and bandwidth?</td><td data-label="Why it matters">At 819 GB/s the chip equals the ASIC (slide 03)</td></tr>
-        <tr><td data-label="Question">What is the conversion energy per crossing, in pJ/bit, both directions?</td><td data-label="Why it matters">The simulator assumes 0.5; break-even needs about 0.005926 (slide 16)</td></tr>
+        <tr><td data-label="Question">What is the conversion energy per crossing, in pJ/bit, both directions?</td><td data-label="Why it matters">The simulator assumes 0.5; at matched precision none breaks even, and against an 8-bit digital butterfly with MEMS phase shifters it needs 0.007224 (slide 16)</td></tr>
         <tr><td data-label="Question">Which phase-shifter technology, at what hold power?</td><td data-label="Why it matters">Thermo-optic heaters cost 1.175 pJ per butterfly-stage, more than the whole digital butterfly</td></tr>
         <tr><td data-label="Question">Laser wall-plug efficiency and fan-out per laser?</td><td data-label="Why it matters">The laser alone exceeds a matched digital butterfly at 0.15</td></tr>
-        <tr><td data-label="Question">How many stages can approximate mode chain, at what loss per stage?</td><td data-label="Why it matters">At 3 dB per stage, chaining loses bits (2.445 to 1.268)</td></tr>
-        <tr><td data-label="Question">How many wavelengths share each mesh, and are its phases achromatic or trimmed per channel?</td><td data-label="Why it matters">With 32 &lambda; on one mesh the worst channel falls to 2.558 bits at S = 6; a mesh per wavelength costs area and heater power (slide 16)</td></tr>
+        <tr><td data-label="Question">What is the slab's insertion loss, and how many stages can approximate mode chain?</td><td data-label="Why it matters">The simulator's 1.977 dB sets the laser fan-out (12, against the lossless mesh's 20) and every margin (7.196 dB against 10.43); at 2.949 dB per chained stage, chaining loses bits (2.758 at S = 2 to 1.872 at S = 6)</td></tr>
+        <tr><td data-label="Question">What is the slab's native size N, and how are its outputs mapped to integers?</td><td data-label="Why it matters">Only N = 4 keeps exact mode; a 64-point slab helps approximate mode (3.092 bits fully chained) (slide 16b)</td></tr>
+        <tr><td data-label="Question">How many wavelengths share each slab?</td><td data-label="Why it matters">With 32 &lambda; on one slab the worst channel falls to 1.551 bits at S = 6; a slab per wavelength costs area and heater power (slide 16)</td></tr>
         <tr><td data-label="Question">Which AI kernels are targeted, and at which number format?</td><td data-label="Why it matters">The screen finds none at FP8 or above</td></tr>
     </table>
     </div>
@@ -1298,8 +1354,7 @@
     <h3>Inputs</h3>
     <ul class="res-list">
         <li><a href="https://arxiv.org/abs/2608.21536">Kundu et al., &ldquo;Programmable Compute-in-Transit using Integrated Photonics&rdquo;, arXiv:2608.21536</a><span class="what">The module paper (PDF). &sect;II: 14 GBaud/s devices. &sect;V &ldquo;Future work&rdquo;: a monolithic chip with a 112 GBaud/s PIC and custom high-speed logic at 28 GHz; 45 GFLOPS of FP4 (E2M1) MAC for an additional 1 pJ/bit, projected. The 3D stacking is the developer's public statement, not &sect;V.</span></li>
-        <li>Photonic link module simulator, plms 0.3.0 at e3054d1: results sections 7 and 12&ndash;16, vendored in <code>data/plms_v0_3/</code><span class="what">Every <span class="src-tag derived">modelled</span> number. Presented in full on the explainer site: <a href="https://photonic-link-module-explained.vercel.app/method/">method</a>, and the chapters linked from slides 02&ndash;10.</span></li>
-        <li>The same simulator, plms 0.4.0 at fe2ee0a: results section 17 (wavelength-dependent transform error), vendored in <code>data/plms_v0_4/</code><span class="what">The plms 0.4 notes on slides 05, 09 and 16. Sections 7 and 12&ndash;16 are unchanged in 0.4.0. Explained in the <a href="https://photonic-link-module-explained.vercel.app/chapters/wavelengths/">wavelengths chapter</a>.</span></li>
+        <li>Photonic link module simulator, plms 0.5.0 at d46a388 (the transform modelled as a passive diffractive slab): the viability verdict, the v0.4 &rarr; v0.5 table, results sections 7 and 12&ndash;19 and the assumptions, vendored in <code>data/plms_v0_5/</code><span class="what">Every <span class="src-tag derived">modelled</span> number. Earlier versions (0.3.0, 0.4.0) modelled an MZI mesh; their numbers appear here only as the simulator's own v0.4 &rarr; v0.5 table gives them. Presented in full on the explainer site: <a href="https://photonic-link-module-explained.vercel.app/method/">method</a>, and the chapters linked from slides 02&ndash;10.</span></li>
         <li><a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Fourier_Optics_Inference/blob/main/analysis/results.md">The series' FLOP-share analysis</a>, vendored in <code>data/foptinf_analysis/</code><span class="what">Amdahl shares and the series' ENOB rule.</span></li>
         <li><code>analysis/</code> in this repository: <code>precision_needed.py</code>, <code>breakeven.py</code><span class="what">Every <span class="src-tag derived">computed</span> number; results in <code>analysis/out/results.md</code>.</span></li>
     </ul>
@@ -1315,7 +1370,7 @@
     </ul>
     <h3>Assumptions, with the simulator's tags</h3>
     <div class="table-wrap"><table class="cards" id="tbl-assume"><tr><th>Parameter</th><th>Default</th><th>Tag</th></tr></table></div>
-    <p class="fig-cap">Generated from the simulator's future-chip assumptions table (<code>data/plms_v0_3/results_extract.md</code>); the deck's own reconstruction of the approximate-mode crossing count is tagged <span class="src-tag inference">illustrative</span> on slide 08.</p>
+    <p class="fig-cap">Generated from the simulator's future-chip assumptions table (<code>data/plms_v0_5/results_extract.md</code>); the deck's own reconstruction of the approximate-mode crossing count is tagged <span class="src-tag inference">illustrative</span> on slide 08.</p>
 </section>
 
 <!-- ════════════════════════════════════ Footer ════════════════════════════════════ -->

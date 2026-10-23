@@ -1,0 +1,1067 @@
+{
+ "config_hash": "fd0a12a4c5da",
+ "experiment": "e19_native_size",
+ "figures": [
+  {
+   "annotations": [],
+   "id": "levels",
+   "kind": "line",
+   "series": [
+    {
+     "name": "Most decision levels on one output",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      5.0,
+      15.0,
+      375.0,
+      234375.0,
+      91552700000.0
+     ]
+    }
+   ],
+   "title": "Most decision levels on one output",
+   "x": {
+    "label": "native size N",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "levels",
+    "scale": "log",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "design margin",
+     "type": "hline",
+     "y": 6.0
+    }
+   ],
+   "id": "margin",
+   "kind": "line",
+   "series": [
+    {
+     "name": "Exact-mode margin at the reference power",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      10.0,
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ],
+   "title": "Exact-mode margin at the reference power",
+   "x": {
+    "label": "native size N",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "margin",
+    "scale": "linear",
+    "unit": "dB"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "energy",
+   "kind": "line",
+   "series": [
+    {
+     "name": "chip, all in",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      468.946,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "free light and crossings",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      43.7833,
+      45.1191,
+      55.8048,
+      73.1444,
+      122.814
+     ]
+    },
+    {
+     "name": "ASIC",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      32.3521,
+      32.3521,
+      32.3521,
+      32.3521,
+      32.3521
+     ]
+    }
+   ],
+   "title": "Exact 4096-point NTT: pJ per radix-4 equivalent",
+   "x": {
+    "label": "native size N",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "energy",
+    "scale": "log",
+    "unit": "pJ"
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "break-even",
+     "type": "hline",
+     "y": 1.0
+    }
+   ],
+   "id": "breakeven",
+   "kind": "line",
+   "series": [
+    {
+     "name": "Bootstrap bound vs the equal-logic ASIC",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      1.10008,
+      1.0154,
+      0.83402,
+      0.667345,
+      0.420368
+     ]
+    }
+   ],
+   "title": "Bootstrap bound vs the equal-logic ASIC",
+   "x": {
+    "label": "native size N",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "speed-up",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [],
+   "id": "fanout",
+   "kind": "line",
+   "series": [
+    {
+     "name": "Lanes one laser feeds at the design margin",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      32.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ],
+   "title": "Lanes one laser feeds at the design margin",
+   "x": {
+    "label": "native size N",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "lanes",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [],
+   "id": "approximate",
+   "kind": "line",
+   "series": [
+    {
+     "name": "S = 1",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      2.74788,
+      2.91434,
+      3.0283,
+      3.05331,
+      3.25528
+     ]
+    },
+    {
+     "name": "all stages chained",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      1.8636,
+      2.24631,
+      2.60544,
+      2.71029,
+      3.09223
+     ]
+    }
+   ],
+   "title": "Approximate mode: effective bits (4,096-point FFT)",
+   "x": {
+    "label": "native size N",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "effective bits",
+    "scale": "linear",
+    "unit": "bits"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "wdm",
+   "kind": "line",
+   "series": [
+    {
+     "name": "λ0",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      0.0275592,
+      0.0297793,
+      0.0333876,
+      0.0344964,
+      0.0342907
+     ]
+    },
+    {
+     "name": "4x200GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      0.0292445,
+      0.0316289,
+      0.0387293,
+      0.0490828,
+      0.0721789
+     ]
+    },
+    {
+     "name": "16x200GHz",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0
+     ],
+     "y": [
+      0.0407673,
+      0.0513309,
+      0.085586,
+      0.152163,
+      0.287049
+     ]
+    }
+   ],
+   "title": "Worst-channel error on one shared slab",
+   "x": {
+    "label": "native size N",
+    "scale": "log",
+    "unit": ""
+   },
+   "y": {
+    "label": "‖U − DFT_N‖/‖DFT_N‖",
+    "scale": "linear",
+    "unit": ""
+   }
+  }
+ ],
+ "profile": "full",
+ "schema": "plms-web-data",
+ "schema_version": 5,
+ "sources": {
+  "asic.pJ_mul32": "textbook",
+  "future.conv_pJ_bit": "illustrative",
+  "future.units": "illustrative",
+  "oft.kind": "paper",
+  "oft.pitch_in_um": "illustrative"
+ },
+ "tables": [
+  {
+   "id": "sizes",
+   "rows": [
+    {
+     "approx": {
+      "bits_S1": 2.74788,
+      "bits_all": 1.8636,
+      "conversions_pJ_per_bfly_stage": {
+       "1": 32.0,
+       "6": 5.33333
+      },
+      "radices": [
+       4,
+       4,
+       4,
+       4,
+       4,
+       4
+      ],
+      "stage_loss_dB": {
+       "4": 2.94933
+      }
+     },
+     "calibrated": 0.0275592,
+     "envelope": {
+      "in_dB": 2.28887,
+      "out_dB": 2.23912
+     },
+     "eta": 0.634346,
+     "exact_feasible": true,
+     "gap_exact": true,
+     "gap_penalty_dB": 0.0,
+     "il_dB": 1.97673,
+     "intrinsic": 0.0263913,
+     "lambda0_fro": 0.0275592,
+     "margin_ref_dB": 10.0,
+     "max_bits": 3,
+     "max_lanes_per_laser": 32,
+     "max_levels": 5,
+     "mean_bits": 2.5,
+     "min_gap": 1.0,
+     "n": 4,
+     "ntt": {
+      "4096": {
+       "addeq": 147456.0,
+       "adds": 24576.0,
+       "asic_addeq": 172032.0,
+       "asic_pJ": 198771.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 1.10008,
+       "bound": "logic",
+       "conversions_pJ": 2174980.0,
+       "crossing_bits": 4349950.0,
+       "free_light_crossings_pJ_per_bfly": 43.7833,
+       "free_light_pJ_per_bfly": 397.783,
+       "logic_only_pJ_per_bfly": 31.9833,
+       "logic_pJ": 196505.0,
+       "muls": 24576.0,
+       "out_bits": 2,
+       "pJ_per_bfly": 468.946,
+       "radices": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+       ],
+       "radix4_butterflies": 6144.0,
+       "recombination_pJ": 72499.2,
+       "speedup_logic": 1.16667,
+       "speedup_logic_free_power": 1.16667,
+       "speedup_silicon": 0.509934,
+       "speedup_silicon_free_power": 0.509934,
+       "stages": 6,
+       "time_asic_s": 6.20606e-08,
+       "time_asic_silicon_s": 2.71258e-08,
+       "time_chip_s": 5.31948e-08,
+       "unit_slots": 362496.0
+      },
+      "65536": {
+       "addeq": 3145730.0,
+       "adds": 524288.0,
+       "asic_addeq": 3670020.0,
+       "asic_pJ": 4240450.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 1.10008,
+       "bound": "logic",
+       "conversions_pJ": 46399500.0,
+       "crossing_bits": 92799000.0,
+       "free_light_crossings_pJ_per_bfly": 43.7833,
+       "free_light_pJ_per_bfly": 397.783,
+       "logic_only_pJ_per_bfly": 31.9833,
+       "logic_pJ": 4192120.0,
+       "muls": 524288.0,
+       "out_bits": 2,
+       "pJ_per_bfly": 468.946,
+       "radices": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+       ],
+       "radix4_butterflies": 131072.0,
+       "recombination_pJ": 1546650.0,
+       "speedup_logic": 1.16667,
+       "speedup_logic_free_power": 1.16667,
+       "speedup_silicon": 0.509934,
+       "speedup_silicon_free_power": 0.509934,
+       "stages": 8,
+       "time_asic_s": 1.32396e-06,
+       "time_asic_silicon_s": 5.78684e-07,
+       "time_chip_s": 1.13482e-06,
+       "unit_slots": 7733250.0
+      }
+     },
+     "photonic_area_mm2": 12.8,
+     "radius_um": 33.9052,
+     "recovery": {
+      "adds": 4,
+      "muls": 1
+     },
+     "residual_exact": true,
+     "residual_steps": 0.0623057,
+     "shifters_chip": 1152,
+     "shifters_per_unit": 18,
+     "slab_mm2": 0.000406862,
+     "static": {
+      "heaters_W": 11.52,
+      "laser_wall_W": 21.3333,
+      "lasers": 32,
+      "total_W": 32.8533,
+      "units_per_laser": 2
+     },
+     "throughput_bfly_per_s": 461668000000.0,
+     "unit_area_mm2": 0.2,
+     "units": 64,
+     "wdm_worst_fro": {
+      "16x200GHz": 0.0407673,
+      "4x200GHz": 0.0292445
+     }
+    },
+    {
+     "approx": {
+      "bits_S1": 2.91434,
+      "bits_all": 2.24631,
+      "conversions_pJ_per_bfly_stage": {
+       "1": 21.3333,
+       "4": 5.33333
+      },
+      "radices": [
+       8,
+       8,
+       8,
+       8
+      ],
+      "stage_loss_dB": {
+       "8": 3.79397
+      }
+     },
+     "calibrated": 0.0297793,
+     "envelope": {
+      "in_dB": 3.24883,
+      "out_dB": 3.22351
+     },
+     "eta": 0.620849,
+     "exact_feasible": false,
+     "gap_exact": true,
+     "gap_penalty_dB": 18.3213,
+     "il_dB": 2.07014,
+     "intrinsic": 0.0284163,
+     "lambda0_fro": 0.0297793,
+     "margin_ref_dB": "-inf",
+     "max_bits": 4,
+     "max_lanes_per_laser": 0,
+     "max_levels": 15,
+     "mean_bits": 3.75,
+     "min_gap": 0.12132,
+     "n": 8,
+     "ntt": {
+      "4096": {
+       "addeq": 167936.0,
+       "adds": 24576.0,
+       "asic_addeq": 172032.0,
+       "asic_pJ": 198771.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 1.0154,
+       "bound": "power",
+       "conversions_pJ": 2295810.0,
+       "crossing_bits": 4591620.0,
+       "free_light_crossings_pJ_per_bfly": 45.1191,
+       "free_light_pJ_per_bfly": 418.786,
+       "logic_only_pJ_per_bfly": 37.2524,
+       "logic_pJ": 228879.0,
+       "muls": 28672.0,
+       "out_bits": 3.75,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        8,
+        8,
+        8,
+        8
+       ],
+       "radix4_butterflies": 6144.0,
+       "recombination_pJ": 48332.8,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 1.02439,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.447747,
+       "stages": 4,
+       "time_asic_s": 6.20606e-08,
+       "time_asic_silicon_s": 2.71258e-08,
+       "time_chip_s": "inf",
+       "unit_slots": 120832.0
+      },
+      "65536": {
+       "addeq": 3588100.0,
+       "adds": 557056.0,
+       "asic_addeq": 3670020.0,
+       "asic_pJ": 4240450.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 1.01442,
+       "bound": "power",
+       "conversions_pJ": 51716100.0,
+       "crossing_bits": 103432000.0,
+       "free_light_crossings_pJ_per_bfly": 45.7961,
+       "free_light_pJ_per_bfly": 440.359,
+       "logic_only_pJ_per_bfly": 36.9461,
+       "logic_pJ": 4842600.0,
+       "muls": 606208.0,
+       "out_bits": 3.75,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        2
+       ],
+       "radix4_butterflies": 131072.0,
+       "recombination_pJ": 1159990.0,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 1.02283,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.447065,
+       "stages": 6,
+       "time_asic_s": 1.32396e-06,
+       "time_asic_silicon_s": 5.78684e-07,
+       "time_chip_s": "inf",
+       "unit_slots": 2899970.0
+      }
+     },
+     "photonic_area_mm2": 12.8401,
+     "radius_um": 69.1753,
+     "recovery": {
+      "adds": 12,
+      "muls": 7
+     },
+     "residual_exact": true,
+     "residual_steps": 0.156506,
+     "shifters_chip": 960,
+     "shifters_per_unit": 30,
+     "slab_mm2": 0.00166021,
+     "static": {
+      "heaters_W": 9.6,
+      "laser_wall_W": "inf",
+      "lasers": "inf",
+      "total_W": "inf",
+      "units_per_laser": 0
+     },
+     "throughput_bfly_per_s": 692502000000.0,
+     "unit_area_mm2": 0.401253,
+     "units": 32,
+     "wdm_worst_fro": {
+      "16x200GHz": 0.0513309,
+      "4x200GHz": 0.0316289
+     }
+    },
+    {
+     "approx": {
+      "bits_S1": 3.0283,
+      "bits_all": 2.60544,
+      "conversions_pJ_per_bfly_stage": {
+       "1": 16.0,
+       "3": 5.33333
+      },
+      "radices": [
+       16,
+       16,
+       16
+      ],
+      "stage_loss_dB": {
+       "16": 4.24075
+      }
+     },
+     "calibrated": 0.0333876,
+     "envelope": {
+      "in_dB": 3.83073,
+      "out_dB": 3.80043
+     },
+     "eta": 0.621885,
+     "exact_feasible": false,
+     "gap_exact": true,
+     "gap_penalty_dB": 44.0523,
+     "il_dB": 2.0629,
+     "intrinsic": 0.0321317,
+     "lambda0_fro": 0.0333876,
+     "margin_ref_dB": "-inf",
+     "max_bits": 9,
+     "max_lanes_per_laser": 0,
+     "max_levels": 375,
+     "mean_bits": 7.125,
+     "min_gap": 0.00627173,
+     "n": 16,
+     "ntt": {
+      "4096": {
+       "addeq": 225792.0,
+       "adds": 33792.0,
+       "asic_addeq": 172032.0,
+       "asic_pJ": 198771.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 0.83402,
+       "bound": "power",
+       "conversions_pJ": 2945280.0,
+       "crossing_bits": 5890560.0,
+       "free_light_crossings_pJ_per_bfly": 55.8048,
+       "free_light_pJ_per_bfly": 535.18,
+       "logic_only_pJ_per_bfly": 49.9048,
+       "logic_pJ": 306615.0,
+       "muls": 38400.0,
+       "out_bits": 7.125,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        16,
+        16,
+        16
+       ],
+       "radix4_butterflies": 6144.0,
+       "recombination_pJ": 36249.6,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 0.761905,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.330827,
+       "stages": 3,
+       "time_asic_s": 6.20606e-08,
+       "time_asic_silicon_s": 2.69474e-08,
+       "time_chip_s": "inf",
+       "unit_slots": 45312.0
+      },
+      "65536": {
+       "addeq": 4816900.0,
+       "adds": 720896.0,
+       "asic_addeq": 3670020.0,
+       "asic_pJ": 4240450.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 0.83402,
+       "bound": "power",
+       "conversions_pJ": 62832600.0,
+       "crossing_bits": 125665000.0,
+       "free_light_crossings_pJ_per_bfly": 55.8048,
+       "free_light_pJ_per_bfly": 535.18,
+       "logic_only_pJ_per_bfly": 49.9048,
+       "logic_pJ": 6541120.0,
+       "muls": 819200.0,
+       "out_bits": 7.125,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        16,
+        16,
+        16,
+        16
+       ],
+       "radix4_butterflies": 131072.0,
+       "recombination_pJ": 773325.0,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 0.761905,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.330827,
+       "stages": 4,
+       "time_asic_s": 1.32396e-06,
+       "time_asic_silicon_s": 5.74877e-07,
+       "time_chip_s": "inf",
+       "unit_slots": 966656.0
+      }
+     },
+     "photonic_area_mm2": 12.9003,
+     "radius_um": 139.016,
+     "recovery": {
+      "adds": 44,
+      "muls": 35
+     },
+     "residual_exact": true,
+     "residual_steps": 0.262376,
+     "shifters_chip": 864,
+     "shifters_per_unit": 54,
+     "slab_mm2": 0.00667278,
+     "static": {
+      "heaters_W": 8.64,
+      "laser_wall_W": "inf",
+      "lasers": "inf",
+      "total_W": "inf",
+      "units_per_laser": 0
+     },
+     "throughput_bfly_per_s": 923336000000.0,
+     "unit_area_mm2": 0.806266,
+     "units": 16,
+     "wdm_worst_fro": {
+      "16x200GHz": 0.085586,
+      "4x200GHz": 0.0387293
+     }
+    },
+    {
+     "approx": {
+      "bits_S1": 3.05331,
+      "bits_all": 2.71029,
+      "conversions_pJ_per_bfly_stage": {
+       "1": 16.0,
+       "3": 5.33333
+      },
+      "radices": [
+       32,
+       32,
+       4
+      ],
+      "stage_loss_dB": {
+       "32": 4.49127,
+       "4": 2.94933
+      }
+     },
+     "calibrated": 0.0344964,
+     "envelope": {
+      "in_dB": 4.15007,
+      "out_dB": 4.1307
+     },
+     "eta": 0.621587,
+     "exact_feasible": false,
+     "gap_exact": true,
+     "gap_penalty_dB": 130.145,
+     "il_dB": 2.06498,
+     "intrinsic": 0.0342044,
+     "lambda0_fro": 0.0344964,
+     "margin_ref_dB": "-inf",
+     "max_bits": 18,
+     "max_lanes_per_laser": 0,
+     "max_levels": 234375,
+     "mean_bits": 13.6875,
+     "min_gap": 3.11e-07,
+     "n": 32,
+     "ntt": {
+      "4096": {
+       "addeq": 306688.0,
+       "adds": 48128.0,
+       "asic_addeq": 172032.0,
+       "asic_pJ": 198771.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 0.667345,
+       "bound": "power",
+       "conversions_pJ": 4032770.0,
+       "crossing_bits": 8065540.0,
+       "free_light_crossings_pJ_per_bfly": 73.1444,
+       "free_light_pJ_per_bfly": 729.519,
+       "logic_only_pJ_per_bfly": 67.2444,
+       "logic_pJ": 413150.0,
+       "muls": 51712.0,
+       "out_bits": 13.6875,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        32,
+        32,
+        4
+       ],
+       "radix4_butterflies": 6144.0,
+       "recombination_pJ": 36249.6,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 0.560935,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.243564,
+       "stages": 3,
+       "time_asic_s": 6.20606e-08,
+       "time_asic_silicon_s": 2.69474e-08,
+       "time_chip_s": "inf",
+       "unit_slots": 22656.0
+      },
+      "65536": {
+       "addeq": 7000060.0,
+       "adds": 1122300.0,
+       "asic_addeq": 3670020.0,
+       "asic_pJ": 4240450.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 0.633776,
+       "bound": "power",
+       "conversions_pJ": 90986500.0,
+       "crossing_bits": 181973000.0,
+       "free_light_crossings_pJ_per_bfly": 77.5751,
+       "free_light_pJ_per_bfly": 771.747,
+       "logic_only_pJ_per_bfly": 71.6751,
+       "logic_pJ": 9394600.0,
+       "muls": 1175550.0,
+       "out_bits": 13.6875,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        32,
+        32,
+        32,
+        2
+       ],
+       "radix4_butterflies": 131072.0,
+       "recombination_pJ": 773325.0,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 0.524283,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.227649,
+       "stages": 4,
+       "time_asic_s": 1.32396e-06,
+       "time_asic_silicon_s": 5.74877e-07,
+       "time_chip_s": "inf",
+       "unit_slots": 483328.0
+      }
+     },
+     "photonic_area_mm2": 13.0105,
+     "radius_um": 278.363,
+     "recovery": {
+      "adds": 172,
+      "muls": 155
+     },
+     "residual_exact": false,
+     "residual_steps": 1.21744,
+     "shifters_chip": 816,
+     "shifters_per_unit": 102,
+     "slab_mm2": 0.0267229,
+     "static": {
+      "heaters_W": 8.16,
+      "laser_wall_W": "inf",
+      "lasers": "inf",
+      "total_W": "inf",
+      "units_per_laser": 0
+     },
+     "throughput_bfly_per_s": 1154170000000.0,
+     "unit_area_mm2": 1.62632,
+     "units": 8,
+     "wdm_worst_fro": {
+      "16x200GHz": 0.152163,
+      "4x200GHz": 0.0490828
+     }
+    },
+    {
+     "approx": {
+      "bits_S1": 3.25528,
+      "bits_all": 3.09223,
+      "conversions_pJ_per_bfly_stage": {
+       "1": 10.6667,
+       "2": 5.33333
+      },
+      "radices": [
+       64,
+       64
+      ],
+      "stage_loss_dB": {
+       "64": 4.61814
+      }
+     },
+     "calibrated": 0.0342907,
+     "envelope": {
+      "in_dB": 4.23459,
+      "out_dB": 4.27744
+     },
+     "eta": 0.622012,
+     "exact_feasible": false,
+     "gap_exact": false,
+     "gap_penalty_dB": 187.039,
+     "il_dB": 2.06202,
+     "intrinsic": 0.0341099,
+     "lambda0_fro": 0.0342907,
+     "margin_ref_dB": "-inf",
+     "max_bits": 37,
+     "max_lanes_per_laser": 0,
+     "max_levels": 91552734375,
+     "mean_bits": 27.7812,
+     "min_gap": 4.44672e-10,
+     "n": 64,
+     "ntt": {
+      "4096": {
+       "addeq": 544512.0,
+       "adds": 87552.0,
+       "asic_addeq": 172032.0,
+       "asic_pJ": 198771.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 0.420368,
+       "bound": "power",
+       "conversions_pJ": 6955390.0,
+       "crossing_bits": 13910800.0,
+       "free_light_crossings_pJ_per_bfly": 122.814,
+       "free_light_pJ_per_bfly": 1254.88,
+       "logic_only_pJ_per_bfly": 118.88,
+       "logic_pJ": 730400.0,
+       "muls": 91392.0,
+       "out_bits": 27.7812,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        64,
+        64
+       ],
+       "radix4_butterflies": 6144.0,
+       "recombination_pJ": 24166.4,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 0.315938,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.135402,
+       "stages": 2,
+       "time_asic_s": 6.20606e-08,
+       "time_asic_silicon_s": 2.65974e-08,
+       "time_chip_s": "inf",
+       "unit_slots": 7552.0
+      },
+      "65536": {
+       "addeq": 9916420.0,
+       "adds": 1581060.0,
+       "asic_addeq": 3670020.0,
+       "asic_pJ": 4240450.0,
+       "asic_pJ_per_bfly": 32.3521,
+       "bootstrap_bound": 0.479869,
+       "bound": "power",
+       "conversions_pJ": 130619000.0,
+       "crossing_bits": 261239000.0,
+       "free_light_crossings_pJ_per_bfly": 106.061,
+       "free_light_pJ_per_bfly": 1102.61,
+       "logic_only_pJ_per_bfly": 101.636,
+       "logic_pJ": 13321700.0,
+       "muls": 1667070.0,
+       "out_bits": 27.7812,
+       "pJ_per_bfly": "inf",
+       "radices": [
+        64,
+        64,
+        16
+       ],
+       "radix4_butterflies": 131072.0,
+       "recombination_pJ": 579994.0,
+       "speedup_logic": 0.0,
+       "speedup_logic_free_power": 0.370095,
+       "speedup_silicon": 0.0,
+       "speedup_silicon_free_power": 0.158612,
+       "stages": 3,
+       "time_asic_s": 1.32396e-06,
+       "time_asic_silicon_s": 5.67411e-07,
+       "time_chip_s": "inf",
+       "unit_slots": 181248.0
+      }
+     },
+     "photonic_area_mm2": 13.2261,
+     "radius_um": 556.892,
+     "recovery": {
+      "adds": 684,
+      "muls": 651
+     },
+     "residual_exact": false,
+     "residual_steps": 2.61415,
+     "shifters_chip": 792,
+     "shifters_per_unit": 198,
+     "slab_mm2": 0.106923,
+     "static": {
+      "heaters_W": 7.92,
+      "laser_wall_W": "inf",
+      "lasers": "inf",
+      "total_W": "inf",
+      "units_per_laser": 0
+     },
+     "throughput_bfly_per_s": 1385000000000.0,
+     "unit_area_mm2": 3.30652,
+     "units": 4,
+     "wdm_worst_fro": {
+      "16x200GHz": 0.287049,
+      "4x200GHz": 0.0721789
+     }
+    }
+   ]
+  }
+ ],
+ "title": "Native transform size: N-point slab units"
+}

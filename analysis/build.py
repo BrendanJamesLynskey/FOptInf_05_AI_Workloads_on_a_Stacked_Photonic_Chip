@@ -42,6 +42,14 @@ def figs(name: str, ids=None) -> dict:
             for f in D.experiment(name)["figures"] if ids is None or f["id"] in ids}
 
 
+def mesh_v04_chained() -> float:
+    """The v0.4 mesh's fully chained effective bits, as the simulator's verdict section states it."""
+    import re
+    m = re.search(r"fully chained the v0\.4 mesh kept ([\d.]+) \(`e16_approximate\.eff_bits_at_converter_bits\.-1`\) in v0\.4",
+                  D.extract_text())
+    return float(m.group(1))
+
+
 def deck_data(prec: dict, be: dict) -> dict:
     sr = D.series_results()
     return {
@@ -56,6 +64,9 @@ def deck_data(prec: dict, be: dict) -> dict:
                 "temperature_map": D.table("e14_laser_thermal", "temperature_map")},
         "e15": {"figures": figs("e15_calibration_scaling"), "sources": D.experiment("e15_calibration_scaling")["sources"]},
         "e16": {"figures": figs("e16_approximate"), "sources": D.experiment("e16_approximate")["sources"]},
+        "e19": {"figures": figs("e19_native_size", ("levels", "breakeven", "approximate")),
+                "sources": D.experiment("e19_native_size")["sources"],
+                "mesh_v04_chained": mesh_v04_chained()},
         "precision": prec,
         "breakeven": be,
         "series": {"headline": sr["headline"], "prefill_lm_last": sr["prefill_lm_last"],
@@ -71,21 +82,21 @@ def fixtures(prec: dict, be: dict) -> dict:
     cases = {"exact": [], "approx": [], "breakeven": [], "digital": [], "g4": [], "precision": [], "e12": [], "e16": []}
     for E in (0.05, 0.5, 2.0):
         for w in (28, 59):
-            for U, W, F in ((64, 4, 20), (4, 1, 26), (1024, 8, 16)):
+            for U, W, F in ((64, 4, 12), (4, 1, 17), (1024, 8, 8)):
                 cc = replace(c, E_conv=E, width=w, U=U, W=W, fanout=F)
                 cases["exact"].append({"chip": asdict(cc), "out": B.exact_transform(cc)})
     for S in range(1, 7):
         for bits in (4, 8, 12):
             for p in (10.0, 0.001, 30.0):
-                for F, mW in ((20, 100.0), (92, 10 ** 2.7)):
+                for F, mW in ((12, 100.0), (60, 10 ** 2.7)):
                     cc = replace(c, p_pi_mW=p, fanout=F, laser_mW=mW)
                     cases["approx"].append({"chip": asdict(cc), "S": S, "bits": bits, "out": B.approx_stage(cc, S, bits)})
-                    for dig in (0.2141, 0.7188):
+                    for dig in (0.0707, 0.1333, 0.7188):
                         cases["breakeven"].append({"chip": asdict(cc), "S": S, "bits": bits, "digital": dig,
                                                    "out": B.breakeven_E_conv(cc, S, dig, bits)})
-    for b in (2.74, 3.0, 3.198, 4, 8, 16):
+    for b in (1.872, 2.746, 2.758, 3.0, 4, 8, 16):
         cases["digital"].append({"bits": b, "out": B.digital_butterfly(c, b)})
-    for x in (0, 1, 6.929, 0.2141, 1.408e13, 4.617e11, -0.1406, 0.00012345, 12345.6, 99999.5, 0.5, 1e-5, 485.87):
+    for x in (0, 1, 7.15, 0.0707, 1.39e13, 4.617e11, -0.1589, 0.00012345, 12345.6, 99999.5, 0.5, 1e-5, 498.87):
         cases["g4"].append({"x": x, "out": g4(x)})
     cr = prec["reference"]["crest"]
     for k, v in prec["formats"].items():
@@ -121,15 +132,15 @@ def explorer_fixtures(prec: dict, be: dict) -> list:
                     "readouts": {"pa-bits": g4(bits), "pa-enob-series": g4(P.series_enob_from_snr_bits(bits, prec["reference"]["crest"]))}})
     # slide 08: what-if
     c = B.Chip()
-    for S, bits, tech, E, F in ((6, 8, "thermo 10 mW/π", 0.5, 20), (6, 8, "mems", 0.05, 20), (1, 8, "thermo 10 mW/π", 0.5, 20), (6, 8, "nv", 0.01, 92)):
-        mW = 100.0 if F == 20 else 10 ** 2.7
+    for S, bits, tech, E, F in ((6, 8, "thermo 10 mW/π", 0.5, 12), (6, 8, "mems", 0.05, 12), (1, 8, "thermo 10 mW/π", 0.5, 12), (6, 8, "nv", 0.01, 60)):
+        mW = 100.0 if F == 12 else 10 ** 2.7
         cc = replace(c, p_pi_mW=B.P_PI_MW[tech], E_conv=E, fanout=F, laser_mW=mW)
         a = B.approx_stage(cc, S, bits)
         eff = B.e16_bits(S, bits)
         dig = B.digital_butterfly(c, eff)
         be_e = B.breakeven_E_conv(cc, S, dig, bits)
         out.append({"id": "be", "inputs": {"be-s": str(S), "be-bits": str(bits), "be-tech": tech, "be-e": str(E),
-                                           "be-laser": "20" if F == 20 else "27"},
+                                           "be-laser": "20" if F == 12 else "27"},
                     "readouts": {"be-photonic": g4(a["total"]), "be-digital": g4(dig), "be-ratio": g4(a["total"] / dig),
                                  "be-need": "never (static alone exceeds digital)" if be_e is None else g4(be_e)}})
     return out
@@ -172,8 +183,11 @@ def results_md(prec: dict, be: dict) -> str:
     cd = be["conditions"]
     w("\nConditions for S = 6 to match the matched-precision digital butterfly "
       f"({g4(cd['target_pJ'])} pJ):\n")
-    w(f"* wall-plug efficiency needed with free heaters and free conversions: {g4(cd['wall_plug_needed_free_heaters_free_conv'])} (default 0.15)")
-    w(f"* E_conv needed with free heaters and a lossless laser (wall plug 1): {g4(cd['E_conv_needed_free_heaters_wall_plug_1'])} pJ/bit (default 0.5)")
+    nv = lambda x: "none (never)" if x is None else g4(x)
+    w(f"* boundary twiddles alone (8-bit, digital): {g4(cd['twiddles_pJ'])} pJ, above the matched digital butterfly at S = 6")
+    w(f"* wall-plug efficiency needed with free heaters and free conversions: {nv(cd['wall_plug_needed_free_heaters_free_conv'])} (default 0.15)")
+    w(f"* E_conv needed with free heaters and a lossless laser (wall plug 1): {nv(cd['E_conv_needed_free_heaters_wall_plug_1'])} pJ/bit (default 0.5)")
+    w(f"* the same against the 8-bit digital butterfly ({g4(be['digital_8bit'])} pJ): {nv(cd['E_conv_needed_free_heaters_wall_plug_1_vs_8bit'])} pJ/bit")
     w(f"* E_conv needed against the 8-bit digital butterfly with MEMS phase shifters: {g4(cd['E_conv_needed_vs_8bit_mems'])} pJ/bit")
     w(f"* at the defaults: {'never' if cd['E_conv_needed_vs_matched_default'] is None else g4(cd['E_conv_needed_vs_matched_default'])}")
     w(f"\nApproximate-mode throughput at S = 6 over the exact-mode rate: {g4(be['throughput_vs_exact'])}x.\n")

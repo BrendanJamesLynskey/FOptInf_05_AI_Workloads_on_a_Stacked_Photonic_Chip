@@ -4,7 +4,7 @@
 Reads the visible text of index.html (scripts and styles removed; numbers that the page computes at run time come
 from the tested JS models and are not in the HTML). Each number is accepted if it appears
 
-  - as written in data/plms_v0_3/ or data/plms_v0_4/results_extract.md, data/foptinf_analysis/results.md or sources/quotes.md;
+  - as written in data/plms_v0_5/results_extract.md, data/foptinf_analysis/results.md or sources/quotes.md;
   - as a value in data/*.json or analysis/out/*.json, rounded to the number of significant figures or decimal
     places the slide uses (a slide may round 3.198 to 3.2, never invent 3.3);
   - in tools/number_exemptions.json, each with its reason (slide numbers, small counts, years, identifiers).
@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TEXT_SOURCES = [ROOT / "data/plms_v0_3/results_extract.md", ROOT / "data/plms_v0_4/results_extract.md",
+TEXT_SOURCES = [ROOT / "data/plms_v0_5/results_extract.md",
                 ROOT / "data/foptinf_analysis/results.md",
                 ROOT / "sources/quotes.md", ROOT / "analysis/out/results.md"]
 JSON_SOURCES = sorted((ROOT / "data").rglob("*.json")) + sorted((ROOT / "analysis/out").glob("*.json"))
@@ -34,10 +34,10 @@ def visible_text(path: Path) -> list[tuple[str, str]]:
     s = path.read_text()
     s = re.sub(r"<script.*?</script>|<style.*?</style>", " ", s, flags=re.S)
     s = re.sub(r"<!--.*?-->", " ", s, flags=re.S)
-    parts = re.split(r'(<section class="slide" id="slide-\d+">)', s)
+    parts = re.split(r'(<section class="slide" id="slide-\d+[a-z]?">)', s)
     out = [("hero", parts[0])]
     for i in range(1, len(parts), 2):
-        sid = re.search(r'id="(slide-\d+)"', parts[i]).group(1)
+        sid = re.search(r'id="(slide-\d+[a-z]?)"', parts[i]).group(1)
         out.append((sid, parts[i + 1]))
     clean = []
     for sid, t in out:

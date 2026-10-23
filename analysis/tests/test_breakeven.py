@@ -20,16 +20,16 @@ def test_exact_mode_breakdown(res):
     chip = D.series("e13_energy", "breakdown", "stacked chip")
     for k, y in zip(chip["x"], chip["y"]):
         close(res["exact"]["chip"][k], y)
-    close(res["exact"]["chip"]["total"], 485.9)
+    close(res["exact"]["chip"]["total"], 498.9)
     close(res["exact"]["asic"], D.series("e13_energy", "breakdown", "ASIC")["y"][-1])
     assert res["exact"]["crossings"] == 708
-    assert res["exact"]["n_lasers"] == 13
+    assert res["exact"]["n_lasers"] == 22          # fan-out 12 on the slab (13 lasers on the v0.4 mesh)
     close(res["exact"]["rate_per_s"], 4.617e11)
 
 
 def test_exact_breakeven_is_negative(res):
-    """'break-even would need E_conv <= -0.1406 pJ/bit'; 'free light and crossings leave 43.78 pJ'."""
-    close(res["exact"]["breakeven_E_conv"], -0.1406)
+    """'break-even would need E_conv <= -0.1589 pJ/bit'; 'free light and crossings leave 43.78 pJ'."""
+    close(res["exact"]["breakeven_E_conv"], -0.1589)
     close(res["exact"]["free_light_and_crossings"], 43.78)
 
 
@@ -75,16 +75,25 @@ def test_approximate_mode_table():
 
 def test_digital_8bit_and_ratios(res):
     close(res["digital_8bit"], 0.7188)
-    close(res["approx"]["1"]["total"] / res["approx"]["6"]["total"], 4.923)
+    close(res["approx"]["1"]["total"] / res["approx"]["6"]["total"], 4.802)
     close(res["throughput_vs_exact"], 59)
 
 
 def test_breakeven_formula_consistent():
     c = B.Chip(p_pi_mW=0.0, wall_plug=1.0)
     for S in (6,):
-        e = B.breakeven_E_conv(c, S, 0.2141)
+        e = B.breakeven_E_conv(c, S, 0.7188)
         assert e is not None and e > 0
-        close(B.approx_stage(replace(c, E_conv=e), S)["total"], 0.2141)
+        close(B.approx_stage(replace(c, E_conv=e), S)["total"], 0.7188)
+        assert B.breakeven_E_conv(c, S, 0.0707) is None     # the 8-bit boundary twiddles alone exceed it
+
+
+def test_fanout_is_the_slabs(res):
+    assert B.Chip().fanout == 12 == B.laser_fanout_6dB(4, 112.0)
+    assert "20 → 12" in D.extract_text()
+    close(res["conditions"]["target_pJ"], 0.0707)
+    assert res["conditions"]["wall_plug_needed_free_heaters_free_conv"] is None
+    assert res["conditions"]["twiddles_pJ"] > res["conditions"]["target_pJ"]
 
 
 def test_never_pays_at_defaults(res):

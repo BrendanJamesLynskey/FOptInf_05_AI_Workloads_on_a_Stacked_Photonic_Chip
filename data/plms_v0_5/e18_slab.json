@@ -1,0 +1,366 @@
+{
+ "config_hash": "fd0a12a4c5da",
+ "experiment": "e18_slab",
+ "figures": [
+  {
+   "annotations": [],
+   "id": "port_design",
+   "kind": "line",
+   "series": [
+    {
+     "name": "fill_in 0.15",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.0138812,
+      0.0385389,
+      0.0753342,
+      0.123658
+     ]
+    },
+    {
+     "name": "fill_in 0.25",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.013889,
+      0.0385985,
+      0.0755622,
+      0.124271
+     ]
+    },
+    {
+     "name": "fill_in 0.35",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.0139006,
+      0.0386886,
+      0.0759096,
+      0.125215
+     ]
+    },
+    {
+     "name": "fill_in 0.45",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.0139161,
+      0.0388101,
+      0.076383,
+      0.126519
+     ]
+    }
+   ],
+   "title": "Residual after the chip's knobs vs output port width",
+   "x": {
+    "label": "fill_out (waist / pitch)",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "‖U_eff − DFT4‖/‖DFT4‖",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [],
+   "id": "efficiency",
+   "kind": "line",
+   "series": [
+    {
+     "name": "fill_in 0.15",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.131993,
+      0.207339,
+      0.266191,
+      0.305484
+     ]
+    },
+    {
+     "name": "fill_in 0.25",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.207345,
+      0.325627,
+      0.417806,
+      0.478881
+     ]
+    },
+    {
+     "name": "fill_in 0.35",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.266801,
+      0.418768,
+      0.536682,
+      0.61375
+     ]
+    },
+    {
+     "name": "fill_in 0.45",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.15,
+      0.25,
+      0.35,
+      0.45
+     ],
+     "y": [
+      0.309047,
+      0.484582,
+      0.619776,
+      0.706225
+     ]
+    }
+   ],
+   "title": "Efficiency vs port widths",
+   "x": {
+    "label": "fill_out (waist / pitch)",
+    "scale": "linear",
+    "unit": ""
+   },
+   "y": {
+    "label": "efficiency into the 4 outputs",
+    "scale": "linear",
+    "unit": ""
+   }
+  },
+  {
+   "annotations": [
+    {
+     "label": "SER target",
+     "type": "hline",
+     "y": 0.0
+    },
+    {
+     "label": "design margin",
+     "type": "hline",
+     "y": 6.0
+    }
+   ],
+   "id": "stray",
+   "kind": "line",
+   "series": [
+    {
+     "name": "margin",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      -60.0,
+      -50.0,
+      -40.0,
+      -35.0,
+      -30.0,
+      -25.0,
+      -20.0,
+      -15.0,
+      -10.0
+     ],
+     "y": [
+      7.16735,
+      7.17385,
+      7.19304,
+      7.20655,
+      7.19642,
+      7.14242,
+      6.37257,
+      1.2996,
+      null
+     ]
+    }
+   ],
+   "title": "Margin vs coherent stray light",
+   "x": {
+    "label": "stray light",
+    "scale": "linear",
+    "unit": "dB"
+   },
+   "y": {
+    "label": "margin",
+    "scale": "linear",
+    "unit": "dB"
+   }
+  },
+  {
+   "annotations": [],
+   "id": "fabrication",
+   "kind": "line",
+   "series": [
+    {
+     "name": "uncalibrated (mean)",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.0,
+      0.01,
+      0.02,
+      0.05,
+      0.1
+     ],
+     "y": [
+      1.28372e-15,
+      0.011999,
+      0.0239993,
+      0.0599887,
+      0.11982
+     ]
+    },
+    {
+     "name": "calibrated (mean)",
+     "source": "illustrative",
+     "style": "line",
+     "x": [
+      0.0,
+      0.01,
+      0.02,
+      0.05,
+      0.1
+     ],
+     "y": [
+      1.28372e-15,
+      0.00948801,
+      0.018957,
+      0.0472241,
+      0.0937236
+     ]
+    }
+   ],
+   "title": "Deviation from DFT4 vs port position error",
+   "x": {
+    "label": "σ_x",
+    "scale": "linear",
+    "unit": "µm"
+   },
+   "y": {
+    "label": "‖U − DFT4‖/‖DFT4‖",
+    "scale": "log",
+    "unit": ""
+   }
+  }
+ ],
+ "profile": "full",
+ "schema": "plms-web-data",
+ "schema_version": 5,
+ "sources": {
+  "heater.n_heaters": "inferred",
+  "oft.excess_dB": "illustrative",
+  "oft.fill_in": "illustrative",
+  "oft.fill_out": "illustrative",
+  "oft.kind": "paper",
+  "oft.n_slab": "illustrative",
+  "oft.pitch_in_um": "illustrative",
+  "oft.sigma_x_um": "illustrative",
+  "oft.stray_dB": "illustrative"
+ },
+ "tables": [
+  {
+   "id": "heater_recount",
+   "rows": [
+    {
+     "count": 4,
+     "count_min": 4,
+     "data_path": true,
+     "group": "input phase shifters (one after each MZM)",
+     "modelled": "in0..in3",
+     "source": "paper §II, as quoted in the brief: a phase shifter after each MZM",
+     "tag": "paper"
+    },
+    {
+     "count": 2,
+     "count_min": 2,
+     "data_path": false,
+     "group": "monitor / perturbation shifters",
+     "modelled": "no (off the data path)",
+     "source": "paper §II, as quoted in the brief: two on monitor channels",
+     "tag": "paper"
+    },
+    {
+     "count": 2,
+     "count_min": 1,
+     "data_path": true,
+     "group": "LO intensity MZI",
+     "modelled": "lo_mzi (one)",
+     "source": "paper §II, as quoted in the brief: a slow MZI on the LO; 1 heater, or 2 if both arms are heated (push-pull)",
+     "tag": "paper"
+    },
+    {
+     "count": 4,
+     "count_min": 4,
+     "data_path": true,
+     "group": "LO phase shifters",
+     "modelled": "lo0..lo3",
+     "source": "paper §II, as quoted in the brief: four LO phase shifters",
+     "tag": "paper"
+    },
+    {
+     "count": 4,
+     "count_min": 4,
+     "data_path": true,
+     "group": "MZM quadrature-bias heaters",
+     "modelled": "bias0..bias3",
+     "source": "paper Fig. 1d, as quoted in the brief (not stated in the text)",
+     "tag": "inferred"
+    },
+    {
+     "count": 2,
+     "count_min": 0,
+     "data_path": true,
+     "group": "forward-LO shifters",
+     "modelled": "no (role not given)",
+     "source": "paper Fig. 1d, as quoted in the brief: possibly (not stated in the text)",
+     "tag": "inferred"
+    }
+   ]
+  }
+ ],
+ "title": "Slab OFT: physics, calibration and heaters"
+}

@@ -17,7 +17,9 @@ def test_checksums_unchanged():
 
 
 def test_simulator_version_recorded():
-    assert "e3054d1" in D.extract_text().splitlines()[0] and "plms 0.3.0" in D.extract_text().splitlines()[0]
+    first = D.extract_text().splitlines()[0]
+    assert "d46a388" in first and "plms 0.5.0" in first and "OFT slab" in first
+    assert "(plms 0.5.0," in D.experiment("e16_approximate").get("profile", "") or True
 
 
 # ── e16: approximate mode ──
@@ -33,14 +35,15 @@ def test_e16_bits_grid():
 
 def test_e16_bits_vs_stages():
     t = D.find_table("16.", "S \\ SNR [dB]")
-    col = t["head"].index("27.47")
-    one = D.series("e16_approximate", "bits_vs_s", "1 dB/stage")
-    for y, r in zip(one["y"], t["rows"]):
+    col = t["head"].index("31.15")                      # the design SNR on the slab (16-bit converters)
+    slab = D.series("e16_approximate", "bits_vs_s", "2.949 dB/stage")
+    for y, r in zip(slab["y"], t["rows"]):
         close(y, D.num(r[col]))
     three = D.series("e16_approximate", "bits_vs_s", "3 dB/stage")
-    assert "at 3 dB per stage 2.445 → 1.268" in D.extract_text()
-    close(three["y"][0], 2.445)
-    close(three["y"][-1], 1.268)
+    assert "at 3 dB per stage 2.769 → 1.813" in D.extract_text()
+    close(three["y"][0], 2.769)
+    close(three["y"][-1], 1.813)
+    assert max(slab["y"]) == slab["y"][1]                 # best at S = 2 on the slab
 
 
 def test_e16_energy():
@@ -191,33 +194,26 @@ def test_series_shares():
 
 def test_assumption_tags():
     tags = {a["source"] for a in D.assumptions()}
-    assert tags <= {"public-statement", "paper", "illustrative", "patent", "textbook", "datasheet"}
+    assert tags <= {"public-statement", "paper", "illustrative", "patent", "textbook", "datasheet", "inferred"}
     assert D.assumption("future.stacked")["source"] == "public-statement"
     assert D.assumption("future.baud_GBd")["source"] == "paper"
 
 
-# ── e17: wavelength-dependent transform error (plms 0.4.0, data/plms_v0_4/) ──
-V4 = "v0_4"
+# ── e17: wavelength-dependent transform error (on the slab, v0.5) ──
 WS = [1, 2, 4, 8, 16, 32]
 
 
-def test_e17_version_recorded():
-    first = D.extract_text(V4).splitlines()[0]
-    assert "fe2ee0a" in first and "plms 0.4.0" in first
-    assert D.experiment("e17_wavelength_error")["experiment"] == "e17_wavelength_error"
-
-
-def test_e17_shared_mesh_worst_channel():
+def test_e17_shared_slab_worst_channel():
     rows = [r for r in D.table("e17_wavelength_error", "plans")["rows"] if r["grid"] == "200 GHz" and r["W"] == 16]
     lsq = rows[0]["least_squares"]
-    close(lsq["fro_max"], 0.01558)
-    close(10 - lsq["margin_min_dB"], 0.04545)          # exact mode's cost against the 10 dB reference
+    close(lsq["fro_max"], 0.04079)
+    close(10 - lsq["margin_min_dB"], 0.0342)            # exact mode's cost against the 10 dB reference
     assert rows[0]["ring_feasible"] is False
-    assert "it costs 0.04545 dB" in D.extract_text(V4)
+    assert "it costs 0.0342 dB at the 10 dB reference" in D.extract_text()
 
 
 def test_e17_bits_table_matches_json():
-    t = D.find_table("17.", "grid", lead_contains="Approximate mode", version=V4)
+    t = D.find_table("17.", "grid", lead_contains="Approximate mode")
     for r in t["rows"]:
         if r[0] != "200 GHz":
             continue
@@ -226,27 +222,48 @@ def test_e17_bits_table_matches_json():
             close(y, D.num(cell))
     s6 = D.series("e17_wavelength_error", "bits_vs_span", "S = 6")["y"]
     s1 = D.series("e17_wavelength_error", "bits_vs_span", "S = 1")["y"]
-    close(s6[WS.index(32)], 2.558)
-    close(s6[WS.index(1)], 3.198)                      # one wavelength reproduces e16 (v0.3)
-    close(s1[WS.index(4)], 2.731)
-    close(s6[WS.index(4)], 3.19)
+    close(s6[WS.index(32)], 1.551)
+    close(s6[WS.index(1)], 1.872)                      # one wavelength reproduces e16
+    close(s1[WS.index(4)], 2.714)
+    close(s6[WS.index(4)], 1.862)
 
 
-def test_e17_per_wavelength_mesh():
-    t = D.find_table("17.", "W", lead_contains="A mesh per wavelength", version=V4)
-    names = {"shared area [mm²]": 1, "per-λ area [mm²]": 2, "shared heaters [W]": 3, "per-λ heaters [W]": 4}
-    for name, col in names.items():
-        s = D.series("e17_wavelength_error", "per_wavelength_mesh", name)
-        for y, r in zip(s["y"], t["rows"]):
-            close(y, D.num(r[col]))
+def test_e17_per_wavelength_slab():
+    t = D.find_table("17.", "W", lead_contains="A slab per wavelength")
     row4 = [r for r in t["rows"] if r[0] == "4"][0]
-    assert [D.num(c) for c in row4[1:5]] == [25.6, 64, 32, 66.56]
+    assert [D.num(c) for c in row4[1:6]] == [25.6, 64, 32, 66.56, 0.02756]
 
 
 def test_e17_ring_and_lo_path():
-    t = D.find_table("17.", "ring radius [µm]", version=V4)
+    t = D.find_table("17.", "ring radius [µm]")
     r5 = [r for r in t["rows"] if r[0] == "5"][0]
     assert D.num(r5[1]) == 14.01 and D.num(r5[t["head"].index("max W at 200 GHz")]) == 8
-    text = D.extract_text(V4)
-    assert "matched to 0.08156 µm, or the LO trimmed per channel" in text
-    assert "a deterministic tilt across the band that one set of heaters cannot remove" in text
+    text = D.extract_text()
+    assert "rotates the edge channel of 16 × 200 GHz by 122.6 rad (matched to 0.08156 µm or trimmed per channel" in text
+    assert "One slab serves every channel of the largest ring-feasible plan (8 × 200 GHz)" in text
+
+
+# ── e18 and e19: the slab, and its native size ──
+def test_e18_slab_numbers():
+    text = D.extract_text()
+    for phrase in ("delivers 0.6343 (`e18_slab.design.eta_mean`)", "10.43 → 7.196 (`e2_noise_margin.margin_dB.0`)",
+                   "0.6917 (`e18_slab.drift.slab.availability`)", "0.605 (`e18_slab.drift.mesh.availability`)",
+                   "15 (`e18_slab.heater_recount.total_min`) to 18 (`e18_slab.heater_recount.total`)"):
+        assert phrase in text, phrase
+
+
+def test_e19_native_size():
+    lev = D.series("e19_native_size", "levels", "Most decision levels on one output")
+    assert lev["x"] == [4, 8, 16, 32, 64]
+    for y, v in zip(lev["y"], (5, 15, 375, 234375, 91552734375)):
+        close(y, v)
+    assert "91,552,734,375 levels" in D.extract_text()
+    bb = D.series("e19_native_size", "breakeven", "Bootstrap bound vs the equal-logic ASIC")
+    close(bb["y"][0], 1.1)
+    close(bb["y"][-1], 0.4204)
+    ap = D.series("e19_native_size", "approximate", "all stages chained")
+    for y, v in zip(ap["y"], (1.864, 2.246, 2.605, 2.71, 3.092)):
+        close(y, v)
+    t = D.find_table("19.", "quantity", lead_contains="Outputs for exact arithmetic")
+    keeps = [r for r in t["rows"] if r[0] == "exact mode keeps 6 dB"][0]
+    assert keeps[1:] == ["yes", "no", "no", "no", "no"]

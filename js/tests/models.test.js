@@ -53,9 +53,9 @@ test('fft chain: conversions per butterfly path (key frames)', () => {
 });
 test('energy stack sums to the published totals', () => {
     const ex = M.energyStack(D.breakeven, 'exact'), ap = M.energyStack(D.breakeven, 'approx');
-    assert.strictEqual(M.g4(ex.parts.reduce((a, p) => a + p[1], 0)), '485.9');
-    assert.strictEqual(M.g4(ap.parts.reduce((a, p) => a + p[1], 0)), '6.929');
-    assert.strictEqual(M.g4(ex.digital), '32.35'); assert.strictEqual(M.g4(ap.digital), '0.2141');
+    assert.strictEqual(M.g4(ex.parts.reduce((a, p) => a + p[1], 0)), '498.9');
+    assert.strictEqual(M.g4(ap.parts.reduce((a, p) => a + p[1], 0)), '7.15');
+    assert.strictEqual(M.g4(ex.digital), '32.35'); assert.strictEqual(M.g4(ap.digital), '0.0707');
 });
 test('system path has the same steps in both modes', () => {
     assert.strictEqual(M.systemPath('exact').length, M.systemPath('approx').length);

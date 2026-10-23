@@ -70,7 +70,7 @@
 
     // ── assumptions table (slide 19), from the simulator's own table ──
     if ($('tbl-assume')) {
-        const t = $('tbl-assume'), tagClass = { paper: 'paper', 'public-statement': 'web', patent: 'patent', illustrative: 'inference', textbook: 'derived', datasheet: 'derived' };
+        const t = $('tbl-assume'), tagClass = { paper: 'paper', 'public-statement': 'web', patent: 'patent', illustrative: 'inference', inferred: 'inference', textbook: 'derived', datasheet: 'derived' };
         D.assumptions.forEach(a => { const tr = document.createElement('tr'); tr.innerHTML = `<td data-label="Parameter"><code>${a.parameter}</code></td><td data-label="Default">${a.default}</td><td data-label="Tag"><span class="src-tag ${tagClass[a.source] || ''}">${a.source}</span></td>`; t.appendChild(tr); });
     }
 
@@ -211,8 +211,9 @@
             const { g, w, h } = window.fopCanvas(cv, narrow ? 1.15 : 0.55), px = font(g, w, 0.95);
             const val = k => m === 'snr' ? F[k].snr_bits : F[k].enob_needed;
             const toM = b => m === 'snr' ? b : M.seriesEnobFromSnrBits(b, crest);
-            const avail = [['S = 1', M.e16Bits(D, 1, 8), 'teal'], ['S = 6', M.e16Bits(D, 6, 8), 'acc'],
-                           ['S = 6, 3 dB', D.e16.figures.bits_vs_s.series[1].y[5], 'orange']];
+            const n64 = D.e19.figures.approximate.series.find(s => s.name === 'all stages chained');
+            const avail = [['S = 2 (best)', M.e16Bits(D, 2, 8), 'teal'], ['S = 6', M.e16Bits(D, 6, 8), 'acc'],
+                           ['N = 64, chained', n64.y[n64.x.indexOf(64)], 'orange']];
             const L = narrow ? 76 : 96, R = 14, T = 3 * px, rowH = (h - T - 3 * px) / order.length, xmax = 11;
             const X = v => L + v / xmax * (w - L - R);
             for (let v = 0; v <= xmax; v += narrow ? 2 : 1) { line(g, [[X(v), T], [X(v), h - 3 * px]], col('border'), 0.5); txt(g, String(v), X(v), h - 1.6 * px, col('sec'), 'center'); }
@@ -390,6 +391,23 @@
         svgEl(svg, 'text', { x: 538, y: 128, class: 's-d' }, 'E4M3');
         svgEl(svg, 'text', { x: 40, y: 158, class: 's-d' }, '16 FP4 values share one scale (NVFP4)');
         window.fopFig.fp4 = { grid: M.FP4_GRID.slice() };
+    }
+
+    // ── slide 16b: native size N (e19) ──
+    if ($('cv-n-levels')) {
+        const f = D.e19.figures, mesh = D.e19.mesh_v04_chained;
+        const draw = () => {
+            const lv = f.levels.series[0];
+            chart($('cv-n-levels'), { xlog: true, ylog: true, xlabel: 'native size N', ylabel: 'levels on one output', legend: false,
+                series: [{ name: 'levels', x: lv.x, y: lv.y, color: 'orange' }], xfmt: v => String(v) });
+            const ap = f.approximate.series;
+            chart($('cv-n-bits'), { xlog: true, xlabel: 'native size N', ylabel: 'effective bits', ymin: 0, ymax: 3.5, xfmt: v => String(v),
+                series: ap.map((s, i) => ({ name: s.name, x: s.x, y: s.y, color: i ? 'acc' : 'teal' })),
+                hlines: [{ y: mesh, label: `v0.4 mesh, chained ${g4(mesh)}`, color: 'orange' }] });
+            const bb = f.breakeven.series[0];
+            window.fopFig.native = { levels: lv.y.slice(), chained: ap[1].y.slice(), bound: bb.y.slice() };
+        };
+        draw(); redraws.push(draw);
     }
 
     let rt = 0;

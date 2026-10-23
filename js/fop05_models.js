@@ -23,7 +23,7 @@
     // ── the chip (analysis/breakeven.py Chip; defaults from the simulator's assumptions table) ──
     const CHIP = {
         U: 64, W: 4, B_GBd: 112, eta: 0.95, heaters_unit: 18, heaters_wl: 8, p_pi_mW: 10, laser_mW: 100,
-        wall_plug: 0.15, fanout: 20, E_conv: 0.5, out_bits: 2, E_recombine: 0.05, width: 59,
+        wall_plug: 0.15, fanout: 12, E_conv: 0.5, out_bits: 2, E_recombine: 0.05, width: 59,
         pJ_add32: 0.1, pJ_mul32: 3.1, node: 0.25, modmul_muls: 3, modadd_adds: 2, power_cap_W: 500,
     };
     const chip = o => Object.assign({}, CHIP, o || {});

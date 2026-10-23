@@ -1,5 +1,5 @@
 {
- "config_hash": "6409e785c8ee",
+ "config_hash": "fd0a12a4c5da",
  "experiment": "e7_throughput",
  "figures": [
   {
@@ -415,7 +415,7 @@
  ],
  "profile": "full",
  "schema": "plms-web-data",
- "schema_version": 3,
+ "schema_version": 5,
  "sources": {
   "energy.fpga_pJ_modadd": "illustrative",
   "energy.link_pJ_bit": "datasheet",

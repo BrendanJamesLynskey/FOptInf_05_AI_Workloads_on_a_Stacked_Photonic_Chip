@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Energy per useful operation on the stacked chip, and when approximate mode would break even.
 
-A closed-form restatement of the simulator's energy accounting (plms 0.3.0, results_extract.md
+A closed-form restatement of the simulator's energy accounting (plms 0.5.0, slab OFT, results_extract.md
 sections 13, 14 and 16), built only from the parameters in its future-chip assumptions table.
 The tests check that, at the defaults, it reproduces every published energy figure:
 
@@ -18,6 +18,7 @@ The tests check that, at the defaults, it reproduces every published energy figu
   approximate mode, per butterfly-stage, S radix-4 stages chained optically (section 16)
     rate        = U W B eta                            (one butterfly-stage per symbol slot)
     crossings   = 8 b_c E_conv / S                     (32 pJ at S = 1, b_c = 8, 0.5 pJ/bit)
+    (on the slab, chaining costs bits instead of saving them: e16 has 1.872 bits at S = 6, 2.746 at S = 1)
     twiddles    = 3 x (4 mul(b_c) + 2 add(b_c)) / S    (digital, at chain boundaries)
     laser, heaters as above, per butterfly-stage
     throughput  = min(rate, (P_cap - P_static) / (crossings + twiddles))
@@ -67,7 +68,8 @@ class Chip:
     p_pi_mW: float = D.default_value("thermal.p_pi_mW")
     laser_mW: float = 10 ** (D.default_value("laser.power_dBm") / 10)
     wall_plug: float = D.default_value("laser.wall_plug")
-    fanout: int = 20                     # U x W per laser at 6 dB, 4 λ, 112 GBd (e14)
+    fanout: int = laser_fanout_6dB(int(D.default_value("future.wavelengths")), D.default_value("future.baud_GBd"))
+    # U x W per laser at 6 dB, 4 λ, 112 GBd (e14): 12 on the slab (the v0.4 mesh, lossless: 20)
     E_conv: float = D.default_value("future.conv_pJ_bit")
     out_bits: int = int(D.default_value("future.out_bits_per_plane"))
     E_recombine: float = D.default_value("future.recombine_pJ_plane")
@@ -178,13 +180,17 @@ def compute() -> dict:
     target = matched[6]
     no_heat = replace(c, p_pi_mW=0.0)
     laser_only = approx_stage(replace(no_heat, E_conv=0.0), 6)
-    need_wall_plug = c.wall_plug * laser_only["laser"] / (target - laser_only["twiddles"])
+    # None where no wall-plug efficiency suffices: the boundary twiddles alone exceed the target (the slab, v0.5)
+    room = target - laser_only["twiddles"]
+    need_wall_plug = c.wall_plug * laser_only["laser"] / room if room > 0 else None
     cond = {
         "target_pJ": target,
         "laser_pJ_default": ap[6]["laser"],
         "heaters_pJ_default": ap[6]["phase_shifters"],
+        "twiddles_pJ": ap[6]["twiddles"],
         "wall_plug_needed_free_heaters_free_conv": need_wall_plug,
         "E_conv_needed_free_heaters_wall_plug_1": breakeven_E_conv(replace(no_heat, wall_plug=1.0), 6, target),
+        "E_conv_needed_free_heaters_wall_plug_1_vs_8bit": breakeven_E_conv(replace(no_heat, wall_plug=1.0), 6, dig8),
         "E_conv_needed_vs_8bit_mems": breakeven_E_conv(replace(c, p_pi_mW=P_PI_MW["mems"]), 6, dig8),
         "E_conv_needed_vs_matched_default": breakeven_E_conv(c, 6, target),
     }
