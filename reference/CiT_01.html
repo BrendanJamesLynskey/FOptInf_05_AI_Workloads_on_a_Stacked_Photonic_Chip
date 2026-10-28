@@ -1230,7 +1230,7 @@
     </div>
     <div class="callout">
         <div class="callout-label">Test 1 in Brendan's simulator</div>
-        <p>Disaggregated_Inference_Sim compresses the KV hand-off either in transit or on the prefill GPU (<a href="https://brendanjameslynskey.github.io/FOptInf_03_Optical_Prefill_Pools/#slide-13">FOptInf 03, slide 13</a>). Compression helped only where the link bound the system: GQA KV over 25 GbE at 14 req/s, FP8 cut the hand-off p99 from 9,657.8 ms to 166.6 ms and lifted SLO attainment from 41.0% to 100.0%. The GPU did the same compression for the same 166.6 ms (<a href="https://github.com/BrendanJamesLynskey/disaggregated_inference_sim/blob/main/examples/results.md">simulator results.md</a>, section 15; transit stage parameters illustrative).</p>
+        <p>Optical_Serving_Sim compresses the KV hand-off either in transit or on the prefill GPU (<a href="https://brendanjameslynskey.github.io/FOptInf_03_Optical_Prefill_Pools/#slide-13">FOptInf 03, slide 13</a>). Compression helped only where the link bound the system: GQA KV over 25 GbE at 14 req/s, FP8 cut the hand-off p99 from 9,657.8 ms to 166.6 ms and lifted SLO attainment from 41.0% to 100.0%. The GPU did the same compression for the same 166.6 ms (<a href="https://github.com/BrendanJamesLynskey/Optical_Serving_Sim/blob/main/examples/results.md">simulator results.md</a>, section 15; transit stage parameters illustrative).</p>
     </div>
     <ul>
         <li><strong>Test 1 comes first.</strong> If the link is idle half the time, compressing its traffic changes nothing a user sees.</li>

@@ -871,7 +871,7 @@
 <section class="slide" id="slide-02">
     <div class="slide-number">02</div>
     <h2>A Standard Decoder Has No FFT</h2>
-    <p>A Llama-style decoder is matrix multiplies (projections, the SwiGLU MLP, the LM head) plus attention (QK<sup>T</sup> and AV), softmax, norms and activations. None of it is a Fourier transform. The analysis reproduces the companion simulator's FLOP count exactly (<a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim">Disaggregated_Inference_Sim</a>'s cost model, checked to the FLOP), and splits it by class:</p>
+    <p>A Llama-style decoder is matrix multiplies (projections, the SwiGLU MLP, the LM head) plus attention (QK<sup>T</sup> and AV), softmax, norms and activations. None of it is a Fourier transform. The analysis reproduces the companion simulator's FLOP count exactly (<a href="https://github.com/BrendanJamesLynskey/Optical_Serving_Sim">Optical_Serving_Sim</a>'s cost model, checked to the FLOP), and splits it by class:</p>
     <div class="table-wrap">
     <table>
         <tr><th>Llama-3-8B prefill</th><th>GFLOP</th><th>Dense matmul</th><th>Attention</th></tr>
@@ -885,7 +885,7 @@
     <div class="diagram-grid cols-2">
         <div class="diagram-panel accent-border">
             <h4>An optical MAC would help this model</h4>
-            <p>The simulator's <code>HYPOTHETICAL_OPTICAL</code> device is a &ldquo;what if compute were nearly free&rdquo; probe: it speeds up every dense FLOP, and, as its comment in <a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim/blob/main/src/disagg_sim/hardware.py">hardware.py</a> says, decode barely moves because decode is bandwidth-bound.</p>
+            <p>The simulator's <code>HYPOTHETICAL_OPTICAL</code> device is a &ldquo;what if compute were nearly free&rdquo; probe: it speeds up every dense FLOP, and, as its comment in <a href="https://github.com/BrendanJamesLynskey/Optical_Serving_Sim/blob/main/src/optical_serving_sim/hardware.py">hardware.py</a> says, decode barely moves because decode is bandwidth-bound.</p>
         </div>
         <div class="diagram-panel accent-border">
             <h4>A transform engine would not</h4>
@@ -1240,7 +1240,7 @@
     <ul>
         <li><strong>Filter spectra are big:</strong> 2 &times; 4,096 channels &times; (L+1) frequency bins per layer, for 32 layers. A 2-megapixel mask holds a fraction of one forward pass's worth.</li>
         <li><strong>Rewrites are amortised over the batch.</strong> Every sequence in a prefill batch uses the same filters, so one pass over the mask serves all of them: large prefill batches help, and token-by-token decode cannot amortise at all.</li>
-        <li><strong>For comparison,</strong> the simulator prefills a 2,048-token Llama-3-8B prompt on one H100 in 59.033 ms (its <a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim/blob/main/examples/results.md">results.md</a>, &sect;1). At the 8-bit device rate the mask alone takes longer, unless batches are large or the mask is much bigger or faster. The device figures are illustrative, from one paper (Miscuglio et al., <a href="https://arxiv.org/abs/2008.05853">arXiv:2008.05853</a>).</li>
+        <li><strong>For comparison,</strong> the simulator prefills a 2,048-token Llama-3-8B prompt on one H100 in 59.033 ms (its <a href="https://github.com/BrendanJamesLynskey/Optical_Serving_Sim/blob/main/examples/results.md">results.md</a>, &sect;1). At the 8-bit device rate the mask alone takes longer, unless batches are large or the mask is much bigger or faster. The device figures are illustrative, from one paper (Miscuglio et al., <a href="https://arxiv.org/abs/2008.05853">arXiv:2008.05853</a>).</li>
     </ul>
 </section>
 
@@ -1325,7 +1325,7 @@
         <li>Only when the <strong>weights themselves are structured</strong> (block-circulant, speculative at LLM scale) does transform work matter: 13.99% of a far smaller total (Amdahl bound 1.16x) with the LM head charged for every prompt token, because the dense LM head is then the bulk of the work; with the LM head on the last token only, 84.54% and 6.5x.</li>
         <li><strong>Causality splits the phases:</strong> prefill has long, padded FFTs with weights held across the batch; decode is token by token, and its FFT option (relaxed tiling) uses small passes on the critical path. That is why, if anything, a transform engine belongs in a <strong>prefill pool</strong>.</li>
         <li><strong>The bill:</strong> about 8 ENOB for INT8-like error and 10 for BF16-like, break-even with digital FFT energy near 12 ENOB, and mask rewrites that can exceed a GPU's whole prefill time.</li>
-        <li><strong>Next (planned):</strong> deck 03 puts an optical transform device into the prefill pool of <a href="https://github.com/BrendanJamesLynskey/Disaggregated_Inference_Sim">Disaggregated_Inference_Sim</a> and measures TTFT, TPOT, goodput, joules per token and PPA against all-GPU pools, with the break-even point.</li>
+        <li><strong>Next (planned):</strong> deck 03 puts an optical transform device into the prefill pool of <a href="https://github.com/BrendanJamesLynskey/Optical_Serving_Sim">Optical_Serving_Sim</a> and measures TTFT, TPOT, goodput, joules per token and PPA against all-GPU pools, with the break-even point.</li>
     </ul>
 </section>
 
